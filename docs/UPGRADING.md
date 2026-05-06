@@ -6,6 +6,26 @@
 - Pin versions in `composer.json` (e.g. `^1.0`) instead of relying only on `dev-main` for production apps.
 - After upgrading, run `php bin/console cache:clear` and `php bin/console assets:install public` so Twig and published bundle assets stay in sync.
 
+## To 1.0.2
+
+No YAML, PHP API, or asset filename changes versus **1.0.1**. Bump with:
+
+```bash
+composer update nowo-tech/tiptap-editor-bundle
+```
+
+No upgrade steps beyond routine dependency update.
+
+## To 1.0.1
+
+No YAML, PHP API, or asset filename changes versus **1.0.0**. Bump with:
+
+```bash
+composer update nowo-tech/tiptap-editor-bundle
+```
+
+Re-run `php bin/console assets:install public` if you publish bundle assets into `public/` (optional if nothing else changed).
+
 ## To 1.0.0
 
 This is the **first tagged stable release**. There is no prior semver migration path within this repository.
@@ -17,16 +37,6 @@ This is the **first tagged stable release**. There is no prior semver migration 
   ```twig
   <script src="{{ asset(nowo_tiptap_editor_asset_path('tiptap-editor.js')) }}"></script>
   ```
-
-## To 1.0.1
-
-No YAML, PHP API, or asset filename changes versus **1.0.0**. Bump with:
-
-```bash
-composer update nowo-tech/tiptap-editor-bundle
-```
-
-Re-run `php bin/console assets:install public` if you publish bundle assets into `public/` (optional if nothing else changed).
 
 ## Future major versions (placeholder)
 

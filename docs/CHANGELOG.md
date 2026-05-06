@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.2] - 2026-05-08
+
+Maintenance release (CI and demo config style only); **no breaking changes** relative to 1.0.1.
+
+### Fixed
+
+- CI: Vitest job — `pnpm/action-setup@v4` no longer sets `version` when `package.json` already pins `packageManager`, avoiding the multiple-version / `ERR_PNPM_BAD_PM_VERSION` failure.
+- PHP-CS-Fixer: demo Symfony 7 `config/bundles.php` and Symfony 8 `config/reference.php` updated for project rules (`declare(strict_types=1)` and operator alignment).
+
 ## [1.0.1] - 2026-05-07
 
 Maintenance and documentation release; **no breaking changes** relative to 1.0.0.
@@ -47,6 +56,7 @@ First stable release published on GitHub.
 - Development workflow: Docker, Makefile, PHPUnit, PHPStan, PHP-CS-Fixer, Vitest on shared TS utilities.
 - Demos: Symfony 7 and 8 sample apps under `demo/` (FrankenPHP).
 
-[Unreleased]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.0.1...HEAD
+[Unreleased]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.0.2...HEAD
+[1.0.2]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.0.2
 [1.0.1]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.0.1
 [1.0.0]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.0.0
