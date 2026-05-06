@@ -4,6 +4,13 @@
 
 {% block body %}
 <div class="container py-4">
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{{ path('app_examples_index', { _locale: app.request.locale }) }}">{{ 'demo.menu_examples'|trans({}, 'messages') }}</a></li>
@@ -29,4 +36,6 @@
         <a href="{{ path('app_examples_index', { _locale: app.request.locale }) }}">{{ 'examples.back_index'|trans({}, 'messages') }}</a>
     </p>
 </div>
+
+<script src="{{ asset(nowo_tiptap_editor_asset_path('tiptap-editor.js')) }}"></script>
 {% endblock %}

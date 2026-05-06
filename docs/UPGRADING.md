@@ -18,6 +18,16 @@ This is the **first tagged stable release**. There is no prior semver migration 
   <script src="{{ asset(nowo_tiptap_editor_asset_path('tiptap-editor.js')) }}"></script>
   ```
 
+## To 1.0.1
+
+No YAML, PHP API, or asset filename changes versus **1.0.0**. Bump with:
+
+```bash
+composer update nowo-tech/tiptap-editor-bundle
+```
+
+Re-run `php bin/console assets:install public` if you publish bundle assets into `public/` (optional if nothing else changed).
+
 ## Future major versions (placeholder)
 
 When `2.0.0` exists, this section will document breaking changes (constructor/DI, YAML keys, removed options, asset filenames).

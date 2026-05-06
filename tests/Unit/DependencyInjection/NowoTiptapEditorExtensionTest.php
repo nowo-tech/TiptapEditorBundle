@@ -25,7 +25,7 @@ final class NowoTiptapEditorExtensionTest extends TestCase
     {
         $container = new ContainerBuilder();
         $extension = new NowoTiptapEditorExtension();
-        $extension->load([], $container);
+        $extension->load([[]], $container);
 
         self::assertTrue($container->hasParameter('nowo_tiptap_editor.toolbar'));
         self::assertTrue($container->hasParameter('nowo_tiptap_editor.min_height'));

@@ -1,0 +1,44 @@
+# Dependencies
+/vendor/
+/node_modules/
+
+# Symfony runtime
+/var/
+
+# Build outputs
+/dist/
+/build/
+/coverage/
+/coverage.xml
+/.vite/
+
+# Caches / analysis
+/.php-cs-fixer.cache
+/.phpstan.cache
+.phpstan.result.cache
+/.phpunit.cache/
+
+# IDE / local
+/.idea/
+/.vscode/
+/.env
+/.env.*
+!.env.example
+
+# Heavy / binary / logs
+*.log
+*.sql
+*.sql.gz
+*.csv
+*.pdf
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.rar
+*.7z
+
+# Secrets
+*.pem
+*.key
+*.p12

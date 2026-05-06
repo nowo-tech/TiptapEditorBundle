@@ -1,0 +1,14 @@
+---
+description: Documentation and release notes rules
+globs:
+  - "README.md"
+  - "docs/**/*.md"
+alwaysApply: false
+---
+
+Prefer:
+- docs aligned with actual code and supported PHP/Symfony ranges
+- updating `CHANGELOG.md` and `docs/UPGRADING.md` for user-facing changes
+- English for `docs/` and README
+
+Do not invent commands or features not present in the repository.

@@ -62,6 +62,10 @@ jobs:
         if: matrix.php == '8.2' && matrix.symfony == '7.0'
         run: composer test-coverage
 
+      - name: Validate PHP coverage file
+        if: matrix.php == '8.2' && matrix.symfony == '7.0'
+        run: test -f coverage.xml || (echo 'coverage.xml missing' && exit 1)
+
   typescript:
     name: Vitest (pnpm)
     runs-on: ubuntu-latest
@@ -85,7 +89,6 @@ jobs:
   code-style-check:
     name: PHP CS Fixer (dry-run)
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
 
     steps:
       - uses: actions/checkout@v6

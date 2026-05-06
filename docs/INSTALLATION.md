@@ -47,3 +47,5 @@ In your base layout, load the bundle script **once** per page (see [USAGE.md](US
 ```
 
 When developing the bundle from a git clone, rebuild the JS with `pnpm run build` in the bundle root, then re-run `assets:install` in the app.
+
+Persisted HTML may require sanitization in your app — see [SECURITY.md](SECURITY.md). To override Twig themes or translations, see [CONFIGURATION.md](CONFIGURATION.md#overriding-bundle-twig-templates).

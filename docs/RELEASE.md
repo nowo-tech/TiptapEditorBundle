@@ -3,8 +3,9 @@
 ## Prerequisites
 
 - [`CHANGELOG.md`](CHANGELOG.md) updated with the new version and date under `[Unreleased]` moved to a numbered section.
-- [`UPGRADE.md`](UPGRADE.md) updated if there are migration notes.
+- [`UPGRADING.md`](UPGRADING.md) updated if there are migration notes.
 - CI green on `main` ([workflow](../.github/workflows/ci.yml)).
+- [Release security checklist (12.4.1)](SECURITY.md#release-security-checklist-1241) reviewed.
 
 ## Version bump
 
@@ -34,3 +35,7 @@ git push origin vx.y.z
 ## Packagist
 
 If the package is registered on [Packagist](https://packagist.org/), a new tag is picked up automatically after the push; otherwise hook or update manually.
+
+## Automated releases
+
+Pushing an annotated tag `v*` triggers [`.github/workflows/release.yml`](../.github/workflows/release.yml) to create or update the GitHub Release (tag message + optional excerpt from `CHANGELOG.md`). [`.github/workflows/sync-releases.yml`](../.github/workflows/sync-releases.yml) backfills missing releases on a schedule or via manual dispatch.

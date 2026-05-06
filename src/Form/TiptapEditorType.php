@@ -15,7 +15,6 @@ use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use function in_array;
-use function is_string;
 use function sprintf;
 
 /**
@@ -74,11 +73,7 @@ final class TiptapEditorType extends AbstractType
         $resolver->setAllowedTypes('example', ['null', 'string', TiptapExample::class]);
         $resolver->setAllowedTypes('theme', ['string']);
 
-        $resolver->setNormalizer('theme', function (Options $options, mixed $value): string {
-            if (!is_string($value)) {
-                throw new InvalidOptionsException('The "theme" option must be a string.');
-            }
-
+        $resolver->setNormalizer('theme', function (Options $options, string $value): string {
             return $this->normalizeTheme($value);
         });
 
@@ -89,10 +84,8 @@ final class TiptapEditorType extends AbstractType
             if ($value instanceof TiptapExample) {
                 return $value;
             }
-            if (!is_string($value)) {
-                throw new InvalidOptionsException('The "example" option must be a TiptapExample enum value, string, or null.');
-            }
-            $ex = TiptapExample::tryFrom($value);
+
+            $ex = TiptapExample::tryFrom((string) $value);
             if ($ex === null) {
                 throw new InvalidOptionsException(sprintf('Unknown Tiptap example "%s". Allowed: %s.', $value, implode(', ', TiptapExample::values())));
             }
@@ -103,9 +96,6 @@ final class TiptapEditorType extends AbstractType
         $resolver->setNormalizer('config', function (Options $options, mixed $value): ?string {
             if ($value === null || $value === '') {
                 return null;
-            }
-            if (!is_string($value)) {
-                throw new InvalidOptionsException('The "config" option must be a string or null.');
             }
             if (!isset($this->configs[$value])) {
                 throw new InvalidOptionsException(sprintf('Unknown Tiptap config profile "%s". Available profiles: %s.', $value, implode(', ', array_keys($this->configs))));

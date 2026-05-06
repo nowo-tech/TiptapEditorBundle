@@ -1,0 +1,13 @@
+---
+description: Tests and quality rules
+globs:
+  - "tests/**/*.php"
+  - "src/Resources/assets/**/*.test.ts"
+  - "phpunit.xml*"
+  - "vitest.config.*"
+alwaysApply: false
+---
+
+When changing behavior, update or add the nearest PHPUnit or Vitest test.
+
+Prefer focused tests and the existing style.

@@ -12,7 +12,7 @@
             "dist": {
                 "type": "path",
                 "url": "/var/tiptap-editor-bundle",
-                "reference": "7cd75c71ddda27ea36e574a51b6a349d6f4db568"
+                "reference": "d9aad7d23dabb521c116090301a8b5caafa3e260"
             },
             "require": {
                 "php": ">=8.2 <8.6",
@@ -57,7 +57,8 @@
                     "@php vendor/bin/phpunit --color=always"
                 ],
                 "test-coverage": [
-                    "@php vendor/bin/phpunit --color=always --coverage-html coverage --coverage-clover coverage.xml --coverage-text"
+                    "@php vendor/bin/phpunit --color=always --coverage-html coverage --coverage-clover coverage.xml --coverage-text",
+                    "@php scripts/verify-clover-100.php"
                 ],
                 "cs-check": [
                     "@php vendor/bin/php-cs-fixer fix --dry-run --diff"
@@ -109,7 +110,8 @@
             ],
             "support": {
                 "issues": "https://github.com/nowo-tech/TiptapEditorBundle/issues",
-                "source": "https://github.com/nowo-tech/TiptapEditorBundle"
+                "source": "https://github.com/nowo-tech/TiptapEditorBundle",
+                "changelog": "https://github.com/nowo-tech/TiptapEditorBundle/blob/main/docs/CHANGELOG.md"
             },
             "transport-options": {
                 "relative": false

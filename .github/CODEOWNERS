@@ -1,0 +1,7 @@
+# CODEOWNERS for TiptapEditorBundle
+* @HecFranco
+
+/.github/ @HecFranco
+/src/ @HecFranco
+/tests/ @HecFranco
+/.scripts/ @HecFranco

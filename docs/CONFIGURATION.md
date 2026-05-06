@@ -39,6 +39,22 @@ If the root has no `configs` key, the extension treats these keys (when present)
 
 Standard Symfony options (`label`, `required`, `translation_domain`, `attr`, …) work as usual.
 
+## Overriding bundle Twig templates
+
+Templates use the **`@NowoTiptapEditorBundle`** namespace (e.g. `@NowoTiptapEditorBundle/Form/tiptap_editor_theme.html.twig`). To override one in your application, copy the file to:
+
+```text
+templates/bundles/NowoTiptapEditorBundle/Form/<same-file-name>.html.twig
+```
+
+Use the **logical bundle name** `NowoTiptapEditorBundle` (matches the bundle class without the `Bundle` suffix pattern Symfony expects for overrides). Clear cache after changes: `php bin/console cache:clear`.
+
+See also Symfony’s [How to Override Templates](https://symfony.com/doc/current/bundles/override.html).
+
+## Translation overrides
+
+Translations use the domain **`NowoTiptapEditorBundle`** (files under `src/Resources/translations/`). To override strings from your app, add YAML/XLF files in **`translations/`** with the same domain name, for example `translations/NowoTiptapEditorBundle.en.yaml`. Symfony merges app translations over bundle defaults.
+
 ## Parameters exposed to the container
 
 The DI extension sets parameters (including backward-compatible scalars mirroring the **default** profile). Prefer injecting configuration via your own services if you need values in PHP; forms resolve profiles through `TiptapEditorType` wiring.

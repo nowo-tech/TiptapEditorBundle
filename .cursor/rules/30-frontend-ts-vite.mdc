@@ -1,0 +1,15 @@
+---
+description: Frontend rules for Vite-built bundle assets
+globs:
+  - "src/Resources/assets/**/*.ts"
+  - "vite.config.ts"
+  - "package.json"
+alwaysApply: false
+---
+
+Prefer:
+- strict TypeScript where used
+- preserving the Vite IIFE entry (`tiptap-editor.ts` → `src/Resources/public/tiptap-editor.js`)
+- English JSDoc for exported helpers
+
+Avoid committing unrelated generated blobs; rebuild with `pnpm run build` when sources change.
