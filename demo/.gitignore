@@ -1,0 +1,6 @@
+symfony7/var/
+symfony8/var/
+symfony7/vendor/
+symfony8/vendor/
+symfony7/.env.local
+symfony8/.env.local

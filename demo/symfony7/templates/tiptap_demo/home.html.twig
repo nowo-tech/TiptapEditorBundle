@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'demo.page_home_title'|trans({}, 'messages') }} – {{ 'demo.title'|trans({}, 'messages') }}{% endblock %}
+
+{% block body %}
+<div class="container py-4">
+    <h1>{{ 'demo.page_home_title'|trans({}, 'messages') }}</h1>
+    <p class="lead">{{ 'demo.page_home_lead'|trans({}, 'messages')|raw }}</p>
+    <div class="d-flex flex-wrap gap-2">
+        <a class="btn btn-primary" href="{{ path('app_demo', { _locale: app.request.locale }) }}">{{ 'demo.menu_demo'|trans({}, 'messages') }}</a>
+        <a class="btn btn-outline-primary" href="{{ path('app_demo_configs', { _locale: app.request.locale }) }}">{{ 'demo.menu_configs'|trans({}, 'messages') }}</a>
+        <a class="btn btn-outline-secondary" href="{{ path('app_showcase', { _locale: app.request.locale }) }}">{{ 'demo.menu_showcase'|trans({}, 'messages') }}</a>
+        <a class="btn btn-outline-secondary" href="{{ path('app_examples_index', { _locale: app.request.locale }) }}">{{ 'demo.menu_examples'|trans({}, 'messages') }}</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,15 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    Nowo\TiptapEditorBundle\Twig\NowoTiptapEditorTwigExtension:
+        tags: ['twig.extension']
+
+    Nowo\TiptapEditorBundle\Form\TiptapEditorType:
+        arguments:
+            $configs: '%nowo_tiptap_editor.configs%'
+            $defaultConfigName: '%nowo_tiptap_editor.default_config%'
+        tags:
+            - { name: form.type }

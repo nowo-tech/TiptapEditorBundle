@@ -1,0 +1,367 @@
+{#
+  Tiptap rich text widget (form_div_layout): hidden textarea + editor mount (HTML synced on change).
+  Variant presets (tiptap_variant): default | simple | notion | agent | headless
+  Optional examples (tiptap_example): extension recipes — see TiptapExample PHP enum / bundle docs.
+#}
+{% use "form_div_layout.html.twig" %}
+
+{% block tiptap_editor_widget %}
+{% set trans_domain = translation_domain|default('NowoTiptapEditorBundle') %}
+{% set ph_key = tiptap_placeholder_key ?? null %}
+{% set placeholder_text = ph_key is not null and ph_key is not same as(false) and ph_key != '' ? ph_key|trans({}, trans_domain == false ? 'messages' : trans_domain) : '' %}
+{% set variant = tiptap_variant|default('default') %}
+{% set tiptap_example = tiptap_example|default(null) %}
+{% set theme = tiptap_theme|default('light') %}
+<div class="tiptap-editor-widget tiptap-variant-{{ variant|e('html_attr') }} {% if theme == 'auto' %}tiptap-theme-auto{% elseif theme == 'dark' %}tiptap-theme-dark{% else %}tiptap-theme-light{% endif %}"
+     data-tiptap-root="1"
+     data-controller="{{ ('nowo-tiptap-editor ' ~ (attr['data-controller']|default('')))|trim }}"
+     data-tiptap-variant-value="{{ variant|e('html_attr') }}"
+     data-tiptap-toolbar-value="{{ tiptap_toolbar ? '1' : '0' }}"
+     data-tiptap-min-height-value="{{ tiptap_min_height|e('html_attr') }}"
+     data-tiptap-debug-value="{{ tiptap_debug ? '1' : '0' }}"
+     data-tiptap-theme-value="{{ theme|e('html_attr') }}"
+     {% if tiptap_example %}data-tiptap-example-value="{{ tiptap_example|e('html_attr') }}"{% endif %}
+     {% if placeholder_text != '' %}data-tiptap-placeholder-value="{{ placeholder_text|e('html_attr') }}"{% endif %}>
+    {% set attr = attr|merge({
+        'class': (attr.class|default('') ~ ' tiptap-editor-hidden-input')|trim,
+        'style': 'display:none!important',
+        'tabindex': '-1',
+        'aria-hidden': 'true',
+    }) %}
+    {{- block('textarea_widget') -}}
+    {% if variant == 'headless' %}
+        <div class="tiptap-editor-mount tiptap-headless-mount px-1 py-2" data-tiptap-mount="1" style="min-height: {{ tiptap_min_height|default('240px') }}"></div>
+    {% else %}
+        <div class="tiptap-editor-chrome border rounded bg-white shadow-sm">
+            <div class="tiptap-editor-mount p-3" data-tiptap-mount="1" style="min-height: {{ tiptap_min_height|default('240px') }}"></div>
+        </div>
+    {% endif %}
+</div>
+<style>
+.tiptap-editor-widget .tiptap-editor-mount .ProseMirror {
+    outline: none;
+    min-height: inherit;
+}
+.tiptap-editor-widget .tiptap-editor-mount p.is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    float: left;
+    color: #9ca3af;
+    pointer-events: none;
+    height: 0;
+}
+/* Simple: compact, light chrome */
+.tiptap-editor-widget.tiptap-variant-simple .tiptap-editor-chrome {
+    border-radius: .35rem;
+    box-shadow: none;
+    border-color: #dee2e6;
+}
+/* Notion-like: centered “paper” */
+.tiptap-editor-widget.tiptap-variant-notion .tiptap-editor-chrome {
+    max-width: 720px;
+    margin-inline: auto;
+    border-radius: .75rem;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 10px 40px rgba(15, 23, 42, 0.08);
+    background: #fafafa;
+}
+.tiptap-editor-widget.tiptap-variant-notion .tiptap-editor-mount {
+    background: #fff;
+    border-radius: .5rem;
+    min-height: 320px;
+}
+/* Notion-like: resalta bloques al pasar el ratón (arrastrar bloques tipo Notion requiere drag-handle / plantilla Platform). */
+.tiptap-editor-widget.tiptap-variant-notion .tiptap-editor-mount .ProseMirror {
+    user-select: text;
+}
+.tiptap-editor-widget.tiptap-variant-notion .tiptap-editor-mount .ProseMirror > * {
+    border-radius: .35rem;
+    transition: outline-color .15s ease, background-color .15s ease;
+}
+.tiptap-editor-widget.tiptap-variant-notion .tiptap-editor-mount .ProseMirror > *:hover {
+    outline: 1px dashed rgba(99, 102, 241, 0.45);
+    outline-offset: 2px;
+    background: rgba(99, 102, 241, 0.05);
+}
+/* Agent: accent strip */
+.tiptap-editor-widget.tiptap-variant-agent .tiptap-editor-chrome {
+    border-radius: .6rem;
+    border: 1px solid #c7d2fe;
+    box-shadow: 0 8px 24px rgba(79, 70, 229, 0.12);
+    background: linear-gradient(180deg, #eef2ff 0%, #ffffff 48px);
+}
+/* Headless: no card */
+.tiptap-editor-widget.tiptap-variant-headless .tiptap-headless-mount {
+    border-radius: .25rem;
+    border: 1px dashed #cbd5e1;
+    background: #fcfcfd;
+}
+
+/* Toolbar: single horizontal strip (scroll) — no stacked rows */
+.tiptap-editor-widget .tiptap-editor-toolbar {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: .35rem;
+    padding: .45rem .55rem;
+    margin-bottom: .6rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+    border: 1px solid #e2e8f0;
+    border-radius: .5rem;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .85);
+}
+.tiptap-editor-widget .tiptap-editor-toolbar__row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: .35rem;
+    flex: 1 1 auto;
+    min-width: min-content;
+}
+.tiptap-editor-widget .tiptap-editor-toolbar__badge--lead {
+    flex-shrink: 0;
+}
+.tiptap-editor-widget .tiptap-editor-link {
+    color: #4f46e5;
+    text-decoration: underline;
+}
+.tiptap-editor-widget .tiptap-editor-toolbar__badge {
+    font-size: .65rem;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    padding: .2rem .45rem;
+    border-radius: .3rem;
+    background: #4f46e5;
+    color: #fff;
+    line-height: 1.2;
+    margin-right: .15rem;
+    user-select: none;
+}
+.tiptap-editor-widget .tiptap-editor-toolbar__btn {
+    box-sizing: border-box;
+    min-width: 2rem;
+    height: 2rem;
+    padding: 0 .45rem;
+    margin: 0;
+    font: inherit;
+    font-size: .8rem;
+    font-weight: 600;
+    line-height: 1;
+    color: #475569;
+    background: #fff;
+    border: 1px solid #cbd5e1;
+    border-radius: .35rem;
+    cursor: pointer;
+    transition: background .12s ease, color .12s ease, border-color .12s ease, box-shadow .12s ease;
+}
+.tiptap-editor-widget .tiptap-editor-toolbar__btn:hover {
+    background: #f8fafc;
+    border-color: #94a3b8;
+    color: #1e293b;
+}
+.tiptap-editor-widget .tiptap-editor-toolbar__btn:focus {
+    outline: none;
+}
+.tiptap-editor-widget .tiptap-editor-toolbar__btn:focus-visible {
+    box-shadow: 0 0 0 2px #fff, 0 0 0 4px #6366f1;
+}
+.tiptap-editor-widget .tiptap-editor-toolbar__btn.tiptap-editor-toolbar__btn--active {
+    background: #4f46e5;
+    border-color: #4338ca;
+    color: #fff;
+}
+.tiptap-editor-widget .tiptap-editor-toolbar__btn.tiptap-editor-toolbar__btn--active:hover {
+    background: #4338ca;
+    border-color: #3730a3;
+    color: #fff;
+}
+
+/* Dark chrome / demo override (body.tiptap-demo-dark fuerza todos los editores en la demo Symfony) */
+.tiptap-editor-widget.tiptap-theme-dark .tiptap-editor-chrome,
+body.tiptap-demo-dark .tiptap-editor-widget .tiptap-editor-chrome {
+    background: #0f172a !important;
+    border-color: #334155 !important;
+    box-shadow: none;
+}
+.tiptap-editor-widget.tiptap-theme-dark.tiptap-variant-notion .tiptap-editor-chrome,
+body.tiptap-demo-dark .tiptap-editor-widget.tiptap-variant-notion .tiptap-editor-chrome {
+    background: #1e293b !important;
+}
+.tiptap-editor-widget.tiptap-theme-dark.tiptap-variant-notion .tiptap-editor-mount,
+body.tiptap-demo-dark .tiptap-editor-widget.tiptap-variant-notion .tiptap-editor-mount {
+    background: #0f172a !important;
+    color: #e2e8f0;
+}
+.tiptap-editor-widget.tiptap-theme-dark .tiptap-editor-toolbar,
+body.tiptap-demo-dark .tiptap-editor-widget .tiptap-editor-toolbar {
+    background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+    border-color: #334155;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06);
+}
+.tiptap-editor-widget.tiptap-theme-dark .tiptap-editor-toolbar__btn,
+body.tiptap-demo-dark .tiptap-editor-widget .tiptap-editor-toolbar__btn {
+    color: #e2e8f0;
+    background: #1e293b;
+    border-color: #475569;
+}
+.tiptap-editor-widget.tiptap-theme-dark .tiptap-editor-toolbar__btn:hover,
+body.tiptap-demo-dark .tiptap-editor-widget .tiptap-editor-toolbar__btn:hover {
+    background: #334155;
+    border-color: #64748b;
+    color: #f8fafc;
+}
+.tiptap-editor-widget.tiptap-theme-dark .tiptap-editor-toolbar__btn:focus-visible,
+body.tiptap-demo-dark .tiptap-editor-widget .tiptap-editor-toolbar__btn:focus-visible {
+    box-shadow: 0 0 0 2px #0f172a, 0 0 0 4px #818cf8;
+}
+.tiptap-editor-widget.tiptap-theme-dark .tiptap-editor-toolbar__btn.tiptap-editor-toolbar__btn--active,
+body.tiptap-demo-dark .tiptap-editor-widget .tiptap-editor-toolbar__btn.tiptap-editor-toolbar__btn--active {
+    background: #6366f1;
+    border-color: #4f46e5;
+    color: #fff;
+}
+.tiptap-editor-widget.tiptap-theme-dark .tiptap-editor-mount .ProseMirror,
+body.tiptap-demo-dark .tiptap-editor-widget .tiptap-editor-mount .ProseMirror {
+    color: #e2e8f0;
+}
+.tiptap-editor-widget.tiptap-theme-dark .tiptap-editor-link,
+body.tiptap-demo-dark .tiptap-editor-widget .tiptap-editor-link {
+    color: #a5b4fc;
+}
+.tiptap-editor-widget.tiptap-theme-dark.tiptap-variant-headless .tiptap-headless-mount,
+body.tiptap-demo-dark .tiptap-editor-widget.tiptap-variant-headless .tiptap-headless-mount {
+    border-color: #475569;
+    background: #020617;
+}
+.tiptap-editor-widget.tiptap-theme-dark.tiptap-variant-agent .tiptap-editor-chrome,
+body.tiptap-demo-dark .tiptap-editor-widget.tiptap-variant-agent .tiptap-editor-chrome {
+    background: linear-gradient(180deg, #1e1b4b 0%, #0f172a 56px) !important;
+    border-color: #4338ca;
+}
+.tiptap-editor-widget.tiptap-theme-dark .tiptap-editor-charcount,
+body.tiptap-demo-dark .tiptap-editor-widget .tiptap-editor-charcount {
+    color: #94a3b8;
+}
+.tiptap-editor-widget.tiptap-theme-dark .tiptap-editor-mount .ProseMirror table th,
+body.tiptap-demo-dark .tiptap-editor-widget .tiptap-editor-mount .ProseMirror table th {
+    background: #1e293b;
+    border-color: #475569;
+}
+.tiptap-editor-widget.tiptap-theme-dark .tiptap-editor-mount .ProseMirror table td,
+body.tiptap-demo-dark .tiptap-editor-widget .tiptap-editor-mount .ProseMirror table td {
+    border-color: #475569;
+}
+
+/* Agent FAB (demo visual — Tiptap AI Toolkit es producto aparte) */
+.tiptap-editor-widget .tiptap-editor-surface--fab {
+    position: relative;
+}
+.tiptap-editor-widget .tiptap-editor-agent-fab {
+    position: absolute;
+    z-index: 3;
+    right: .65rem;
+    bottom: .65rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    background: linear-gradient(135deg, #2dd4bf, #6366f1);
+    color: #fff;
+    box-shadow: 0 6px 20px rgba(79, 70, 229, .35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform .15s ease, box-shadow .15s ease;
+}
+.tiptap-editor-widget .tiptap-editor-agent-fab:hover {
+    transform: scale(1.06);
+    box-shadow: 0 8px 28px rgba(79, 70, 229, .45);
+}
+.tiptap-editor-widget .tiptap-editor-agent-fab__glyph {
+    font-size: 1.15rem;
+    line-height: 1;
+}
+
+/* Recipes (data-tiptap-example-value): bubble/floating menus, tables, counts */
+.tiptap-editor-widget .tiptap-example-bubble {
+    display: flex;
+    gap: .25rem;
+    padding: .35rem .45rem;
+    background: #1e293b;
+    border-radius: .35rem;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, .35);
+}
+.tiptap-editor-widget .tiptap-example-bubble .tiptap-editor-toolbar__btn {
+    color: #f8fafc;
+    background: #334155;
+    border-color: #475569;
+}
+.tiptap-editor-widget .tiptap-example-floating {
+    padding: .35rem .55rem;
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    border-radius: .35rem;
+    font-size: .75rem;
+    color: #065f46;
+}
+.tiptap-editor-widget .tiptap-example-floating__hint {
+    font-weight: 500;
+}
+.tiptap-editor-widget .tiptap-editor-charcount {
+    margin-top: .45rem;
+    font-size: .75rem;
+    color: #64748b;
+}
+.tiptap-editor-widget .tiptap-editor-mount .ProseMirror table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: .5rem 0;
+}
+.tiptap-editor-widget .tiptap-editor-mount .ProseMirror th,
+.tiptap-editor-widget .tiptap-editor-mount .ProseMirror td {
+    border: 1px solid #cbd5e1;
+    padding: .35rem .5rem;
+    vertical-align: top;
+}
+.tiptap-editor-widget .tiptap-editor-mount .ProseMirror th {
+    background: #f1f5f9;
+    font-weight: 600;
+}
+.tiptap-editor-widget.tiptap-example-text_direction_rtl .tiptap-editor-mount .ProseMirror {
+    text-align: right;
+}
+.tiptap-editor-widget .tiptap-editor-mount .ProseMirror img {
+    max-width: 100%;
+    height: auto;
+    border-radius: .35rem;
+}
+.tiptap-editor-widget .tiptap-editor-mount .ProseMirror ul[data-type="taskList"] {
+    list-style: none;
+    padding-left: 0;
+}
+.tiptap-editor-widget .tiptap-editor-mount .ProseMirror ul[data-type="taskList"] li {
+    display: flex;
+    align-items: flex-start;
+    gap: .35rem;
+}
+.tiptap-editor-widget .tiptap-editor-mount .ProseMirror ul[data-type="taskList"] input[type="checkbox"] {
+    margin-top: .2rem;
+}
+/* Lowlight / code blocks — spans use hljs-* classes */
+.tiptap-editor-widget .tiptap-editor-mount .ProseMirror pre.hljs {
+    background: #0f172a;
+    color: #e2e8f0;
+    padding: .75rem 1rem;
+    border-radius: .5rem;
+    overflow-x: auto;
+}
+</style>
+{% endblock %}

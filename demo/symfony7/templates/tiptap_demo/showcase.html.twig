@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'demo.showcase_page_title'|trans({}, 'messages') }} – {{ 'demo.title'|trans({}, 'messages') }}{% endblock %}
+
+{% block body %}
+<div class="container py-4">
+    <h1 class="h2">{{ 'demo.showcase_page_title'|trans({}, 'messages') }}</h1>
+    <p class="lead text-muted">{{ 'demo.showcase_page_lead'|trans({}, 'messages') }}</p>
+    <p class="small"><a href="https://tiptap.dev/" rel="noopener noreferrer" target="_blank">tiptap.dev</a> — {{ 'demo.showcase_platform_note'|trans({}, 'messages') }}</p>
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+
+    {{ form_start(form, { attr: { class: 'tiptap-showcase-form' } }) }}
+
+    <ul class="nav nav-pills flex-wrap gap-2 mb-3" id="showcaseTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="pill-agent" data-bs-toggle="pill" data-bs-target="#pane-agent" type="button" role="tab" aria-controls="pane-agent" aria-selected="true">{{ 'demo.showcase_tab_agent'|trans({}, 'messages') }}</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="pill-notion" data-bs-toggle="pill" data-bs-target="#pane-notion" type="button" role="tab" aria-controls="pane-notion" aria-selected="false">{{ 'demo.showcase_tab_notion'|trans({}, 'messages') }}</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="pill-simple" data-bs-toggle="pill" data-bs-target="#pane-simple" type="button" role="tab" aria-controls="pane-simple" aria-selected="false">{{ 'demo.showcase_tab_simple'|trans({}, 'messages') }}</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="pill-headless" data-bs-toggle="pill" data-bs-target="#pane-headless" type="button" role="tab" aria-controls="pane-headless" aria-selected="false">{{ 'demo.showcase_tab_headless'|trans({}, 'messages') }}</button>
+        </li>
+    </ul>
+
+    <div class="tab-content border rounded-3 p-3 p-md-4 bg-white shadow-sm mb-3">
+        <div class="tab-pane fade show active" id="pane-agent" role="tabpanel" aria-labelledby="pill-agent" tabindex="0">
+            {{ form_row(form.showcase_agent, { label: false }) }}
+        </div>
+        <div class="tab-pane fade" id="pane-notion" role="tabpanel" aria-labelledby="pill-notion" tabindex="0">
+            {{ form_row(form.showcase_notion, { label: false }) }}
+        </div>
+        <div class="tab-pane fade" id="pane-simple" role="tabpanel" aria-labelledby="pill-simple" tabindex="0">
+            {{ form_row(form.showcase_simple, { label: false }) }}
+        </div>
+        <div class="tab-pane fade" id="pane-headless" role="tabpanel" aria-labelledby="pill-headless" tabindex="0">
+            {{ form_row(form.showcase_headless, { label: false }) }}
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">{{ 'demo.submit_showcase'|trans({}, 'messages') }}</button>
+
+    {{ form_end(form) }}
+</div>
+
+<script src="{{ asset(nowo_tiptap_editor_asset_path('tiptap-editor.js')) }}"></script>
+{% endblock %}

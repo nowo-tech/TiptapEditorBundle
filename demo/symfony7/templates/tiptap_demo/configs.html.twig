@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'demo.menu_configs'|trans({}, 'messages') }} – {{ 'demo.title'|trans({}, 'messages') }}{% endblock %}
+
+{% block body %}
+<div class="container py-4">
+    <h1>{{ 'demo.configs_page_title'|trans({}, 'messages') }}</h1>
+    <p class="lead text-muted">{{ 'demo.configs_page_lead'|trans({}, 'messages') }}</p>
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+
+    {{ form_start(form) }}
+        <h2 class="h5 mt-4">{{ 'demo.section_full'|trans({}, 'messages') }}</h2>
+        <p class="small text-muted">{{ 'demo.section_full_hint'|trans({}, 'messages') }}</p>
+        {{ form_row(form.content_full) }}
+
+        <h2 class="h5 mt-4">{{ 'demo.section_simple'|trans({}, 'messages') }}</h2>
+        <p class="small text-muted">{{ 'demo.section_simple_hint'|trans({}, 'messages') }}</p>
+        {{ form_row(form.content_simple) }}
+
+        <h2 class="h5 mt-4">{{ 'demo.section_notion'|trans({}, 'messages') }}</h2>
+        <p class="small text-muted">{{ 'demo.section_notion_hint'|trans({}, 'messages') }}</p>
+        {{ form_row(form.content_notion) }}
+
+        <h2 class="h5 mt-4">{{ 'demo.section_agent'|trans({}, 'messages') }}</h2>
+        <p class="small text-muted">{{ 'demo.section_agent_hint'|trans({}, 'messages') }}</p>
+        {{ form_row(form.content_agent) }}
+
+        <h2 class="h5 mt-4">{{ 'demo.section_headless'|trans({}, 'messages') }}</h2>
+        <p class="small text-muted">{{ 'demo.section_headless_hint'|trans({}, 'messages') }}</p>
+        {{ form_row(form.content_headless) }}
+
+        <button type="submit" class="btn btn-primary mt-3">{{ 'demo.submit_all'|trans({}, 'messages') }}</button>
+    {{ form_end(form) }}
+</div>
+
+<script src="{{ asset(nowo_tiptap_editor_asset_path('tiptap-editor.js')) }}"></script>
+{% endblock %}

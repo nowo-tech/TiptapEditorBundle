@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ ('examples.card.' ~ slug ~ '.title')|trans({}, 'messages') }} – {{ 'examples.page_title'|trans({}, 'messages') }}{% endblock %}
+
+{% block body %}
+<div class="container py-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('app_examples_index', { _locale: app.request.locale }) }}">{{ 'demo.menu_examples'|trans({}, 'messages') }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ ('examples.card.' ~ slug ~ '.title')|trans({}, 'messages') }}</li>
+        </ol>
+    </nav>
+
+    <h1 class="h3">{{ ('examples.card.' ~ slug ~ '.title')|trans({}, 'messages') }}</h1>
+    <p class="text-body-secondary">{{ ('examples.card.' ~ slug ~ '.desc')|trans({}, 'messages') }}</p>
+
+    <div class="alert alert-info">{{ 'examples.stub_lead'|trans({}, 'messages') }}</div>
+
+    <p>
+        <a class="btn btn-primary" href="{{ 'examples.docs_url'|trans({}, 'messages') }}" rel="noopener noreferrer" target="_blank">{{ 'examples.doc_hub_link'|trans({}, 'messages') }}</a>
+        <a class="btn btn-outline-secondary" href="{{ path('app_examples_index', { _locale: app.request.locale }) }}">{{ 'examples.back_index'|trans({}, 'messages') }}</a>
+    </p>
+</div>
+{% endblock %}

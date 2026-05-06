@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ ('examples.card.' ~ slug ~ '.title')|trans({}, 'messages') }} – {{ 'examples.page_title'|trans({}, 'messages') }}{% endblock %}
+
+{% block body %}
+<div class="container py-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('app_examples_index', { _locale: app.request.locale }) }}">{{ 'demo.menu_examples'|trans({}, 'messages') }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ ('examples.card.' ~ slug ~ '.title')|trans({}, 'messages') }}</li>
+        </ol>
+    </nav>
+
+    <h1 class="h3">{{ ('examples.card.' ~ slug ~ '.title')|trans({}, 'messages') }}</h1>
+    <p class="text-body-secondary">{{ ('examples.card.' ~ slug ~ '.desc')|trans({}, 'messages') }}</p>
+
+    {% if slug == 'syntax-highlighting' %}
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+    {% endif %}
+
+    {{ form_start(form, { attr: { class: 'mb-4' } }) }}
+        {{ form_widget(form.content) }}
+        <button type="submit" class="btn btn-primary mt-2">{{ 'examples.submit'|trans({}, 'messages') }}</button>
+    {{ form_end(form) }}
+
+    <p class="small">
+        <a href="{{ 'examples.docs_url'|trans({}, 'messages') }}" rel="noopener noreferrer" target="_blank">{{ 'examples.doc_hub_link'|trans({}, 'messages') }}</a>
+        ·
+        <a href="{{ path('app_examples_index', { _locale: app.request.locale }) }}">{{ 'examples.back_index'|trans({}, 'messages') }}</a>
+    </p>
+</div>
+{% endblock %}
