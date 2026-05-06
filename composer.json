@@ -17,7 +17,8 @@
     "homepage": "https://github.com/nowo-tech/TiptapEditorBundle",
     "support": {
         "issues": "https://github.com/nowo-tech/TiptapEditorBundle/issues",
-        "source": "https://github.com/nowo-tech/TiptapEditorBundle"
+        "source": "https://github.com/nowo-tech/TiptapEditorBundle",
+        "changelog": "https://github.com/nowo-tech/TiptapEditorBundle/blob/main/docs/CHANGELOG.md"
     },
     "authors": [
         {

@@ -18,7 +18,7 @@
 ## Quick start
 
 ```bash
-composer require nowo-tech/tiptap-editor-bundle
+composer require nowo-tech/tiptap-editor-bundle:^1.0
 php bin/console assets:install public
 ```
 
@@ -34,7 +34,16 @@ use Nowo\TiptapEditorBundle\Form\TiptapEditorType;
 $builder->add('article', TiptapEditorType::class, ['label' => 'Article']);
 ```
 
-See [docs/USAGE.md](docs/USAGE.md), [docs/INSTALLATION.md](docs/INSTALLATION.md), [docs/CONFIGURATION.md](docs/CONFIGURATION.md).
+## Documentation
+
+| Doc | Purpose |
+|-----|---------|
+| [docs/INSTALLATION.md](docs/INSTALLATION.md) | Composer, bundle registration, assets |
+| [docs/CONFIGURATION.md](docs/CONFIGURATION.md) | YAML profiles, variants, form options |
+| [docs/USAGE.md](docs/USAGE.md) | Forms, Twig script tag, `example` recipes |
+| [docs/CHANGELOG.md](docs/CHANGELOG.md) | Release history |
+| [docs/UPGRADE.md](docs/UPGRADE.md) | Version upgrades |
+| [docs/RELEASE.md](docs/RELEASE.md) | Maintainer: tags & GitHub Releases |
 
 ## Development
 
