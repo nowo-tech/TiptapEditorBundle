@@ -14,7 +14,7 @@
 - Optional formatting toolbar (bold, italic, bullet/ordered lists, undo/redo).
 - Twig themes aligned with common Symfony layouts (Bootstrap 3–5, Foundation, Tailwind 2, table layout).
 - `nowo_tiptap_editor_asset_path()` Twig helper for `assets:install` paths (`bundles/nowotiptapeditor/`).
-- **pnpm + Vite** frontend; **Vitest** coverage on shared logger utilities.
+- **pnpm + Vite** frontend; **Vitest** on the bundle logger and the widget lifecycle (custom element).
 - **Dockerfile + Makefile** workflow matching other Nowo bundles.
 - **Demos**: Symfony 7 & 8 under `demo/` (FrankenPHP).
 

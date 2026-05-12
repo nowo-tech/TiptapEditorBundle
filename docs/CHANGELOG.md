@@ -7,10 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.3] - 2026-05-12
+
+Widget lifecycle and demo startup messaging; **no PHP API or YAML changes**. If your CSS targeted the old host element (`div.tiptap-editor-widget`), see [`UPGRADING.md`](UPGRADING.md).
+
+### Added
+
+- Autonomous custom element **`<nowo-tiptap-editor>`** for the form widget: `connectedCallback` mounts Tiptap when the node is attached; `disconnectedCallback` destroys the editor.
+- **`destroyTiptapRoot`** on `window.NowoTiptapEditor` (and internal teardown via the custom element).
+- Vitest **`tiptap-editor.lifecycle.test.ts`** (custom element registration + safe `destroyTiptapRoot` on uninitialized roots).
+
 ### Changed
 
-- Form widget outer host is the autonomous custom element `<nowo-tiptap-editor>`: Tiptap mounts when the element connects to the document and tears down on disconnect, while the Symfony `<textarea>` stays in the light DOM for unchanged HTML submission.
-- Demo `make up` (Symfony 7/8): aligned with **REQ-DEMO-005** — `docker-compose up -d`, `sleep 5`, `composer install` via `exec`, optional cache/assets steps, then `PORT` read from `.env` / `.env.example` with `tr -d '\r'` and final line `Demo started at: http://localhost:<PORT>`.
+- Form themes: outer host is `<nowo-tiptap-editor class="tiptap-editor-widget …">` instead of `<div>` (same classes and `data-*` attributes; textarea remains in the light DOM for unchanged form submission).
+- Demo **`make up`** (Symfony 7/8): aligned with **REQ-DEMO-005** — `docker-compose up -d`, `sleep 5`, `composer install` via `exec`, cache/assets steps, then `PORT` from `.env` / `.env.example` with `tr -d '\r'` and final line `Demo started at: http://localhost:<PORT>`.
+- Root `demo/Makefile`: `verify-*` and `release-verify` resolve `PORT` from `.env.example` when missing in `.env`.
 
 ## [1.0.2] - 2026-05-08
 
@@ -61,7 +72,8 @@ First stable release published on GitHub.
 - Development workflow: Docker, Makefile, PHPUnit, PHPStan, PHP-CS-Fixer, Vitest on shared TS utilities.
 - Demos: Symfony 7 and 8 sample apps under `demo/` (FrankenPHP).
 
-[Unreleased]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.0.2...HEAD
+[Unreleased]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.0.3...HEAD
+[1.0.3]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.0.3
 [1.0.2]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.0.2
 [1.0.1]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.0.1
 [1.0.0]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.0.0

@@ -6,9 +6,18 @@
 - Pin versions in `composer.json` (e.g. `^1.0`) instead of relying only on `dev-main` for production apps.
 - After upgrading, run `php bin/console cache:clear` and `php bin/console assets:install public` so Twig and published bundle assets stay in sync.
 
-## Unreleased (widget host)
+## To 1.0.3
 
-- The rendered widget root is `<nowo-tiptap-editor class="tiptap-editor-widget ...">` instead of a `<div>`. Prefer `.tiptap-editor-widget` in CSS; if you used `div.tiptap-editor-widget`, switch to `nowo-tiptap-editor.tiptap-editor-widget` (or drop the element qualifier).
+No YAML or PHP API changes versus **1.0.2**. Rebuild or reinstall published assets if you ship the bundle JS from `vendor/`:
+
+```bash
+composer update nowo-tech/tiptap-editor-bundle
+php bin/console assets:install public
+```
+
+**Markup / CSS:** the widget host is `<nowo-tiptap-editor class="tiptap-editor-widget …">` instead of `<div>`. Prefer `.tiptap-editor-widget` in selectors; if you used `div.tiptap-editor-widget`, use `nowo-tiptap-editor.tiptap-editor-widget` or drop the element qualifier.
+
+**Demos (`demo/symfony7`, `demo/symfony8`):** `make up` follows the canonical startup messages and ends with `Demo started at: http://localhost:<PORT>` (see [`CHANGELOG.md`](CHANGELOG.md) for 1.0.3).
 
 ## To 1.0.2
 
