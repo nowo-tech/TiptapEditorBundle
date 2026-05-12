@@ -1,5 +1,5 @@
 {#
-  Tiptap rich text widget (form_div_layout): hidden textarea + editor mount (HTML synced on change).
+  Tiptap rich text widget (form_div_layout): `<nowo-tiptap-editor>` host + hidden textarea + mount (HTML synced on change).
   Variant presets (tiptap_variant): default | simple | notion | agent | headless
   Optional examples (tiptap_example): extension recipes — see TiptapExample PHP enum / bundle docs.
 #}
@@ -12,7 +12,7 @@
 {% set variant = tiptap_variant|default('default') %}
 {% set tiptap_example = tiptap_example|default(null) %}
 {% set theme = tiptap_theme|default('light') %}
-<div class="tiptap-editor-widget tiptap-variant-{{ variant|e('html_attr') }} {% if theme == 'auto' %}tiptap-theme-auto{% elseif theme == 'dark' %}tiptap-theme-dark{% else %}tiptap-theme-light{% endif %}"
+<nowo-tiptap-editor class="tiptap-editor-widget tiptap-variant-{{ variant|e('html_attr') }} {% if theme == 'auto' %}tiptap-theme-auto{% elseif theme == 'dark' %}tiptap-theme-dark{% else %}tiptap-theme-light{% endif %}"
      data-tiptap-root="1"
      data-controller="{{ ('nowo-tiptap-editor ' ~ (attr['data-controller']|default('')))|trim }}"
      data-tiptap-variant-value="{{ variant|e('html_attr') }}"
@@ -36,8 +36,11 @@
             <div class="tiptap-editor-mount p-3" data-tiptap-mount="1" style="min-height: {{ tiptap_min_height|default('240px') }}"></div>
         </div>
     {% endif %}
-</div>
+</nowo-tiptap-editor>
 <style>
+nowo-tiptap-editor.tiptap-editor-widget {
+    display: block;
+}
 .tiptap-editor-widget .tiptap-editor-mount .ProseMirror {
     outline: none;
     min-height: inherit;

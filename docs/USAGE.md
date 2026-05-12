@@ -30,11 +30,13 @@ Include the compiled widget **after** your layout loads (once per page):
 <script src="{{ asset(nowo_tiptap_editor_asset_path('tiptap-editor.js')) }}"></script>
 ```
 
-The script finds `[data-tiptap-root="1"]` nodes (including fragments loaded later) and mounts Tiptap.
+The script finds `[data-tiptap-root="1"]` and `<nowo-tiptap-editor>` nodes (including fragments attached later) and mounts Tiptap. The form field remains a real `<textarea>` in the light DOM so Symfony receives HTML on submit as before.
+
+The `<nowo-tiptap-editor>` host uses the **custom elements** lifecycle (`connectedCallback` / `disconnectedCallback`) so the editor boots when the node is inserted into the document (e.g. Turbo, modals, or content prefetched in a background panel) and is destroyed when the host is removed.
 
 ### Optional global API
 
-`window.NowoTiptapEditor` exposes helpers such as `initTiptapRoot`, `runInit`, and `runInitAndObserve` for custom integrations.
+`window.NowoTiptapEditor` exposes helpers such as `initTiptapRoot`, `destroyTiptapRoot`, `runInit`, and `runInitAndObserve` for custom integrations.
 
 ## Toolbar and variants
 

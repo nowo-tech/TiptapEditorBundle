@@ -23,7 +23,7 @@ make down-symfony8
 Inside `demo/symfony8` or `demo/symfony7`:
 
 ```bash
-make up          # build image, composer install, assets:install, start FrankenPHP
+make up          # up -d → wait → composer install → cache/assets → "Demo started at: …"
 make install
 make update-bundle
 ```

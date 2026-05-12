@@ -6,6 +6,10 @@
 - Pin versions in `composer.json` (e.g. `^1.0`) instead of relying only on `dev-main` for production apps.
 - After upgrading, run `php bin/console cache:clear` and `php bin/console assets:install public` so Twig and published bundle assets stay in sync.
 
+## Unreleased (widget host)
+
+- The rendered widget root is `<nowo-tiptap-editor class="tiptap-editor-widget ...">` instead of a `<div>`. Prefer `.tiptap-editor-widget` in CSS; if you used `div.tiptap-editor-widget`, switch to `nowo-tiptap-editor.tiptap-editor-widget` (or drop the element qualifier).
+
 ## To 1.0.2
 
 No YAML, PHP API, or asset filename changes versus **1.0.1**. Bump with:

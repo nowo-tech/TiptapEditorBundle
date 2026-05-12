@@ -89,6 +89,7 @@ define verify-target-template
 verify-$(1):
 	@$(MAKE) -C $(1) ensure-up
 	@port=$$(grep "^PORT=" $(1)/.env 2>/dev/null | cut -d= -f2 | tr -d '\r'); \
+	[ -z "$$port" ] && port=$$(grep "^PORT=" $(1)/.env.example 2>/dev/null | cut -d= -f2 | tr -d '\r'); \
 	[ -z "$$port" ] && port=$$( [ "$(1)" = "symfony8" ] && echo "8011" || echo "8010" ); \
 	code=$$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:$$port 2>/dev/null || echo "000"); \
 	if [ "$$code" = "200" ]; then echo "✅ $(1) OK (HTTP $$code)"; else echo "❌ $(1) HTTP $$code"; exit 1; fi
@@ -164,6 +165,7 @@ verify:
 release-verify:
 	@for demo in $(DEMOS); do \
 		port=$$(grep '^PORT=' $$demo/.env 2>/dev/null | cut -d= -f2 | tr -d '\r'); \
+		[ -z "$$port" ] && port=$$(grep '^PORT=' $$demo/.env.example 2>/dev/null | cut -d= -f2 | tr -d '\r'); \
 		[ -z "$$port" ] && port=$$(case $$demo in symfony7) echo 8010;; symfony8) echo 8011;; *) echo 8010;; esac); \
 		echo "Release verify: $$demo (port $$port)..."; \
 		$(MAKE) up-$$demo; sleep 12; \

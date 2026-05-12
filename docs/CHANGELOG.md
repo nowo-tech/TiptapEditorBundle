@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Form widget outer host is the autonomous custom element `<nowo-tiptap-editor>`: Tiptap mounts when the element connects to the document and tears down on disconnect, while the Symfony `<textarea>` stays in the light DOM for unchanged HTML submission.
+- Demo `make up` (Symfony 7/8): aligned with **REQ-DEMO-005** — `docker-compose up -d`, `sleep 5`, `composer install` via `exec`, optional cache/assets steps, then `PORT` read from `.env` / `.env.example` with `tr -d '\r'` and final line `Demo started at: http://localhost:<PORT>`.
+
 ## [1.0.2] - 2026-05-08
 
 Maintenance release (CI and demo config style only); **no breaking changes** relative to 1.0.1.

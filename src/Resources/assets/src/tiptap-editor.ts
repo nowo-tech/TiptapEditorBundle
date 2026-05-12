@@ -1,5 +1,5 @@
 /**
- * Tiptap editor bundle: mounts editors on [data-tiptap-root], syncs HTML to Symfony textarea fields.
+ * Tiptap editor bundle: mounts editors on `[data-tiptap-root="1"]` or `<nowo-tiptap-editor>`, syncs HTML to Symfony textarea fields.
  * Variants mirror UX presets; optional `data-tiptap-example-value` loads extension recipes like https://tiptap.dev/docs/examples
  */
 
@@ -38,7 +38,10 @@ const log = createBundleLogger('tiptap-editor', {
 });
 log.scriptLoaded();
 
-const ROOT_SELECTOR = '[data-tiptap-root="1"]';
+const ROOT_SELECTOR = '[data-tiptap-root="1"], nowo-tiptap-editor';
+
+/** Maps widget roots to live Tiptap instances for teardown on DOM disconnect. */
+const mountedEditors = new WeakMap<HTMLElement, Editor>();
 
 export type EditorVariant = 'default' | 'simple' | 'notion' | 'agent' | 'headless';
 
@@ -93,6 +96,18 @@ function syncTextarea(textarea: HTMLTextAreaElement, html: string): void {
   textarea.value = html;
   textarea.dispatchEvent(new Event('input', { bubbles: true }));
   textarea.dispatchEvent(new Event('change', { bubbles: true }));
+}
+
+/**
+ * Destroys the Tiptap instance for a widget root (e.g. when `<nowo-tiptap-editor>` disconnects).
+ */
+export function destroyTiptapRoot(root: HTMLElement): void {
+  const ed = mountedEditors.get(root);
+  if (ed) {
+    ed.destroy();
+    mountedEditors.delete(root);
+  }
+  root.removeAttribute('data-tiptap-initialized');
 }
 
 export type ToolbarBtn = {
@@ -721,6 +736,8 @@ export function initTiptapRoot(root: HTMLElement): void {
     },
   });
 
+  mountedEditors.set(root, editor);
+
   if (example === 'menus' && menuMount) {
     wireMenuDom(editor, menuMount);
   }
@@ -747,6 +764,31 @@ function discoverRoots(doc: Document | HTMLElement): HTMLElement[] {
   return Array.from(doc.querySelectorAll<HTMLElement>(ROOT_SELECTOR));
 }
 
+/**
+ * Autonomous custom element: initializes when the node is connected (Turbo, dialogs, prefetched HTML)
+ * and tears down on disconnect. The Symfony textarea stays in the light DOM for normal form posts.
+ */
+class NowoTiptapEditorElement extends HTMLElement {
+  connectedCallback(): void {
+    if (!this.hasAttribute('data-tiptap-root')) {
+      this.setAttribute('data-tiptap-root', '1');
+    }
+    queueMicrotask(() => {
+      if (this.isConnected) {
+        initTiptapRoot(this);
+      }
+    });
+  }
+
+  disconnectedCallback(): void {
+    destroyTiptapRoot(this);
+  }
+}
+
+if (typeof customElements !== 'undefined' && customElements.get('nowo-tiptap-editor') === undefined) {
+  customElements.define('nowo-tiptap-editor', NowoTiptapEditorElement);
+}
+
 export function runInit(): void {
   for (const root of discoverRoots(document)) {
     initTiptapRoot(root);
@@ -767,6 +809,7 @@ if (typeof window !== 'undefined') {
         applyChromeTheme: typeof applyChromeTheme;
         runInit: typeof runInit;
         runInitAndObserve: typeof runInitAndObserve;
+        destroyTiptapRoot: typeof destroyTiptapRoot;
       };
     }
   ).NowoTiptapEditor = {
@@ -774,6 +817,7 @@ if (typeof window !== 'undefined') {
     applyChromeTheme,
     runInit,
     runInitAndObserve,
+    destroyTiptapRoot,
   };
 }
 
