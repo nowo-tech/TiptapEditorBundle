@@ -22,10 +22,6 @@ Form submit sync for correct POST bodies; demo pages show saved HTML after a val
 - README: demo screenshot of **Editor variants** (`docs/images/demo-editor-variants.png`).
 - [`USAGE.md`](USAGE.md): documents automatic submit sync and the new global helper.
 
-### Fixed
-
-- Demo Symfony 8: **`config/reference.php`** — removed a non-standard `declare(strict_types=1);` from the Symfony-generated stub (avoids fighting upstream / PHP-CS-Fixer expectations for that file).
-
 ### Demos (`demo/symfony7`, `demo/symfony8`)
 
 - After a **valid** form submit, pages show an HTML preview (`<pre>`) from the posted data (configs, showcase, simple demo, examples show); **`examples_show`** passes `saved_value` from the controller like the main demo route.
