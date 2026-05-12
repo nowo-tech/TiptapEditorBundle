@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- README: demo screenshot of **Editor variants** (`docs/images/demo-editor-variants.png`).
+
 ## [1.0.3] - 2026-05-12
 
 Widget lifecycle and demo startup messaging; **no PHP API or YAML changes**. If your CSS targeted the old host element (`div.tiptap-editor-widget`), see [`UPGRADING.md`](UPGRADING.md).
