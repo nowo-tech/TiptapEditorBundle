@@ -73,7 +73,7 @@ final class TiptapEditorType extends AbstractType
         $resolver->setAllowedTypes('example', ['null', 'string', TiptapExample::class]);
         $resolver->setAllowedTypes('theme', ['string']);
 
-        $resolver->setNormalizer('theme', fn(Options $options, string $value): string => $this->normalizeTheme($value));
+        $resolver->setNormalizer('theme', fn (Options $options, string $value): string => $this->normalizeTheme($value));
 
         $resolver->setNormalizer('example', static function (Options $options, mixed $value): ?TiptapExample {
             if ($value === null || $value === '') {
