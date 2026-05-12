@@ -16,10 +16,10 @@
         <button type="submit" class="btn btn-primary">{{ 'demo.submit'|trans({}, 'messages') }}</button>
     {{ form_end(form) }}
 
-    {% if saved_value is defined and saved_value != '' %}
+    {% if form.vars.submitted and form.vars.valid %}
         <hr class="my-4">
         <p class="text-muted small">{{ 'demo.saved_preview'|trans({}, 'messages') }}</p>
-        <pre class="border rounded p-3 bg-light small">{{ saved_value|e }}</pre>
+        <pre class="border rounded p-3 bg-light small">{{ saved_value|default('')|e }}</pre>
     {% endif %}
 </div>
 

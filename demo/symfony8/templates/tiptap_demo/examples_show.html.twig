@@ -30,6 +30,12 @@
         <button type="submit" class="btn btn-primary mt-2">{{ 'examples.submit'|trans({}, 'messages') }}</button>
     {{ form_end(form) }}
 
+    {% if form.vars.submitted and form.vars.valid %}
+        <hr class="my-4">
+        <p class="text-muted small">{{ 'demo.saved_preview'|trans({}, 'messages') }}</p>
+        <pre class="border rounded p-3 bg-light small">{{ saved_value|default('')|e }}</pre>
+    {% endif %}
+
     <p class="small">
         <a href="{{ 'examples.docs_url'|trans({}, 'messages') }}" rel="noopener noreferrer" target="_blank">{{ 'examples.doc_hub_link'|trans({}, 'messages') }}</a>
         ·

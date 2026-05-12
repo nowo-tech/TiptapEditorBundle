@@ -110,6 +110,21 @@ export function destroyTiptapRoot(root: HTMLElement): void {
   root.removeAttribute('data-tiptap-initialized');
 }
 
+/**
+ * Writes the current editor HTML into each hidden Symfony textarea under `container`
+ * (e.g. the submitting form). Call on `submit` so POST bodies match the latest document.
+ */
+export function syncTiptapTextareasIn(container: HTMLElement): void {
+  const roots = Array.from(container.querySelectorAll<HTMLElement>(ROOT_SELECTOR));
+  for (const root of roots) {
+    const editor = mountedEditors.get(root);
+    const textarea = root.querySelector('textarea');
+    if (editor && textarea instanceof HTMLTextAreaElement) {
+      syncTextarea(textarea, editor.getHTML());
+    }
+  }
+}
+
 export type ToolbarBtn = {
   label: string;
   title: string;
@@ -810,6 +825,7 @@ if (typeof window !== 'undefined') {
         runInit: typeof runInit;
         runInitAndObserve: typeof runInitAndObserve;
         destroyTiptapRoot: typeof destroyTiptapRoot;
+        syncTiptapTextareasIn: typeof syncTiptapTextareasIn;
       };
     }
   ).NowoTiptapEditor = {
@@ -818,10 +834,23 @@ if (typeof window !== 'undefined') {
     runInit,
     runInitAndObserve,
     destroyTiptapRoot,
+    syncTiptapTextareasIn,
   };
 }
 
 if (typeof document !== 'undefined') {
+  document.addEventListener(
+    'submit',
+    (ev: Event) => {
+      const t = ev.target;
+      if (!(t instanceof HTMLFormElement)) {
+        return;
+      }
+      syncTiptapTextareasIn(t);
+    },
+    true,
+  );
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', runInitAndObserve);
   } else {

@@ -320,8 +320,9 @@ class TiptapDemoController extends AbstractController
         }
 
         return $this->render('tiptap_demo/examples_show.html.twig', [
-            'slug' => $slug,
-            'form' => $form,
+            'slug'         => $slug,
+            'form'         => $form,
+            'saved_value'  => (string) ($form->get($field)->getData() ?? ''),
         ]);
     }
 }
