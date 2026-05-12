@@ -15,6 +15,7 @@
 - Twig themes aligned with common Symfony layouts (Bootstrap 3–5, Foundation, Tailwind 2, table layout).
 - `nowo_tiptap_editor_asset_path()` Twig helper for `assets:install` paths (`bundles/nowotiptapeditor/`).
 - **pnpm + Vite** frontend; **Vitest** on the bundle logger and the widget lifecycle (custom element).
+- **Form submit:** before POST, the bundle syncs ProseMirror HTML into each hidden Symfony textarea (capture-phase `submit`); see [Usage](docs/USAGE.md).
 - **Dockerfile + Makefile** workflow matching other Nowo bundles.
 - **Demos**: Symfony 7 & 8 under `demo/` (FrankenPHP).
 

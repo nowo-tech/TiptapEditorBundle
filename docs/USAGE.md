@@ -32,11 +32,13 @@ Include the compiled widget **after** your layout loads (once per page):
 
 The script finds `[data-tiptap-root="1"]` and `<nowo-tiptap-editor>` nodes (including fragments attached later) and mounts Tiptap. The form field remains a real `<textarea>` in the light DOM so Symfony receives HTML on submit as before.
 
+On each **`submit`** (capture phase), the bundle syncs **every** mounted editor under the submitting `<form>` into its hidden textarea so the POST body reflects the latest document (in addition to syncing on editor `update`). If you build forms without a native submit event, call `window.NowoTiptapEditor.syncTiptapTextareasIn(formElement)` before reading or sending field values.
+
 The `<nowo-tiptap-editor>` host uses the **custom elements** lifecycle (`connectedCallback` / `disconnectedCallback`) so the editor boots when the node is inserted into the document (e.g. Turbo, modals, or content prefetched in a background panel) and is destroyed when the host is removed.
 
 ### Optional global API
 
-`window.NowoTiptapEditor` exposes helpers such as `initTiptapRoot`, `destroyTiptapRoot`, `runInit`, and `runInitAndObserve` for custom integrations.
+`window.NowoTiptapEditor` exposes helpers such as `initTiptapRoot`, `destroyTiptapRoot`, **`syncTiptapTextareasIn`**, `runInit`, and `runInitAndObserve` for custom integrations.
 
 ## Toolbar and variants
 

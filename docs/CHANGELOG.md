@@ -7,9 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.4] - 2026-05-12
+
+Form submit sync for correct POST bodies; demo pages show saved HTML after a valid submit. **No PHP form type or YAML schema changes.**
+
+### Added
+
+- **`syncTiptapTextareasIn(container)`** on `window.NowoTiptapEditor`: copies each mounted editor’s HTML into its Symfony `<textarea>` under `container`.
+- **Capture-phase `submit` listener** on `document`: for the submitting `<form>`, runs the sync above so the request body matches the latest ProseMirror document (in addition to existing `onUpdate` sync).
+- Vitest coverage: **`syncTiptapTextareasIn`** on a container with no widget roots (no-op).
+
 ### Changed
 
 - README: demo screenshot of **Editor variants** (`docs/images/demo-editor-variants.png`).
+- [`USAGE.md`](USAGE.md): documents automatic submit sync and the new global helper.
+
+### Fixed
+
+- Demo Symfony 8: **`config/reference.php`** — removed a non-standard `declare(strict_types=1);` from the Symfony-generated stub (avoids fighting upstream / PHP-CS-Fixer expectations for that file).
+
+### Demos (`demo/symfony7`, `demo/symfony8`)
+
+- After a **valid** form submit, pages show an HTML preview (`<pre>`) from the posted data (configs, showcase, simple demo, examples show); **`examples_show`** passes `saved_value` from the controller like the main demo route.
+- Simple demo: preview is shown when the form is submitted and valid (including empty body), not only when the saved value is non-empty.
 
 ## [1.0.3] - 2026-05-12
 
@@ -76,7 +96,8 @@ First stable release published on GitHub.
 - Development workflow: Docker, Makefile, PHPUnit, PHPStan, PHP-CS-Fixer, Vitest on shared TS utilities.
 - Demos: Symfony 7 and 8 sample apps under `demo/` (FrankenPHP).
 
-[Unreleased]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.0.3...HEAD
+[Unreleased]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.0.4...HEAD
+[1.0.4]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.0.4
 [1.0.3]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.0.3
 [1.0.2]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.0.2
 [1.0.1]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.0.1

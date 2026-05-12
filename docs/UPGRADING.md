@@ -6,6 +6,19 @@
 - Pin versions in `composer.json` (e.g. `^1.0`) instead of relying only on `dev-main` for production apps.
 - After upgrading, run `php bin/console cache:clear` and `php bin/console assets:install public` so Twig and published bundle assets stay in sync.
 
+## To 1.0.4
+
+No YAML or PHP form API changes versus **1.0.3**. Bump and refresh published JS:
+
+```bash
+composer update nowo-tech/tiptap-editor-bundle
+php bin/console assets:install public
+```
+
+**JavaScript:** the bundle registers a **capture-phase** `submit` listener on `document` that syncs every Tiptap widget inside the submitting form. If you maintain a custom build or fork of `tiptap-editor.js`, port the same behaviour or call `window.NowoTiptapEditor.syncTiptapTextareasIn(formElement)` before serializing the form. Integrations that already called `sync` manually should not break; duplicate writes set the same HTML.
+
+**Demos only:** Symfony 7/8 sample apps gained post-submit HTML previews; no impact on the Composer package archive (see `composer.json` `archive.exclude`).
+
 ## To 1.0.3
 
 No YAML or PHP API changes versus **1.0.2**. Rebuild or reinstall published assets if you ship the bundle JS from `vendor/`:
