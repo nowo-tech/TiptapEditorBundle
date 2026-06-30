@@ -7,9 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.6] - 2026-06-30
+
+Patch release: demo Symfony alignment and CI **`cs-check`** fix; **no PHP form type, YAML schema, or published JS changes**.
+
 ### Fixed
 
 - Demo Symfony 7 and 8 **`config/reference.php`**: `declare(strict_types=1);` for PHP-CS-Fixer (CI `cs-check`).
+
+### Demos (`demo/symfony7`, `demo/symfony8`)
+
+- **`composer.lock`** refreshed for Symfony **7.4** and **8.1**.
+- Symfony 7: Flex-generated **`config/reference.php`**; recipes for **form** (stateless CSRF in `config/packages/csrf.yaml`) and **property-info** (`config/packages/property_info.yaml`).
+- Symfony 8: **`config/reference.php`** regenerated for Symfony 8.1 configuration shapes.
 
 ## [1.0.5] - 2026-06-30
 
@@ -31,7 +41,6 @@ Maintenance release: CI matrix, Makefile `update-deps`, demo Symfony versions, a
 ### Fixed
 
 - Demo Symfony 8 **`config/reference.php`**: `declare(strict_types=1);` restored for PHP-CS-Fixer alignment (CHANGELOG 1.0.4 incorrectly documented its removal).
-- Demo Symfony 7 **`config/reference.php`**: same `declare(strict_types=1);` alignment.
 
 ### Demos (`demo/symfony7`, `demo/symfony8`)
 
@@ -123,7 +132,8 @@ First stable release published on GitHub.
 - Development workflow: Docker, Makefile, PHPUnit, PHPStan, PHP-CS-Fixer, Vitest on shared TS utilities.
 - Demos: Symfony 7 and 8 sample apps under `demo/` (FrankenPHP).
 
-[Unreleased]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.0.5...HEAD
+[Unreleased]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.0.6...HEAD
+[1.0.6]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.0.6
 [1.0.5]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.0.5
 [1.0.4]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.0.4
 [1.0.3]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.0.3
