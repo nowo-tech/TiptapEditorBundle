@@ -6,6 +6,18 @@
 - Pin versions in `composer.json` (e.g. `^1.0`) instead of relying only on `dev-main` for production apps.
 - After upgrading, run `php bin/console cache:clear` and `php bin/console assets:install public` so Twig and published bundle assets stay in sync.
 
+## To 1.0.6
+
+No YAML or PHP form API changes versus **1.0.5**. Bump with:
+
+```bash
+composer update nowo-tech/tiptap-editor-bundle
+```
+
+No upgrade steps beyond routine dependency update.
+
+**Demos only:** Symfony 7/8 sample apps refreshed `composer.lock`, Symfony 7 gained Flex **`reference.php`** plus form/property-info recipes; both demos’ **`reference.php`** stubs include `declare(strict_types=1);` for PHP-CS-Fixer. See [`CHANGELOG.md`](CHANGELOG.md) for 1.0.6.
+
 ## To 1.0.5
 
 No YAML or PHP form API changes versus **1.0.4**. Bump with:
