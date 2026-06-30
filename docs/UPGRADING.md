@@ -6,6 +6,18 @@
 - Pin versions in `composer.json` (e.g. `^1.0`) instead of relying only on `dev-main` for production apps.
 - After upgrading, run `php bin/console cache:clear` and `php bin/console assets:install public` so Twig and published bundle assets stay in sync.
 
+## To 1.0.5
+
+No YAML or PHP form API changes versus **1.0.4**. Bump with:
+
+```bash
+composer update nowo-tech/tiptap-editor-bundle
+```
+
+No asset reinstall required unless you ship bundle JS from `vendor/` and want to stay in sync with patch releases.
+
+**Maintainers / demos only:** `make update-deps` and `make -C demo update-deps-all` refresh bundle and demo Composer dependencies via Docker one-off containers (see **REQ-MAKE-008** in [`SPEC-DRIVEN-DEVELOPMENT.md`](SPEC-DRIVEN-DEVELOPMENT.md)). Demo Symfony versions now target **7.4** and **8.1**; CI matrix documents supported Symfony lines.
+
 ## To 1.0.4
 
 No YAML or PHP form API changes versus **1.0.3**. Bump and refresh published JS:
