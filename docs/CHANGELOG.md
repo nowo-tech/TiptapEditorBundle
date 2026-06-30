@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- CI **`cs-check`**: exclude Flex auto-generated **`demo/symfony*/config/reference.php`** from PHP-CS-Fixer (Symfony regenerates them without `declare(strict_types=1)`).
+
 ## [1.0.6] - 2026-06-30
 
 Patch release: demo Symfony alignment and CI **`cs-check`** fix; **no PHP form type, YAML schema, or published JS changes**.
