@@ -12,7 +12,7 @@
             "dist": {
                 "type": "path",
                 "url": "/var/tiptap-editor-bundle",
-                "reference": "1314b0573547abd146073b6e6a36ba1eb0fb67ab"
+                "reference": "2bba3f6a41ac64ef48148748fc7e69bbf45268bd"
             },
             "require": {
                 "php": ">=8.2 <8.6",
