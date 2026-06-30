@@ -181,3 +181,8 @@ release-check: test-coverage-all release-verify
 clean:
 	@rm -rf $(foreach demo,$(DEMOS),$(demo)/vendor $(demo)/var $(demo)/.phpunit.cache)
 	@echo "✅ Cleaned vendor and cache from all demos."
+
+
+# REQ-MAKE-008: update-deps-all (REQ-MAKE-008)
+BUNDLE_ROOT := $(abspath $(dir $(lastword $(MAKEFILE_LIST)))/..)
+include $(BUNDLE_ROOT)/../.scripts/Makefile.demo-aggregate-update-deps.mk

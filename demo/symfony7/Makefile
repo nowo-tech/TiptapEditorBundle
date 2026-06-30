@@ -76,3 +76,10 @@ update-bundle: ensure-up
 	docker-compose exec php composer update nowo-tech/tiptap-editor-bundle --no-interaction
 	docker-compose exec php php bin/console cache:clear --env=dev
 	@echo "Bundle updated. Reload the page in the browser."
+
+
+# REQ-MAKE-008: update-deps (REQ-MAKE-008)
+COMPOSE     ?= docker-compose
+SERVICE_PHP ?= php
+BUNDLE_ROOT := $(abspath $(dir $(lastword $(MAKEFILE_LIST)))/../..)
+include $(BUNDLE_ROOT)/../.scripts/Makefile.demo-update-deps.mk

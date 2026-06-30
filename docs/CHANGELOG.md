@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.5] - 2026-06-30
+
+Maintenance release: CI matrix, Makefile `update-deps`, demo Symfony versions, and documentation; **no PHP form type, YAML schema, or published JS changes**.
+
+### Added
+
+- Makefile targets **`update-deps`** (root bundle) and **`update-deps`** / **`update-deps-all`** (demos) via shared Nowo scripts (**REQ-MAKE-008**); demo Makefiles define `COMPOSE` and `SERVICE_PHP` so `docker-compose run` works correctly.
+- [`SPEC-DRIVEN-DEVELOPMENT.md`](SPEC-DRIVEN-DEVELOPMENT.md): product spec, user stories, and `REQ-*` traceability guide.
+- GitHub workflow **CodeRabbit** (`.github/workflows/coderabbit.yml`) and `.coderabbit.yaml`.
+
+### Changed
+
+- CI PHPUnit matrix: Symfony **7.4** and **8.1** in addition to 7.0 and 8.0 (PHP 8.2–8.5).
+- README: Symfony badge **6.4 | 7.4+ | 8.0 | 8.1+**; link to spec-driven development doc.
+- [`ENGRAM.md`](ENGRAM.md): cross-link to spec-driven development.
+- Dev **`composer.lock`**: refreshed Symfony and tooling patch versions.
+
+### Fixed
+
+- Demo Symfony 8 **`config/reference.php`**: `declare(strict_types=1);` restored for PHP-CS-Fixer alignment (CHANGELOG 1.0.4 incorrectly documented its removal).
+
+### Demos (`demo/symfony7`, `demo/symfony8`)
+
+- Symfony Flex **`extra.symfony.require`**: **7.4.\*** (was 7.0.\*) and **8.1.\*** (was 8.0.\*); Symfony 8 demo pins **`symfony/translation`** to **8.1.\***.
+- Demo controller Twig context key alignment (PHP-CS-Fixer).
+
 ## [1.0.4] - 2026-05-12
 
 Form submit sync for correct POST bodies; demo pages show saved HTML after a valid submit. **No PHP form type or YAML schema changes.**
@@ -92,7 +118,8 @@ First stable release published on GitHub.
 - Development workflow: Docker, Makefile, PHPUnit, PHPStan, PHP-CS-Fixer, Vitest on shared TS utilities.
 - Demos: Symfony 7 and 8 sample apps under `demo/` (FrankenPHP).
 
-[Unreleased]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.0.4...HEAD
+[Unreleased]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.0.5...HEAD
+[1.0.5]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.0.5
 [1.0.4]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.0.4
 [1.0.3]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.0.3
 [1.0.2]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.0.2
