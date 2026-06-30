@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Demo Symfony 7 and 8 **`config/reference.php`**: `declare(strict_types=1);` for PHP-CS-Fixer (CI `cs-check`).
+
 ## [1.0.5] - 2026-06-30
 
 Maintenance release: CI matrix, Makefile `update-deps`, demo Symfony versions, and documentation; **no PHP form type, YAML schema, or published JS changes**.
@@ -27,6 +31,7 @@ Maintenance release: CI matrix, Makefile `update-deps`, demo Symfony versions, a
 ### Fixed
 
 - Demo Symfony 8 **`config/reference.php`**: `declare(strict_types=1);` restored for PHP-CS-Fixer alignment (CHANGELOG 1.0.4 incorrectly documented its removal).
+- Demo Symfony 7 **`config/reference.php`**: same `declare(strict_types=1);` alignment.
 
 ### Demos (`demo/symfony7`, `demo/symfony8`)
 
