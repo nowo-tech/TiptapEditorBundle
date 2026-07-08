@@ -11,7 +11,7 @@
 ## Features
 
 - `TiptapEditorType` extending `TextareaType` — value is HTML string.
-- Optional formatting toolbar (bold, italic, bullet/ordered lists, undo/redo).
+- Optional formatting toolbar (bold, italic, bullet/ordered lists, undo/redo); **`notion`** variant adds bubble/floating menus (link, image, embed iframe).
 - Twig themes aligned with common Symfony layouts (Bootstrap 3–5, Foundation, Tailwind 2, table layout).
 - `nowo_tiptap_editor_asset_path()` Twig helper for `assets:install` paths (`bundles/nowotiptapeditor/`).
 - **pnpm + Vite** frontend; **Vitest** on the bundle logger and the widget lifecycle (custom element).
@@ -57,6 +57,7 @@ $builder->add('article', TiptapEditorType::class, ['label' => 'Article']);
 - [Engram](docs/ENGRAM.md)
 - [Spec-driven development](docs/SPEC-DRIVEN-DEVELOPMENT.md)
 - [GitHub Spec Kit](docs/SPEC-KIT.md)
+
 ### Additional documentation
 
 - [Demo with FrankenPHP (development and production)](docs/DEMO-FRANKENPHP.md)

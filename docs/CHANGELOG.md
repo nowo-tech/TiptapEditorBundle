@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-07-08
+
+Minor release: **notion** UX, embed iframes, translation locales, and maintainer Spec Kit baseline; **no PHP form type or YAML schema changes**.
+
+### Added
+
+- Tiptap **`embedIframe`** extension ([`embed-iframe.ts`](../src/Resources/assets/src/embed-iframe.ts)): preserves `<iframe>` nodes (YouTube, Vimeo, etc.) when loading and saving HTML.
+- **`notion`** variant: bubble menu (bold, italic, underline, strike, code, link) and floating **Insert** menu (link, image, embed, bullet list); **Ctrl/Cmd+K** opens the link prompt.
+- Double-click **image** or **iframe** in the editor to edit its URL.
+- Bundle translations for **`tiptap_placeholder`**: **de**, **fr**, **it**, **nl**, **pt** (in addition to **en** / **es**).
+- GitHub **Spec Kit** baseline: [`specs/001-baseline/`](../specs/001-baseline/), [`.specify/`](../.specify/), Cursor skills (`.cursor/skills/speckit-*`), and [`SPEC-KIT.md`](SPEC-KIT.md).
+
+### Changed
+
+- **`notion`** profile toolbar: adds link and image actions alongside heading presets.
+- Twig form theme: styles for notion bubble/floating menus and embedded iframes.
+- [`SPEC-DRIVEN-DEVELOPMENT.md`](SPEC-DRIVEN-DEVELOPMENT.md): documents Spec Kit layer and updated user stories.
+- README: link to [`SPEC-KIT.md`](SPEC-KIT.md).
+- Dev **`composer.lock`** and demo **`composer.lock`**: refreshed tooling and path-repo references.
+
+### Demos (`demo/symfony7`, `demo/symfony8`)
+
+- Docker images: install PHP **`intl`** extension (with `zip`).
+
 ## [1.0.7] - 2026-07-08
 
 Patch release: stable CI **`cs-check`** for Flex-generated demo stubs; **no PHP form type, YAML schema, or published JS changes**.
@@ -145,7 +169,8 @@ First stable release published on GitHub.
 - Development workflow: Docker, Makefile, PHPUnit, PHPStan, PHP-CS-Fixer, Vitest on shared TS utilities.
 - Demos: Symfony 7 and 8 sample apps under `demo/` (FrankenPHP).
 
-[Unreleased]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.0.7...HEAD
+[Unreleased]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.1.0
 [1.0.7]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.0.7
 [1.0.6]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.0.6
 [1.0.5]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.0.5

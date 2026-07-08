@@ -6,6 +6,25 @@
 - Pin versions in `composer.json` (e.g. `^1.0`) instead of relying only on `dev-main` for production apps.
 - After upgrading, run `php bin/console cache:clear` and `php bin/console assets:install public` so Twig and published bundle assets stay in sync.
 
+## To 1.1.0
+
+No PHP form type or YAML configuration changes versus **1.0.7**. Bump and refresh published JS:
+
+```bash
+composer update nowo-tech/tiptap-editor-bundle
+php bin/console assets:install public
+```
+
+**JavaScript / UX**
+
+- **`notion`** variant (YAML profile or form `config`): bubble and floating menus for inline formatting and inserts (link, image, embed iframe, bullet list). **Ctrl/Cmd+K** opens the link dialog.
+- **Embed iframes:** existing HTML with `<iframe src="…">` round-trips through the editor; use the floating **Embed** action or double-click an iframe to change its URL.
+- **Images:** double-click an image to edit its `src` (same prompt as the toolbar image action).
+
+**Translations:** bundle ships **`tiptap_placeholder`** in **de**, **en**, **es**, **fr**, **it**, **nl**, **pt**. Override via your app `translations/NowoTiptapEditorBundle.<locale>.yaml` as before (see [`CONFIGURATION.md`](CONFIGURATION.md#translation-overrides)).
+
+**Demos only:** Docker images install PHP `intl`. Spec Kit files under `.specify/` and `specs/` are maintainer tooling — not part of the Packagist archive.
+
 ## To 1.0.7
 
 No YAML or PHP form API changes versus **1.0.6**. Bump with:
