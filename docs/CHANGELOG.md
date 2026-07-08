@@ -7,9 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.7] - 2026-07-08
+
+Patch release: stable CI **`cs-check`** for Flex-generated demo stubs; **no PHP form type, YAML schema, or published JS changes**.
+
 ### Fixed
 
 - CI **`cs-check`**: exclude Flex auto-generated **`demo/symfony*/config/reference.php`** from PHP-CS-Fixer (Symfony regenerates them without `declare(strict_types=1)`).
+
+### Demos (`demo/symfony7`, `demo/symfony8`)
+
+- **`composer.lock`**: path-repo reference aligned with bundle **1.0.6**.
+- **`config/reference.php`**: kept as Flex-generated stubs (no manual `declare(strict_types=1);`).
 
 ## [1.0.6] - 2026-06-30
 
@@ -136,7 +145,8 @@ First stable release published on GitHub.
 - Development workflow: Docker, Makefile, PHPUnit, PHPStan, PHP-CS-Fixer, Vitest on shared TS utilities.
 - Demos: Symfony 7 and 8 sample apps under `demo/` (FrankenPHP).
 
-[Unreleased]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.0.6...HEAD
+[Unreleased]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.0.7...HEAD
+[1.0.7]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.0.7
 [1.0.6]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.0.6
 [1.0.5]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.0.5
 [1.0.4]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.0.4
