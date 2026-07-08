@@ -55,7 +55,7 @@ See also Symfony’s [How to Override Templates](https://symfony.com/doc/current
 
 ## Translation overrides
 
-Translations use the domain **`NowoTiptapEditorBundle`** (files under `src/Resources/translations/`). To override strings from your app, add YAML/XLF files in **`translations/`** with the same domain name, for example `translations/NowoTiptapEditorBundle.en.yaml`. Symfony merges app translations over bundle defaults.
+Translations use the domain **`NowoTiptapEditorBundle`** (files under `src/Resources/translations/`). Bundled locales for **`tiptap_placeholder`**: **de**, **en**, **es**, **fr**, **it**, **nl**, **pt**. To override strings from your app, add YAML/XLF files in **`translations/`** with the same domain name, for example `translations/NowoTiptapEditorBundle.en.yaml`. Symfony merges app translations over bundle defaults.
 
 ## Parameters exposed to the container
 
