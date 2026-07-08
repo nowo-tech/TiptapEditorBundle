@@ -302,6 +302,39 @@ body.tiptap-demo-dark .tiptap-editor-widget .tiptap-editor-mount .ProseMirror ta
     border-radius: .35rem;
     box-shadow: 0 4px 14px rgba(15, 23, 42, .35);
 }
+.tiptap-editor-widget .tiptap-notion-bubble {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .25rem;
+    padding: .35rem .45rem;
+    background: #1e293b;
+    border-radius: .5rem;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, .28);
+    z-index: 30;
+}
+.tiptap-editor-widget .tiptap-notion-bubble .tiptap-editor-toolbar__btn {
+    color: #f8fafc;
+    background: #334155;
+    border-color: #475569;
+}
+.tiptap-editor-widget .tiptap-notion-floating {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .35rem;
+    padding: .4rem .55rem;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: .5rem;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, .12);
+    z-index: 25;
+}
+.tiptap-editor-widget .tiptap-notion-floating__hint {
+    font-size: .75rem;
+    font-weight: 600;
+    color: #64748b;
+    margin-right: .15rem;
+}
 .tiptap-editor-widget .tiptap-example-bubble .tiptap-editor-toolbar__btn {
     color: #f8fafc;
     background: #334155;
@@ -345,6 +378,15 @@ body.tiptap-demo-dark .tiptap-editor-widget .tiptap-editor-mount .ProseMirror ta
     max-width: 100%;
     height: auto;
     border-radius: .35rem;
+}
+.tiptap-editor-widget .tiptap-editor-mount .ProseMirror iframe {
+    display: block;
+    max-width: 100%;
+    width: 100%;
+    min-height: 200px;
+    border: 0;
+    border-radius: .35rem;
+    background: #0f172a;
 }
 .tiptap-editor-widget .tiptap-editor-mount .ProseMirror ul[data-type="taskList"] {
     list-style: none;

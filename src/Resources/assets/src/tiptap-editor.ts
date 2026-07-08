@@ -28,6 +28,7 @@ import StarterKit from '@tiptap/starter-kit';
 import { common, createLowlight } from 'lowlight';
 
 import { createBundleLogger } from './logger';
+import { EmbedIframe } from './embed-iframe';
 
 declare const __TIPTAP_EDITOR_BUILD_TIME__: string;
 
@@ -145,12 +146,56 @@ function runLinkPrompt(editor: Editor): void {
   editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
 }
 
-function runImagePrompt(editor: Editor): void {
-  const url = window.prompt('URL de imagen', 'https://');
+function runImagePrompt(editor: Editor, existingSrc?: string): void {
+  const url = window.prompt('URL de imagen', existingSrc ?? 'https://');
   if (url === null || url.trim() === '') {
     return;
   }
+  if (editor.isActive('image')) {
+    editor.chain().focus().updateAttributes('image', { src: url.trim() }).run();
+    return;
+  }
   editor.chain().focus().setImage({ src: url.trim() }).run();
+}
+
+function runIframePrompt(editor: Editor, existingSrc?: string): void {
+  const url = window.prompt('URL del embed (iframe)', existingSrc ?? 'https://');
+  if (url === null || url.trim() === '') {
+    return;
+  }
+  if (editor.isActive('embedIframe')) {
+    editor.chain().focus().updateAttributes('embedIframe', { src: url.trim() }).run();
+    return;
+  }
+  editor
+    .chain()
+    .focus()
+    .insertContent(
+      `<iframe src="${url.trim()}" width="100%" height="360" allowfullscreen="allowfullscreen"></iframe>`,
+    )
+    .run();
+}
+
+function handleRichMediaDoubleClick(editor: Editor, target: EventTarget | null): boolean {
+  if (!(target instanceof HTMLElement)) {
+    return false;
+  }
+
+  if (target.tagName === 'IMG') {
+    const pos = editor.view.posAtDOM(target, 0);
+    editor.chain().focus().setNodeSelection(pos).run();
+    runImagePrompt(editor, target.getAttribute('src') ?? undefined);
+    return true;
+  }
+
+  if (target.tagName === 'IFRAME') {
+    const pos = editor.view.posAtDOM(target, 0);
+    editor.chain().focus().setNodeSelection(pos).run();
+    runIframePrompt(editor, target.getAttribute('src') ?? undefined);
+    return true;
+  }
+
+  return false;
 }
 
 function headingBtn(level: 1 | 2 | 3 | 4 | 5 | 6, editor: Editor): ToolbarBtn {
@@ -299,7 +344,7 @@ function variantPresetToolbarRows(editor: Editor, variant: EditorVariant): Toolb
     case 'notion':
       return [
         [...u, headingBtn(1, editor), headingBtn(2, editor), headingBtn(3, editor), p],
-        [...m.slice(0, 4), ...l.slice(0, 4)],
+        [...m.slice(0, 4), linkBtn(editor), ...l.slice(0, 4), ...imageToolbarRow(editor)],
       ];
     case 'simple':
     case 'default':
@@ -547,11 +592,92 @@ function wireMenuDom(editor: Editor, menu: MenuMount): void {
   wire(menu.floating);
 }
 
+function notionMenuButton(label: string, title: string, action: string): string {
+  return `<button type="button" class="tiptap-editor-toolbar__btn" data-tiptap-notion-action="${action}" title="${title}">${label}</button>`;
+}
+
+function wireNotionMenus(editor: Editor, menu: MenuMount): void {
+  const run = (action: string): void => {
+    const chain = editor.chain().focus();
+    switch (action) {
+      case 'bold':
+        chain.toggleBold().run();
+        break;
+      case 'italic':
+        chain.toggleItalic().run();
+        break;
+      case 'underline':
+        chain.toggleUnderline().run();
+        break;
+      case 'strike':
+        chain.toggleStrike().run();
+        break;
+      case 'code':
+        chain.toggleCode().run();
+        break;
+      case 'link':
+        runLinkPrompt(editor);
+        break;
+      case 'image':
+        runImagePrompt(editor);
+        break;
+      case 'embed':
+        runIframePrompt(editor);
+        break;
+      case 'bullet':
+        chain.toggleBulletList().run();
+        break;
+      case 'ordered':
+        chain.toggleOrderedList().run();
+        break;
+      default:
+        break;
+    }
+  };
+
+  const wire = (root: HTMLElement): void => {
+    root.querySelectorAll<HTMLButtonElement>('[data-tiptap-notion-action]').forEach((btn) => {
+      btn.addEventListener('click', (ev) => {
+        ev.preventDefault();
+        const action = btn.getAttribute('data-tiptap-notion-action');
+        if (action) {
+          run(action);
+        }
+      });
+    });
+  };
+
+  wire(menu.bubble);
+  wire(menu.floating);
+}
+
+function shouldEnableNotionMenus(variant: EditorVariant, toolbar: boolean, example: ExampleId | null): boolean {
+  return !toolbar && example === null && (variant === 'notion' || variant === 'default' || variant === 'agent');
+}
+
+/** Images, tables, and embed iframes for wiki / Notion-like profiles. */
+function addRichContentExtensions(exts: Extension[]): void {
+  exts.push(
+    Image.configure({
+      inline: true,
+      allowBase64: false,
+    }),
+    Table.configure({
+      resizable: true,
+    }),
+    TableRow,
+    TableHeader,
+    TableCell,
+    EmbedIframe,
+  );
+}
+
 function buildExtensions(
   placeholder: string,
   variant: EditorVariant,
   example: ExampleId | null,
   menuMount: MenuMount | null,
+  notionMenus: MenuMount | null,
 ): Extension[] {
   const headingLevels =
     variant === 'headless' && !example ? ([1, 2, 3, 4, 5, 6] as const) : ([1, 2, 3] as const);
@@ -658,6 +784,46 @@ function buildExtensions(
     );
   }
 
+  if (
+    example === null &&
+    (variant === 'notion' || variant === 'default' || variant === 'agent')
+  ) {
+    addRichContentExtensions(exts    );
+  }
+
+  if (notionMenus) {
+    notionMenus.bubble.className = 'tiptap-notion-bubble';
+    notionMenus.bubble.innerHTML =
+      notionMenuButton('B', 'Negrita', 'bold') +
+      notionMenuButton('I', 'Cursiva', 'italic') +
+      notionMenuButton('U', 'Subrayado', 'underline') +
+      notionMenuButton('S', 'Tachado', 'strike') +
+      notionMenuButton('</>', 'Código', 'code') +
+      notionMenuButton('🔗', 'Enlace (Ctrl+K)', 'link');
+
+    notionMenus.floating.className = 'tiptap-notion-floating';
+    notionMenus.floating.innerHTML =
+      '<span class="tiptap-notion-floating__hint">Insertar</span>' +
+      notionMenuButton('🔗', 'Enlace', 'link') +
+      notionMenuButton('🖼', 'Imagen', 'image') +
+      notionMenuButton('▶', 'Embed', 'embed') +
+      notionMenuButton('•', 'Lista', 'bullet');
+
+    exts.push(
+      BubbleMenu.configure({
+        element: notionMenus.bubble,
+        shouldShow: ({ editor: ed }) => !ed.isActive('codeBlock') && !ed.state.selection.empty,
+      }),
+      FloatingMenu.configure({
+        element: notionMenus.floating,
+        shouldShow: ({ editor: ed }) => {
+          const { $from } = ed.state.selection;
+          return $from.parent.type.name === 'paragraph' && $from.parent.content.size === 0;
+        },
+      }),
+    );
+  }
+
   if (placeholder !== '') {
     exts.push(
       Placeholder.configure({
@@ -728,11 +894,37 @@ export function initTiptapRoot(root: HTMLElement): void {
     menuHost.appendChild(menuMount.floating);
   }
 
+  let notionMenus: MenuMount | null = null;
+  if (shouldEnableNotionMenus(variant, toolbar, example)) {
+    notionMenus = {
+      bubble: document.createElement('div'),
+      floating: document.createElement('div'),
+    };
+    const menuHost = chrome ?? root;
+    menuHost.appendChild(notionMenus.bubble);
+    menuHost.appendChild(notionMenus.floating);
+  }
+
+  let editor!: Editor;
+
   const editorProps: {
     attributes: Record<string, string>;
+    handleKeyDown?: (view: unknown, event: KeyboardEvent) => boolean;
+    handleDOMEvents?: Record<string, (view: unknown, event: Event) => boolean>;
   } = {
     attributes: {
       class: 'tiptap-editor-prose',
+    },
+    handleKeyDown: (_view, event) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault();
+        runLinkPrompt(editor);
+        return true;
+      }
+      return false;
+    },
+    handleDOMEvents: {
+      dblclick: (_view, event) => handleRichMediaDoubleClick(editor, event.target),
     },
   };
 
@@ -741,9 +933,9 @@ export function initTiptapRoot(root: HTMLElement): void {
     editorProps.attributes.lang = 'ar';
   }
 
-  const editor = new Editor({
+  editor = new Editor({
     element: mount,
-    extensions: buildExtensions(placeholder, variant, example, menuMount),
+    extensions: buildExtensions(placeholder, variant, example, menuMount, notionMenus),
     content: textarea.value || '<p></p>',
     editorProps,
     onUpdate: () => {
@@ -755,6 +947,10 @@ export function initTiptapRoot(root: HTMLElement): void {
 
   if (example === 'menus' && menuMount) {
     wireMenuDom(editor, menuMount);
+  }
+
+  if (notionMenus) {
+    wireNotionMenus(editor, notionMenus);
   }
 
   syncTextarea(textarea, editor.getHTML());

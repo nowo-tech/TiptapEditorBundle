@@ -56,7 +56,7 @@ $builder->add('article', TiptapEditorType::class, ['label' => 'Article']);
 - [Security](docs/SECURITY.md)
 - [Engram](docs/ENGRAM.md)
 - [Spec-driven development](docs/SPEC-DRIVEN-DEVELOPMENT.md)
-
+- [GitHub Spec Kit](docs/SPEC-KIT.md)
 ### Additional documentation
 
 - [Demo with FrankenPHP (development and production)](docs/DEMO-FRANKENPHP.md)
