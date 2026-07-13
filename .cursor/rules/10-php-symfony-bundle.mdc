@@ -2,17 +2,27 @@
 description: PHP and Symfony bundle rules
 globs:
   - "src/**/*.php"
-  - "src/**/*.yaml"
-  - "src/**/*.yml"
+  - "config/**/*.php"
+  - "config/**/*.yaml"
+  - "config/**/*.yml"
 alwaysApply: false
 ---
 
-Target compatibility: PHP >=8.2 and Symfony 6.4 / 7 / 8.
+Target this bundle compatibility by default: PHP >=8.1 and Symfony 6/7/8.
 
 Prefer:
-- strict typing and explicit return types
+- modern PHP with strict typing and explicit return types
 - PSR-12 coding style
-- constructor injection for services
-- PHPDoc in English for public APIs
+- final classes by default
+- readonly where appropriate
+- constructor injection
+- small focused services
+- framework conventions over custom abstractions
+- preserving public extension points
+- keeping DI extension, compiler pass wiring, and form type options backward compatible
+- PHPDoc in English for non-trivial classes, methods, and complex behavior
 
 Do not introduce BC breaks unless explicitly requested.
+Do not add PHPDoc in Spanish.
+Do not rename public services, configuration keys, or Twig integrations without warning.
+Do not touch unrelated namespaces or files.
