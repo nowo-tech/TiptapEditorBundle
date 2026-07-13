@@ -7,8 +7,11 @@ alwaysApply: false
 ---
 
 Prefer:
-- docs aligned with actual code and supported PHP/Symfony ranges
-- updating `CHANGELOG.md` and `docs/UPGRADING.md` for user-facing changes
-- English for `docs/` and README
+- documentation updates aligned with real code changes and current compatibility ranges
+- concise, actionable release notes
+- updating CHANGELOG and UPGRADING together for notable user-facing changes
+- preserving existing document structure and tone
+- keeping examples consistent with actual defaults and routes in this bundle
 
-Do not invent commands or features not present in the repository.
+Do not invent features, versions, or commands that are not present in the repository.
+Do not remove past release history unless explicitly requested.

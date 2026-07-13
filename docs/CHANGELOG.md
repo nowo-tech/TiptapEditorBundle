@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-07-13
+
+Maintenance release; **no PHP form type, YAML schema, or published JS changes**.
+
+### Changed
+
+- Cursor rules (`.cursor/rules/`): refined PHP/Symfony, tests, docs/release guidance; new Twig/public-assets rule (**REQ-IDE-005**).
+- **`.gitignore`**: ignore local `.cursor/sandbox.json`.
+- Dev **`composer.lock`**: PHP-CS-Fixer **3.95.13**, Rector **2.5.6**.
+
+### Demos (`demo/symfony7`, `demo/symfony8`)
+
+- **`composer.lock`**: path-repo reference aligned with bundle **1.1.0**; **`nowo-tech/twig-inspector-bundle`** **1.0.35**.
+
 ## [1.1.0] - 2026-07-08
 
 Minor release: **notion** UX, embed iframes, translation locales, and maintainer Spec Kit baseline; **no PHP form type or YAML schema changes**.
@@ -169,7 +183,8 @@ First stable release published on GitHub.
 - Development workflow: Docker, Makefile, PHPUnit, PHPStan, PHP-CS-Fixer, Vitest on shared TS utilities.
 - Demos: Symfony 7 and 8 sample apps under `demo/` (FrankenPHP).
 
-[Unreleased]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.1.1...HEAD
+[1.1.1]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.1.1
 [1.1.0]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.1.0
 [1.0.7]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.0.7
 [1.0.6]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.0.6
