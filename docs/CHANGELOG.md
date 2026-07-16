@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.2] - 2026-07-16
+
+Maintenance release: git hygiene (**REQ-GIT-001**), Code of Conduct, and dependency refresh; **no PHP form type, YAML schema, or published JS changes**.
+
+### Added
+
+- **REQ-GIT-001**: CI job `git-hygiene`, `.scripts/check-no-cursor-coauthor.sh`, `.scripts/strip-cursor-coauthor-from-history.sh`, `.githooks/commit-msg`, Cursor rule `01-git-commits.mdc`, and Makefile targets `setup-hooks`, `check-no-cursor-coauthor`, `strip-cursor-coauthor-from-history`.
+- [`CODE_OF_CONDUCT.md`](../CODE_OF_CONDUCT.md) (Contributor Covenant) and [`docs/GITHUB_CI.md`](GITHUB_CI.md).
+
+### Changed
+
+- [`CONTRIBUTING.md`](CONTRIBUTING.md), [`RELEASE.md`](RELEASE.md), README: document CoC, hooks, and CI git-hygiene checks.
+- `make release-check` runs `check-no-cursor-coauthor` first.
+- Dev **`composer.lock`**: PHP-CS-Fixer **3.95.15**, Rector **2.5.7**.
+
+### Demos (`demo/symfony7`, `demo/symfony8`)
+
+- **`composer.lock`**: path-repo reference refreshed; **`nowo-tech/twig-inspector-bundle`** **1.0.36**.
+
 ## [1.1.1] - 2026-07-13
 
 Maintenance release; **no PHP form type, YAML schema, or published JS changes**.
@@ -183,7 +202,8 @@ First stable release published on GitHub.
 - Development workflow: Docker, Makefile, PHPUnit, PHPStan, PHP-CS-Fixer, Vitest on shared TS utilities.
 - Demos: Symfony 7 and 8 sample apps under `demo/` (FrankenPHP).
 
-[Unreleased]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.1.1...HEAD
+[Unreleased]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.1.2...HEAD
+[1.1.2]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.1.2
 [1.1.1]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.1.1
 [1.1.0]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.1.0
 [1.0.7]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.0.7

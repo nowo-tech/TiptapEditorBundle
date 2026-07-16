@@ -39,3 +39,5 @@ If the package is registered on [Packagist](https://packagist.org/), a new tag i
 ## Automated releases
 
 Pushing an annotated tag `v*` triggers [`.github/workflows/release.yml`](../.github/workflows/release.yml) to create or update the GitHub Release (tag message + optional excerpt from `CHANGELOG.md`). [`.github/workflows/sync-releases.yml`](../.github/workflows/sync-releases.yml) backfills missing releases on a schedule or via manual dispatch.
+
+After creating the release commit and tag, run `make check-no-cursor-coauthor` again **before** `git push` (REQ-GIT-001). The release commit itself is not covered by an earlier `release-check` run.

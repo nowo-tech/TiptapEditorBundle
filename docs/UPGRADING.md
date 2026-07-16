@@ -6,6 +6,18 @@
 - Pin versions in `composer.json` (e.g. `^1.0`) instead of relying only on `dev-main` for production apps.
 - After upgrading, run `php bin/console cache:clear` and `php bin/console assets:install public` so Twig and published bundle assets stay in sync.
 
+## To 1.1.2
+
+No YAML or PHP form API changes versus **1.1.1**. Bump with:
+
+```bash
+composer update nowo-tech/tiptap-editor-bundle
+```
+
+No upgrade steps beyond routine dependency update.
+
+**Contributors / maintainers:** install git hooks once per clone (`make setup-hooks`). Commit messages must not include Cursor `Co-authored-by` trailers (**REQ-GIT-001**); see [`GITHUB_CI.md`](GITHUB_CI.md) and [`CONTRIBUTING.md`](CONTRIBUTING.md). Demo locks include Twig Inspector **1.0.36**.
+
 ## To 1.1.1
 
 No YAML or PHP form API changes versus **1.1.0**. Bump with:
