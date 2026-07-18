@@ -16,7 +16,8 @@ use function sprintf;
 /**
  * Bundle configuration: named profiles (toolbar, min_height, form_theme, debug, theme) plus a default profile key.
  *
- * Legacy (flat) options under `nowo_tiptap_editor` are normalized into `configs.default`.
+ * Legacy YAML keys `default_config` / `configs` are accepted and mapped to `default_profile` / `profiles`.
+ * Flat options under `nowo_tiptap_editor` are normalized into `profiles.default`.
  *
  * Each profile may set `variant` ({@see EditorVariant}) for CSS + JS behaviour presets.
  *
@@ -37,12 +38,22 @@ final class Configuration implements ConfigurationInterface
                 if (!is_array($v)) {
                     return $v;
                 }
-                if (isset($v['configs'])) {
+
+                if (!isset($v['profiles']) && isset($v['configs'])) {
+                    $v['profiles'] = $v['configs'];
+                    unset($v['configs']);
+                }
+                if (!isset($v['default_profile']) && isset($v['default_config'])) {
+                    $v['default_profile'] = $v['default_config'];
+                    unset($v['default_config']);
+                }
+
+                if (isset($v['profiles'])) {
                     return $v;
                 }
 
-                $defaultConfig = $v['default_config'] ?? 'default';
-                $profile       = [];
+                $defaultProfile = $v['default_profile'] ?? 'default';
+                $profile        = [];
                 foreach (['toolbar', 'min_height', 'form_theme', 'debug', 'variant', 'theme'] as $key) {
                     if (array_key_exists($key, $v)) {
                         $profile[$key] = $v[$key];
@@ -50,19 +61,19 @@ final class Configuration implements ConfigurationInterface
                 }
 
                 return [
-                    'default_config' => $defaultConfig,
-                    'configs'        => [
+                    'default_profile' => $defaultProfile,
+                    'profiles'        => [
                         'default' => $profile,
                     ],
                 ];
             })
             ->end()
             ->children()
-                ->scalarNode('default_config')
+                ->scalarNode('default_profile')
                     ->defaultValue('default')
-                    ->info('Profile name used when the form field omits the "config" option.')
+                    ->info('Profile name used when the form field omits the "config" option (form option key remains "config" for BC).')
                 ->end()
-                ->arrayNode('configs')
+                ->arrayNode('profiles')
                     ->info('Named profiles; each field may reference one via the "config" form option.')
                     ->useAttributeAsKey('name')
                     ->requiresAtLeastOneElement()
@@ -106,8 +117,8 @@ final class Configuration implements ConfigurationInterface
             ->end()
             ->validate()
             ->always(static function (array $v): array {
-                if (!isset($v['configs'][$v['default_config']])) {
-                    throw new InvalidConfigurationException(sprintf('nowo_tiptap_editor.default_config ("%s") must exist in nowo_tiptap_editor.configs (keys: %s).', $v['default_config'], implode(', ', array_keys($v['configs']))));
+                if (!isset($v['profiles'][$v['default_profile']])) {
+                    throw new InvalidConfigurationException(sprintf('nowo_tiptap_editor.default_profile ("%s") must exist in nowo_tiptap_editor.profiles (keys: %s).', $v['default_profile'], implode(', ', array_keys($v['profiles']))));
                 }
 
                 return $v;

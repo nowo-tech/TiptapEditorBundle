@@ -27,6 +27,18 @@ final class NowoTiptapEditorExtensionTest extends TestCase
         $extension = new NowoTiptapEditorExtension();
         $extension->load([[]], $container);
 
+        self::assertTrue($container->hasParameter('nowo_tiptap_editor.default_profile'));
+        self::assertTrue($container->hasParameter('nowo_tiptap_editor.profiles'));
+        self::assertTrue($container->hasParameter('nowo_tiptap_editor.default_config'));
+        self::assertTrue($container->hasParameter('nowo_tiptap_editor.configs'));
+        self::assertSame(
+            $container->getParameter('nowo_tiptap_editor.default_profile'),
+            $container->getParameter('nowo_tiptap_editor.default_config'),
+        );
+        self::assertSame(
+            $container->getParameter('nowo_tiptap_editor.profiles'),
+            $container->getParameter('nowo_tiptap_editor.configs'),
+        );
         self::assertTrue($container->hasParameter('nowo_tiptap_editor.toolbar'));
         self::assertTrue($container->hasParameter('nowo_tiptap_editor.min_height'));
         self::assertTrue($container->hasParameter('nowo_tiptap_editor.form_theme'));

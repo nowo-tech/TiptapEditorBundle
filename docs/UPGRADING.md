@@ -6,6 +6,19 @@
 - Pin versions in `composer.json` (e.g. `^1.0`) instead of relying only on `dev-main` for production apps.
 - After upgrading, run `php bin/console cache:clear` and `php bin/console assets:install public` so Twig and published bundle assets stay in sync.
 
+## To 1.2.0
+
+YAML keys **`default_config`** / **`configs`** were renamed to **`default_profile`** / **`profiles`** (AuditKit-style). Prefer the new names in app config. Legacy keys are still accepted via `beforeNormalization` when the new keys are absent. Container parameters `nowo_tiptap_editor.default_config` / `nowo_tiptap_editor.configs` remain as aliases of the new parameters. The form option key **`config`** is unchanged. **No published JS changes.**
+
+Bump with:
+
+```bash
+composer update nowo-tech/tiptap-editor-bundle
+php bin/console cache:clear
+```
+
+Optional: rename keys in `config/packages/nowo_tiptap_editor.yaml` (and any Flex `reference.php` stubs) to the new names. See [`CONFIGURATION.md`](CONFIGURATION.md).
+
 ## To 1.1.2
 
 No YAML or PHP form API changes versus **1.1.1**. Bump with:
@@ -136,7 +149,7 @@ Re-run `php bin/console assets:install public` if you publish bundle assets into
 This is the **first tagged stable release**. There is no prior semver migration path within this repository.
 
 - **Composer**: `composer require nowo-tech/tiptap-editor-bundle:^1.0`
-- **Configuration**: prefer explicit **`configs`** + **`default_config`** (see [`CONFIGURATION.md`](CONFIGURATION.md)). Legacy **flat** YAML under `nowo_tiptap_editor` is still accepted and normalized into a single default profile.
+- **Configuration**: prefer explicit **`profiles`** + **`default_profile`** (see [`CONFIGURATION.md`](CONFIGURATION.md)). Legacy keys `default_config` / `configs` and **flat** YAML under `nowo_tiptap_editor` are still accepted and normalized into a single default profile.
 - **Bootstrap**: ensure your layout loads the bundle script once per page:
 
   ```twig

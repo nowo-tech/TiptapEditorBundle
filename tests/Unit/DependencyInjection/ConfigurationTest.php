@@ -20,8 +20,8 @@ final class ConfigurationTest extends TestCase
         // Processor expects at least one merged config chunk — same as Symfony Kernel (`[[]]`, not `[]`).
         $config = $processor->processConfiguration(new Configuration(), [[]]);
 
-        self::assertSame('default', $config['default_config']);
-        $profile = $config['configs']['default'];
+        self::assertSame('default', $config['default_profile']);
+        $profile = $config['profiles']['default'];
         self::assertTrue($profile['toolbar']);
         self::assertSame('240px', $profile['min_height']);
         self::assertSame('form_div_layout.html.twig', $profile['form_theme']);
@@ -40,19 +40,19 @@ final class ConfigurationTest extends TestCase
             'debug'      => true,
         ]]);
 
-        $profile = $config['configs']['default'];
+        $profile = $config['profiles']['default'];
         self::assertFalse($profile['toolbar']);
         self::assertSame('320px', $profile['min_height']);
         self::assertSame('bootstrap_5_layout.html.twig', $profile['form_theme']);
         self::assertTrue($profile['debug']);
     }
 
-    public function testExplicitConfigsWithoutFlatNormalization(): void
+    public function testExplicitProfilesWithoutFlatNormalization(): void
     {
         $processor = new Processor();
         $config    = $processor->processConfiguration(new Configuration(), [[
-            'default_config' => 'full',
-            'configs'        => [
+            'default_profile' => 'full',
+            'profiles'        => [
                 'full' => [
                     'toolbar'    => true,
                     'min_height' => '400px',
@@ -64,9 +64,28 @@ final class ConfigurationTest extends TestCase
             ],
         ]]);
 
-        self::assertSame('full', $config['default_config']);
-        self::assertSame('agent', $config['configs']['full']['variant']);
-        self::assertSame('dark', $config['configs']['full']['theme']);
+        self::assertSame('full', $config['default_profile']);
+        self::assertSame('agent', $config['profiles']['full']['variant']);
+        self::assertSame('dark', $config['profiles']['full']['theme']);
+    }
+
+    public function testLegacyConfigsKeysAreMapped(): void
+    {
+        $processor = new Processor();
+        $config    = $processor->processConfiguration(new Configuration(), [[
+            'default_config' => 'full',
+            'configs'        => [
+                'full' => [
+                    'variant' => 'agent',
+                    'theme'   => 'dark',
+                ],
+            ],
+        ]]);
+
+        self::assertSame('full', $config['default_profile']);
+        self::assertSame('agent', $config['profiles']['full']['variant']);
+        self::assertArrayNotHasKey('default_config', $config);
+        self::assertArrayNotHasKey('configs', $config);
     }
 
     public function testInvalidVariantThrows(): void
@@ -75,7 +94,7 @@ final class ConfigurationTest extends TestCase
 
         $processor = new Processor();
         $processor->processConfiguration(new Configuration(), [[
-            'configs' => [
+            'profiles' => [
                 'default' => [
                     'variant' => 'invalid-variant-name',
                 ],
@@ -89,7 +108,7 @@ final class ConfigurationTest extends TestCase
 
         $processor = new Processor();
         $processor->processConfiguration(new Configuration(), [[
-            'configs' => [
+            'profiles' => [
                 'default' => [
                     'theme' => 'sepia',
                 ],
@@ -97,15 +116,15 @@ final class ConfigurationTest extends TestCase
         ]]);
     }
 
-    public function testDefaultConfigMustReferenceExistingProfile(): void
+    public function testDefaultProfileMustReferenceExistingProfile(): void
     {
         $this->expectException(InvalidConfigurationException::class);
-        $this->expectExceptionMessage('must exist in nowo_tiptap_editor.configs');
+        $this->expectExceptionMessage('must exist in nowo_tiptap_editor.profiles');
 
         $processor = new Processor();
         $processor->processConfiguration(new Configuration(), [[
-            'default_config' => 'missing_profile',
-            'configs'        => [
+            'default_profile' => 'missing_profile',
+            'profiles'        => [
                 'default' => [],
             ],
         ]]);

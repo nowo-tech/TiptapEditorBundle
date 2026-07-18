@@ -19,8 +19,8 @@ Create configuration (recommended — named profiles):
 ```yaml
 # config/packages/nowo_tiptap_editor.yaml
 nowo_tiptap_editor:
-    default_config: default
-    configs:
+    default_profile: default
+    profiles:
         default:
             variant: simple
             toolbar: true
@@ -30,7 +30,7 @@ nowo_tiptap_editor:
             theme: light
 ```
 
-You may still use **legacy flat** keys at the root (without `configs`): they are normalized into `configs.default`. Prefer explicit `configs` for multiple profiles.
+You may still use **legacy flat** keys at the root (without `profiles`): they are normalized into `profiles.default`. Prefer explicit `profiles` for multiple profiles. Legacy YAML keys `default_config` / `configs` are still accepted and mapped to `default_profile` / `profiles`.
 
 See [CONFIGURATION.md](CONFIGURATION.md) for the full reference.
 

@@ -8,7 +8,7 @@ use Nowo\TiptapEditorBundle\TiptapExample;
 
 $builder->add('body', TiptapEditorType::class, [
     'label' => 'Content',
-    // Optional: pick a YAML profile from nowo_tiptap_editor.configs
+    // Optional: pick a YAML profile from nowo_tiptap_editor.profiles
     'config' => 'simple',
     // Optional: load extra extensions (tables, tasks, code blocks, …)
     'example' => TiptapExample::Tables,

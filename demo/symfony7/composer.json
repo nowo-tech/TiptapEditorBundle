@@ -38,7 +38,8 @@
         },
         "post-install-cmd": ["@auto-scripts"],
         "post-update-cmd": ["@auto-scripts"],
-        "test": "@php -r \"fwrite(STDOUT, 'demo-smoke'.PHP_EOL);\""
+        "test": "@php -r \"fwrite(STDOUT, 'demo-smoke'.PHP_EOL);\"",
+        "test-coverage": "@test"
     },
     "conflict": {
         "symfony/symfony": "*"

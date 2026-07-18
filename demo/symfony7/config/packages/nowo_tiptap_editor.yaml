@@ -1,9 +1,9 @@
 # nowo_tiptap_editor — opciones del bundle
 #
 # Raíz:
-#   default_config: nombre del perfil cuando el campo no usa la opción de formulario `config`.
+#   default_profile: nombre del perfil cuando el campo no usa la opción de formulario `config`.
 #
-# configs.<nombre>:
+# profiles.<nombre>:
 #   variant:        default | simple | notion | agent | headless  (preset UX/CSS/JS)
 #   toolbar:        bool — barra de formato (negrita, listas, deshacer…)
 #   min_height:     alto mínimo del área de edición (p. ej. 240px, 12rem)
@@ -12,8 +12,8 @@
 #   theme:          light | dark | auto  — paleta del chrome (auto sigue prefers-color-scheme)
 
 nowo_tiptap_editor:
-    default_config: simple
-    configs:
+    default_profile: simple
+    profiles:
         full:
             variant: default
             toolbar: true

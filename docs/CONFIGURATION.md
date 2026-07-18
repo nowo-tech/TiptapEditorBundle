@@ -6,10 +6,10 @@ Root key: `nowo_tiptap_editor`
 
 | Option            | Type   | Default   | Description |
 |-------------------|--------|-----------|-------------|
-| `default_config`  | string | `default` | Profile name used when a form field omits the `config` option. **Must** exist as a key under `configs`. |
-| `configs`         | map    | —         | Named profiles. At least one profile is required (or use [legacy flat](#legacy-flat-yaml) input, which creates `configs.default`). |
+| `default_profile` | string | `default` | Profile name used when a form field omits the `config` option. **Must** exist as a key under `profiles`. |
+| `profiles`        | map    | —         | Named profiles. At least one profile is required (or use [legacy flat](#legacy-keys-and-flat-yaml) input, which creates `profiles.default`). |
 
-## Per profile (`configs.<name>`)
+## Per profile (`profiles.<name>`)
 
 | Option        | Type   | Default                    | Description |
 |---------------|--------|----------------------------|-------------|
@@ -20,9 +20,10 @@ Root key: `nowo_tiptap_editor`
 | `variant`     | string | `default`                  | UX preset: `default`, `simple`, `notion`, `agent`, `headless` (see `Nowo\TiptapEditorBundle\EditorVariant`). |
 | `theme`       | string | `light`                    | Chrome palette: `light`, `dark`, or `auto` (follows `prefers-color-scheme`). |
 
-## Legacy flat YAML
+## Legacy keys and flat YAML
 
-If the root has no `configs` key, the extension treats these keys (when present) as a single profile and maps them to `configs` under the name given by `default_config` (default `default`):
+- **Renamed keys:** `default_config` / `configs` were renamed to `default_profile` / `profiles`. Legacy keys are still accepted via normalization (mapped when the new keys are absent).
+- **Flat layout:** If the root has no `profiles` (nor legacy `configs`) key, the extension treats these keys (when present) as a single profile and maps them to `profiles` under the name given by `default_profile` (default `default`):
 
 - `toolbar`, `min_height`, `form_theme`, `debug`, `variant`, `theme`
 
@@ -30,7 +31,7 @@ If the root has no `configs` key, the extension treats these keys (when present)
 
 | Option          | Type | Description |
 |-----------------|------|-------------|
-| `config`        | `string\|null` | Profile name under `nowo_tiptap_editor.configs`. `null`/empty uses `default_config`. |
+| `config`        | `string\|null` | Profile name under `nowo_tiptap_editor.profiles`. `null`/empty uses `default_profile`. (Form option key remains `config` for BC.) |
 | `example`       | `string\|TiptapExample\|null` | Optional extension recipe (tables, tasks, syntax highlighting, …). See `Nowo\TiptapEditorBundle\TiptapExample`. |
 | `toolbar`       | bool | Overrides the profile default for this field. |
 | `min_height`    | string | Overrides the profile default for this field. |
@@ -59,4 +60,4 @@ Translations use the domain **`NowoTiptapEditorBundle`** (files under `src/Resou
 
 ## Parameters exposed to the container
 
-The DI extension sets parameters (including backward-compatible scalars mirroring the **default** profile). Prefer injecting configuration via your own services if you need values in PHP; forms resolve profiles through `TiptapEditorType` wiring.
+The DI extension sets `nowo_tiptap_editor.default_profile` and `nowo_tiptap_editor.profiles`, plus legacy aliases `nowo_tiptap_editor.default_config` / `nowo_tiptap_editor.configs` (same values), and backward-compatible scalars mirroring the **default** profile. Prefer injecting configuration via your own services if you need values in PHP; forms resolve profiles through `TiptapEditorType` wiring.

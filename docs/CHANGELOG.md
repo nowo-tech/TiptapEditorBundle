@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-07-18
+
+Minor release: YAML configuration keys renamed to AuditKit-style **`default_profile`** / **`profiles`**; legacy keys remain supported. **No published JS changes.** Form option `config` unchanged.
+
+### Changed
+
+- Configuration: renamed YAML keys **`default_config`** / **`configs`** to **`default_profile`** / **`profiles`** (AuditKit-style). Legacy keys still accepted via normalization; container parameters keep legacy aliases. Form option `config` unchanged. See [`UPGRADING.md`](UPGRADING.md) and [`CONFIGURATION.md`](CONFIGURATION.md).
+- Docs (`CONFIGURATION`, `INSTALLATION`, `USAGE`, `UPGRADING`) and Spec Kit baseline (`FR-CFG-*`) aligned with the new keys.
+
+### Demos (`demo/symfony7`, `demo/symfony8`)
+
+- `config/packages/nowo_tiptap_editor.yaml` and Flex `config/reference.php` stubs use **`default_profile`** / **`profiles`**.
+- Composer scripts: add **`test-coverage`** (aliases smoke **`test`**) so `make release-check` demo targets resolve.
+- `demo/Makefile` healthchecks use `curl -L` so locale redirects (`/` → `/en/`) count as healthy.
+
 ## [1.1.2] - 2026-07-16
 
 Maintenance release: git hygiene (**REQ-GIT-001**), Code of Conduct, and dependency refresh; **no PHP form type, YAML schema, or published JS changes**.
@@ -202,7 +217,8 @@ First stable release published on GitHub.
 - Development workflow: Docker, Makefile, PHPUnit, PHPStan, PHP-CS-Fixer, Vitest on shared TS utilities.
 - Demos: Symfony 7 and 8 sample apps under `demo/` (FrankenPHP).
 
-[Unreleased]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.1.2...HEAD
+[Unreleased]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.2.0
 [1.1.2]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.1.2
 [1.1.1]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.1.1
 [1.1.0]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.1.0

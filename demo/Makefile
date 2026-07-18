@@ -91,7 +91,7 @@ verify-$(1):
 	@port=$$(grep "^PORT=" $(1)/.env 2>/dev/null | cut -d= -f2 | tr -d '\r'); \
 	[ -z "$$port" ] && port=$$(grep "^PORT=" $(1)/.env.example 2>/dev/null | cut -d= -f2 | tr -d '\r'); \
 	[ -z "$$port" ] && port=$$( [ "$(1)" = "symfony8" ] && echo "8011" || echo "8010" ); \
-	code=$$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:$$port 2>/dev/null || echo "000"); \
+	code=$$(curl -sL -o /dev/null -w "%{http_code}" http://127.0.0.1:$$port/ 2>/dev/null || echo "000"); \
 	if [ "$$code" = "200" ]; then echo "✅ $(1) OK (HTTP $$code)"; else echo "❌ $(1) HTTP $$code"; exit 1; fi
 endef
 
@@ -161,7 +161,7 @@ verify:
 	@[ -n "$(DEMO)" ] || { echo "Usage: make verify DEMO=symfony7|symfony8"; exit 1; }
 	@$(MAKE) verify-$(DEMO)
 
-# release-verify: for each demo up → sleep → healthcheck HTTP 200 → down
+# release-verify: for each demo up → sleep → healthcheck HTTP 200 (follow locale redirects) → down
 release-verify:
 	@for demo in $(DEMOS); do \
 		port=$$(grep '^PORT=' $$demo/.env 2>/dev/null | cut -d= -f2 | tr -d '\r'); \
@@ -169,7 +169,7 @@ release-verify:
 		[ -z "$$port" ] && port=$$(case $$demo in symfony7) echo 8010;; symfony8) echo 8011;; *) echo 8010;; esac); \
 		echo "Release verify: $$demo (port $$port)..."; \
 		$(MAKE) up-$$demo; sleep 12; \
-		code=$$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:$$port 2>/dev/null || echo "000"); \
+		code=$$(curl -sL -o /dev/null -w "%{http_code}" http://127.0.0.1:$$port/ 2>/dev/null || echo "000"); \
 		$(MAKE) down-$$demo 2>/dev/null || true; \
 		if [ "$$code" != "200" ]; then echo "$$demo healthcheck failed (HTTP $$code)"; exit 1; fi; \
 		echo "OK $$demo (HTTP $$code)"; \

@@ -9,7 +9,7 @@ services:
 
     Nowo\TiptapEditorBundle\Form\TiptapEditorType:
         arguments:
-            $configs: '%nowo_tiptap_editor.configs%'
-            $defaultConfigName: '%nowo_tiptap_editor.default_config%'
+            $profiles: '%nowo_tiptap_editor.profiles%'
+            $defaultProfileName: '%nowo_tiptap_editor.default_profile%'
         tags:
             - { name: form.type }

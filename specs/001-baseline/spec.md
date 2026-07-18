@@ -21,7 +21,7 @@ As a form author, I use `TiptapEditorType` so users edit HTML with a Tiptap tool
 **Acceptance Scenarios**:
 
 1. **Given** default profile, **When** field renders, **Then** Twig theme outputs textarea + `data-controller="nowo-tiptap-editor"` with profile options serialized.
-2. **Given** `config` option references a named profile, **When** field builds, **Then** toolbar, min-height, variant, and theme come from `nowo_tiptap_editor.configs.{name}`.
+2. **Given** `config` option references a named profile, **When** field builds, **Then** toolbar, min-height, variant, and theme come from `nowo_tiptap_editor.profiles.{name}`.
 
 ---
 
@@ -31,8 +31,8 @@ As an integrator, I define multiple YAML profiles (`default`, `simple`, `notion`
 
 **Acceptance Scenarios**:
 
-1. **Given** legacy flat config keys at root, **When** extension normalizes, **Then** values migrate into `configs.default` with `default_config=default`.
-2. **Given** `default_config` references missing profile, **When** container compiles, **Then** configuration validation fails with explicit error.
+1. **Given** legacy flat config keys at root, **When** extension normalizes, **Then** values migrate into `profiles.default` with `default_profile=default`.
+2. **Given** `default_profile` references missing profile, **When** container compiles, **Then** configuration validation fails with explicit error.
 
 ---
 
@@ -62,8 +62,8 @@ As a template author, I render read-only HTML or iframe embeds via Twig function
 
 - **FR-BUNDLE-001**: `NowoTiptapEditorBundle` MUST register `TwigPathsPass` and alias `nowo_tiptap_editor`.
 - **FR-DI-001**: `services.yaml` MUST wire `TiptapEditorType`, Twig extension, and profile parameters.
-- **FR-CFG-001**: `Configuration` MUST define `default_config` and `configs` map with per-profile `toolbar`, `min_height`, `form_theme`, `debug`, `variant`, `theme`; MUST normalize legacy flat config into `configs.default`.
-- **FR-CFG-002**: Extension MUST validate `default_config` exists in `configs` and expose profiles to form type.
+- **FR-CFG-001**: `Configuration` MUST define `default_profile` and `profiles` map with per-profile `toolbar`, `min_height`, `form_theme`, `debug`, `variant`, `theme`; MUST normalize legacy flat config into `profiles.default`; MUST accept legacy YAML keys `default_config` / `configs` via normalization.
+- **FR-CFG-002**: Extension MUST validate `default_profile` exists in `profiles` and expose profiles to form type.
 - **FR-TWIG-001**: `TwigPathsPass` MUST register `Resources/views` under `NowoTiptapEditorBundle`.
 
 ### Form & variants

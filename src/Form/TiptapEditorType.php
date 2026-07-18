@@ -20,7 +20,7 @@ use function sprintf;
 /**
  * Rich-text field backed by a hidden textarea (HTML) and a Tiptap editor surface (see frontend bundle script).
  *
- * Use the `config` option to pick a named profile from `nowo_tiptap_editor.configs`; omitted/null uses `default_config`.
+ * Use the `config` option to pick a named profile from `nowo_tiptap_editor.profiles`; omitted/null uses `default_profile`.
  * Use the `example` option to enable an extension “recipe” (tables, tasks, syntax highlighting, etc.); see {@see TiptapExample}.
  *
  * @extends AbstractType<string>
@@ -30,22 +30,22 @@ use function sprintf;
 final class TiptapEditorType extends AbstractType
 {
     /**
-     * @param array<string, array{toolbar: bool, min_height: string, form_theme: string, debug: bool, variant: string, theme?: string}> $configs
+     * @param array<string, array{toolbar: bool, min_height: string, form_theme: string, debug: bool, variant: string, theme?: string}> $profiles
      */
     public function __construct(
-        private readonly array $configs,
-        private readonly string $defaultConfigName,
+        private readonly array $profiles,
+        private readonly string $defaultProfileName,
     ) {
     }
 
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
-        $name                                 = $options['config'] ?? $this->defaultConfigName;
+        $name                                 = $options['config'] ?? $this->defaultProfileName;
         $view->vars['tiptap_toolbar']         = $options['toolbar'];
         $view->vars['tiptap_min_height']      = $options['min_height'];
         $view->vars['tiptap_placeholder_key'] = $options['placeholder'];
-        $view->vars['tiptap_debug']           = $this->configs[$name]['debug'];
-        $view->vars['tiptap_variant']         = EditorVariant::fromString($this->configs[$name]['variant'])->value;
+        $view->vars['tiptap_debug']           = $this->profiles[$name]['debug'];
+        $view->vars['tiptap_variant']         = EditorVariant::fromString($this->profiles[$name]['variant'])->value;
         $view->vars['tiptap_example']         = $options['example'] instanceof TiptapExample ? $options['example']->value : null;
         $view->vars['tiptap_theme']           = $options['theme'];
     }
@@ -95,8 +95,8 @@ final class TiptapEditorType extends AbstractType
             if ($value === null || $value === '') {
                 return null;
             }
-            if (!isset($this->configs[$value])) {
-                throw new InvalidOptionsException(sprintf('Unknown Tiptap config profile "%s". Available profiles: %s.', $value, implode(', ', array_keys($this->configs))));
+            if (!isset($this->profiles[$value])) {
+                throw new InvalidOptionsException(sprintf('Unknown Tiptap config profile "%s". Available profiles: %s.', $value, implode(', ', array_keys($this->profiles))));
             }
 
             return $value;
@@ -117,12 +117,12 @@ final class TiptapEditorType extends AbstractType
      */
     private function profileFor(Options $options): array
     {
-        $name = $options['config'] ?? $this->defaultConfigName;
-        if (!isset($this->configs[$name])) {
-            throw new InvalidOptionsException(sprintf('Unknown Tiptap config profile "%s". Available profiles: %s.', $name, implode(', ', array_keys($this->configs))));
+        $name = $options['config'] ?? $this->defaultProfileName;
+        if (!isset($this->profiles[$name])) {
+            throw new InvalidOptionsException(sprintf('Unknown Tiptap config profile "%s". Available profiles: %s.', $name, implode(', ', array_keys($this->profiles))));
         }
 
-        return $this->configs[$name];
+        return $this->profiles[$name];
     }
 
     public function getParent(): string
