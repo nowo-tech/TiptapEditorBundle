@@ -1,5 +1,13 @@
 # Maintainer: tagging and GitHub Release
 
+## Table of contents
+
+- [Prerequisites](#prerequisites)
+- [Version bump](#version-bump)
+- [Tag and push](#tag-and-push)
+- [GitHub Release](#github-release)
+- [Packagist](#packagist)
+
 ## Prerequisites
 
 - [`CHANGELOG.md`](CHANGELOG.md) updated with the new version and date under `[Unreleased]` moved to a numbered section.
@@ -20,9 +28,9 @@ Replace `x.y.z` with the real version (no `v` inside Composer; the Git tag uses 
 ```bash
 git checkout main
 git pull origin main
-git tag -a vx.y.z -m "Release x.y.z"
+git tag -a v1.2.1 -m "Release 1.2.1 - named asset package, FrankenPHP banner, demo PHP 8.5"
 git push origin main
-git push origin vx.y.z
+git push origin v1.2.1
 ```
 
 ## GitHub Release

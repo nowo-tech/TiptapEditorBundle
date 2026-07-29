@@ -5,7 +5,35 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Table of contents
+
+- [Unreleased](#unreleased)
+- [1.2.1](#121---2026-07-29)
+- [1.2.0](#120---2026-07-18)
+- [1.1.2](#112---2026-07-16)
+
 ## [Unreleased]
+
+## [1.2.1] - 2026-07-29
+
+### Added
+
+- Symfony asset package **`nowo_tiptap_editor`** (`framework.assets.packages`, base path `/bundles/nowotiptapeditor`) and Twig helper **`nowo_tiptap_editor_asset_package()`** (REQ-ASSETS-004).
+- Root **`make demo-smoke`** + `.github/workflows/demo-smoke.yml` (REQ-TEST-011).
+- `.scripts/check-open-prs.sh` wired into `release-check` (REQ-REL-003 tooling).
+- FrankenPHP friendly banner image under `docs/images/` (REQ-DOCS-017 / DEMO-008).
+- Composer keywords `php`, `frankenphp` (REQ-PKG-004).
+- Require **`symfony/asset`** for the named package at kernel boot.
+- **REQ-CS-005:** `nowo-tech/phpstan-frankenphp` in `require-dev` with classic + worker rulesets.
+
+### Changed
+
+- **`nowo_tiptap_editor_asset_path()`** returns a relative filename (e.g. `tiptap-editor.js`) for use with `asset(..., nowo_tiptap_editor_asset_package())` instead of a hard-coded `bundles/nowotiptapeditor/...` path.
+- Demo Symfony 8 Dockerfile base image: `dunglas/frankenphp:1-php8.5-alpine` (REQ-DEMO-010).
+- Demo Makefiles: absolute `DOCKER_BIN` so local `docker/` dirs do not shadow the CLI (REQ-MAKE-010).
+- PHPUnit / CI: `SYMFONY_DEPRECATIONS_HELPER=max[direct]=0` (REQ-SF-005).
+- PHPStan: explicit `ignoreErrors: []` (REQ-CS-006 soft).
+- README Documentation order: Installation first; `GITHUB_CI` under Additional (REQ-DOCS-002).
 
 ## [1.2.0] - 2026-07-18
 

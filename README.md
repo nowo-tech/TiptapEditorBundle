@@ -5,25 +5,22 @@
 > **Found this useful?** [Install from Packagist](https://packagist.org/packages/nowo-tech/tiptap-editor-bundle) · Star the repo on [GitHub](https://github.com/nowo-tech/TiptapEditorBundle).
 
 **Symfony form type** for rich text using [**Tiptap**](https://tiptap.dev/) (ProseMirror). Stores HTML in the underlying textarea — comparable to embedding **CKEditor-style** WYSIWYG fields. Assets are built with **Vite** (IIFE bundle in `Resources/public/`).
+**FrankenPHP demos:** runtime is selected with **`FRANKENPHP_MODE`** (`worker` default, or `classic` for per-request PHP / hot-reload). See [docs/DEMO-FRANKENPHP.md](docs/DEMO-FRANKENPHP.md).
 
-**FrankenPHP worker mode:** Supported for production-style demo runs (worker-enabled Caddyfile). Development demos use classic `php_server` without worker so PHP/Twig changes apply on refresh — see [docs/DEMO-FRANKENPHP.md](docs/DEMO-FRANKENPHP.md).
+![FrankenPHP Friendly Worker Mode](docs/images/frankenphp-friendly.png)
+
+This bundle is **FrankenPHP worker mode friendly**.
 
 ## Features
 
 - `TiptapEditorType` extending `TextareaType` — value is HTML string.
 - Optional formatting toolbar (bold, italic, bullet/ordered lists, undo/redo); **`notion`** variant adds bubble/floating menus (link, image, embed iframe).
 - Twig themes aligned with common Symfony layouts (Bootstrap 3–5, Foundation, Tailwind 2, table layout).
-- `nowo_tiptap_editor_asset_path()` Twig helper for `assets:install` paths (`bundles/nowotiptapeditor/`).
+- `nowo_tiptap_editor_asset_path()` / `nowo_tiptap_editor_asset_package()` Twig helpers for the Symfony asset package `nowo_tiptap_editor`.
 - **pnpm + Vite** frontend; **Vitest** on the bundle logger and the widget lifecycle (custom element).
 - **Form submit:** before POST, the bundle syncs ProseMirror HTML into each hidden Symfony textarea (capture-phase `submit`); see [Usage](docs/USAGE.md).
 - **Dockerfile + Makefile** workflow matching other Nowo bundles.
 - **Demos**: Symfony 7 & 8 under `demo/` (FrankenPHP).
-
-## Demo preview
-
-**Editor variants** in the Symfony demo app (profiles from `config/packages/nowo_tiptap_editor.yaml`: full reference, `simple`, `notion`, `agent`, `headless`). Start a demo with `make -C demo up-symfony8` or `make -C demo up-symfony7`, then open the **Variants** route in the browser.
-
-![Editor variants — Symfony demo screenshot](docs/images/demo-editor-variants.png)
 
 ## Quick start
 
@@ -35,7 +32,7 @@ php bin/console assets:install public
 In Twig layout:
 
 ```twig
-<script src="{{ asset(nowo_tiptap_editor_asset_path('tiptap-editor.js')) }}"></script>
+<script src="{{ asset(nowo_tiptap_editor_asset_path('tiptap-editor.js'), nowo_tiptap_editor_asset_package()) }}"></script>
 ```
 
 ```php
@@ -44,9 +41,34 @@ use Nowo\TiptapEditorBundle\Form\TiptapEditorType;
 $builder->add('article', TiptapEditorType::class, ['label' => 'Article']);
 ```
 
+## Demo preview
+
+**Editor variants** in the Symfony demo app (profiles from `config/packages/nowo_tiptap_editor.yaml`: full reference, `simple`, `notion`, `agent`, `headless`). Start a demo with `make -C demo up-symfony8` or `make -C demo up-symfony7`, then open the **Variants** route in the browser.
+
+![Editor variants — Symfony demo screenshot](docs/images/demo-editor-variants.png)
+
+## Development
+
+Requirements: Docker (recommended), or PHP 8.2+ with Composer + pnpm locally.
+
+```bash
+make up           # composer + pnpm install in container
+make assets       # vite build → src/Resources/public/tiptap-editor.js
+make test         # PHPUnit
+make test-ts      # Vitest + coverage (logger)
+make qa           # cs-check + phpunit
+make demo-smoke   # REQ-TEST-011: FrankenPHP demo HTTP 200
+```
+
+Demos:
+
+```bash
+make -C demo up-symfony8
+# http://localhost:8011
+```
+
 ## Documentation
 
-- [GitHub Actions CI requirements](docs/GITHUB_CI.md)
 - [Installation](docs/INSTALLATION.md)
 - [Configuration](docs/CONFIGURATION.md)
 - [Usage](docs/USAGE.md)
@@ -63,25 +85,7 @@ $builder->add('article', TiptapEditorType::class, ['label' => 'Article']);
 ### Additional documentation
 
 - [Demo with FrankenPHP (development and production)](docs/DEMO-FRANKENPHP.md)
-
-## Development
-
-Requirements: Docker (recommended), or PHP 8.2+ with Composer + pnpm locally.
-
-```bash
-make up           # composer + pnpm install in container
-make assets       # vite build → src/Resources/public/tiptap-editor.js
-make test         # PHPUnit
-make test-ts      # Vitest + coverage (logger)
-make qa           # cs-check + phpunit
-```
-
-Demos:
-
-```bash
-make -C demo up-symfony8
-# http://localhost:8011
-```
+- [GitHub Actions CI requirements](docs/GITHUB_CI.md)
 
 ## Tests and coverage
 

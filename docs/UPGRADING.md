@@ -1,10 +1,40 @@
 # Upgrade guide
 
+## Table of contents
+
+- [General](#general)
+- [To 1.2.1](#to-121)
+- [To 1.2.0](#to-120)
+- [To 1.1.2](#to-112)
+- [To 1.1.1](#to-111)
+- [To 1.1.0](#to-110)
+- [To 1.0.0](#to-100)
+
 ## General
 
 - Follow [`CHANGELOG.md`](CHANGELOG.md) for each release.
 - Pin versions in `composer.json` (e.g. `^1.0`) instead of relying only on `dev-main` for production apps.
 - After upgrading, run `php bin/console cache:clear` and `php bin/console assets:install public` so Twig and published bundle assets stay in sync.
+
+## To 1.2.1
+
+`nowo_tiptap_editor_asset_path()` now returns a **relative filename** (e.g. `tiptap-editor.js`). Update layouts to pass the package name:
+
+```twig
+{# Before #}
+<script src="{{ asset(nowo_tiptap_editor_asset_path('tiptap-editor.js')) }}"></script>
+
+{# After #}
+<script src="{{ asset(nowo_tiptap_editor_asset_path('tiptap-editor.js'), nowo_tiptap_editor_asset_package()) }}"></script>
+```
+
+The Symfony asset package **`nowo_tiptap_editor`** is registered automatically (`base_path` `/bundles/nowotiptapeditor`). Requires **`symfony/asset`** (now a hard Composer dependency).
+
+```bash
+composer update nowo-tech/tiptap-editor-bundle
+php bin/console cache:clear
+php bin/console assets:install public
+```
 
 ## To 1.2.0
 
@@ -153,7 +183,7 @@ This is the **first tagged stable release**. There is no prior semver migration 
 - **Bootstrap**: ensure your layout loads the bundle script once per page:
 
   ```twig
-  <script src="{{ asset(nowo_tiptap_editor_asset_path('tiptap-editor.js')) }}"></script>
+  <script src="{{ asset(nowo_tiptap_editor_asset_path('tiptap-editor.js'), nowo_tiptap_editor_asset_package()) }}"></script>
   ```
 
 ## Future major versions (placeholder)

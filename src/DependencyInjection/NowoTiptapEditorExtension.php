@@ -58,6 +58,18 @@ final class NowoTiptapEditorExtension extends Extension implements PrependExtens
 
     public function prepend(ContainerBuilder $container): void
     {
+        if ($container->hasExtension('framework')) {
+            $container->prependExtensionConfig('framework', [
+                'assets' => [
+                    'packages' => [
+                        Configuration::ALIAS => [
+                            'base_path' => '/bundles/nowotiptapeditor',
+                        ],
+                    ],
+                ],
+            ]);
+        }
+
         if (!$container->hasExtension('twig')) {
             return;
         }

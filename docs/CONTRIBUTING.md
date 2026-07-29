@@ -1,5 +1,13 @@
 # Contributing Guide
 
+## Table of contents
+
+- [Code of Conduct](#code-of-conduct)
+- [How to contribute](#how-to-contribute)
+- [Project layout](#project-layout)
+- [Code style](#code-style)
+- [Git hooks (REQ-GIT-001)](#git-hooks-req-git-001)
+
 Thank you for contributing to **Tiptap Editor Bundle**.
 
 ## Code of Conduct

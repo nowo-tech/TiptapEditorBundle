@@ -9,6 +9,7 @@ This document describes how the **Tiptap Editor Bundle** demos run under **Frank
 - [Development](#development)
 - [Production / worker mode](#production--worker-mode)
 - [Ports and URLs](#ports-and-urls)
+- [Switching classic vs worker (`FRANKENPHP_MODE`)](#switching-classic-vs-worker-frankenphp_mode)
 - [Troubleshooting](#troubleshooting)
 
 ## Overview
@@ -70,6 +71,17 @@ Exact worker directives depend on the demo image and FrankenPHP version; compare
 | symfony8   | 8011             | http://localhost:8011 |
 
 Override `PORT` in the demo `.env` (from `.env.example`) if ports clash.
+
+## Switching classic vs worker (`FRANKENPHP_MODE`)
+
+Demos select the FrankenPHP runtime via **`FRANKENPHP_MODE`** in `.env` / `.env.example` (not a Dockerfile `ENV`):
+
+| Value | Behaviour |
+| --- | --- |
+| **`worker`** (default) | Keep the worker Caddyfile (`php_server { worker ... }`) |
+| **`classic`** | Entrypoint copies `Caddyfile.dev` (plain `php_server`, hot-reload friendly) |
+
+Compose passes `FRANKENPHP_MODE=${FRANKENPHP_MODE:-worker}` into the PHP service. After changing `.env`, run `docker compose up -d` (or `make up`) so the container is **recreated** — a plain `restart` does not reload env. No image rebuild is required.
 
 ## Troubleshooting
 

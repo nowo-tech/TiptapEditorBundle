@@ -1,5 +1,12 @@
 # Installation
 
+## Table of contents
+
+- [Install](#install)
+- [Assets](#assets)
+
+## Install
+
 ```bash
 composer require nowo-tech/tiptap-editor-bundle:^1.0
 ```
@@ -34,16 +41,16 @@ You may still use **legacy flat** keys at the root (without `profiles`): they ar
 
 See [CONFIGURATION.md](CONFIGURATION.md) for the full reference.
 
-Install static assets into your `public/` tree:
+## Assets
 
 ```bash
 php bin/console assets:install public
 ```
 
-In your base layout, load the bundle script **once** per page (see [USAGE.md](USAGE.md)):
+In your base layout, load the bundle script **once** per page via the named package `nowo_tiptap_editor` (see [USAGE.md](USAGE.md)):
 
 ```twig
-<script src="{{ asset(nowo_tiptap_editor_asset_path('tiptap-editor.js')) }}"></script>
+<script src="{{ asset(nowo_tiptap_editor_asset_path('tiptap-editor.js'), nowo_tiptap_editor_asset_package()) }}"></script>
 ```
 
 When developing the bundle from a git clone, rebuild the JS with `pnpm run build` in the bundle root, then re-run `assets:install` in the app.

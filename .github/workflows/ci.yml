@@ -70,14 +70,18 @@ jobs:
 
       - name: Install dependencies with Symfony ${{ matrix.symfony }}
         run: |
-          composer require symfony/config:^${{ matrix.symfony }} symfony/dependency-injection:^${{ matrix.symfony }} symfony/form:^${{ matrix.symfony }} symfony/framework-bundle:^${{ matrix.symfony }} symfony/http-foundation:^${{ matrix.symfony }} symfony/http-kernel:^${{ matrix.symfony }} symfony/routing:^${{ matrix.symfony }} symfony/twig-bundle:^${{ matrix.symfony }} symfony/web-profiler-bundle:^${{ matrix.symfony }} --no-interaction --no-update
+          composer require symfony/asset:^${{ matrix.symfony }} symfony/config:^${{ matrix.symfony }} symfony/dependency-injection:^${{ matrix.symfony }} symfony/form:^${{ matrix.symfony }} symfony/framework-bundle:^${{ matrix.symfony }} symfony/http-foundation:^${{ matrix.symfony }} symfony/http-kernel:^${{ matrix.symfony }} symfony/routing:^${{ matrix.symfony }} symfony/twig-bundle:^${{ matrix.symfony }} symfony/web-profiler-bundle:^${{ matrix.symfony }} --no-interaction --no-update
           composer update symfony/* --with-all-dependencies --no-interaction --prefer-dist --no-progress
 
       - name: Run PHPUnit
+        env:
+          SYMFONY_DEPRECATIONS_HELPER: max[direct]=0
         run: composer test
 
       - name: PHPUnit coverage (PHP 8.2 + Symfony 7.0)
         if: matrix.php == '8.2' && matrix.symfony == '7.0'
+        env:
+          SYMFONY_DEPRECATIONS_HELPER: max[direct]=0
         run: composer test-coverage
 
       - name: Validate PHP coverage file

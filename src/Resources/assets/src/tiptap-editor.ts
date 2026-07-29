@@ -1000,12 +1000,18 @@ if (typeof customElements !== 'undefined' && customElements.get('nowo-tiptap-edi
   customElements.define('nowo-tiptap-editor', NowoTiptapEditorElement);
 }
 
+/**
+ * Discovers and initializes all Tiptap roots currently in the document.
+ */
 export function runInit(): void {
   for (const root of discoverRoots(document)) {
     initTiptapRoot(root);
   }
 }
 
+/**
+ * Runs {@link runInit} once, then observes DOM mutations to initialize newly inserted roots.
+ */
 export function runInitAndObserve(): void {
   runInit();
   const observer = new MutationObserver(() => runInit());

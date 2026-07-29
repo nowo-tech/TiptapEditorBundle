@@ -1,9 +1,12 @@
 export type BundleLoggerOptions = {
+  /** Optional ISO or display build timestamp shown on scriptLoaded(). */
   buildTime?: string;
 };
 
 export type BundleLogger = {
+  /** Logs a styled “script loaded” line (optionally with build time). */
   scriptLoaded: () => void;
+  /** Enables or disables debug/info/warn/error console output. */
   setDebug: (enabled: boolean) => void;
   debug: (...args: unknown[]) => void;
   info: (...args: unknown[]) => void;
@@ -33,6 +36,13 @@ function formatArgs(args: unknown[]): unknown[] {
   );
 }
 
+/**
+ * Creates a namespaced console logger for bundle frontend scripts.
+ *
+ * @param name - Short label wrapped in brackets in every log line (e.g. `TiptapEditor`).
+ * @param options - Optional build metadata.
+ * @returns Logger with scriptLoaded / setDebug / leveled methods (debug-gated).
+ */
 export function createBundleLogger(name: string, options: BundleLoggerOptions = {}): BundleLogger {
   const prefix = `[${name}]`;
   const { buildTime } = options;

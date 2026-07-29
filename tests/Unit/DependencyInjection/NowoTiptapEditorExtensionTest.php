@@ -7,6 +7,7 @@ namespace Nowo\TiptapEditorBundle\Tests\Unit\DependencyInjection;
 use Nowo\TiptapEditorBundle\DependencyInjection\Configuration;
 use Nowo\TiptapEditorBundle\DependencyInjection\NowoTiptapEditorExtension;
 use PHPUnit\Framework\TestCase;
+use Symfony\Bundle\FrameworkBundle\DependencyInjection\FrameworkExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 
@@ -121,5 +122,14 @@ final class NowoTiptapEditorExtensionTest extends TestCase
         $extension = new NowoTiptapEditorExtension();
         $extension->prepend($container);
         self::assertFalse($container->hasExtension('twig'));
+    }
+
+    public function testPrependConfiguresAssets(): void
+    {
+        $container = new ContainerBuilder();
+        $container->registerExtension(new FrameworkExtension());
+        (new NowoTiptapEditorExtension())->prepend($container);
+        $configs = $container->getExtensionConfig('framework');
+        self::assertSame('/bundles/nowotiptapeditor', $configs[0]['assets']['packages']['nowo_tiptap_editor']['base_path']);
     }
 }

@@ -12,41 +12,40 @@ use PHPUnit\Framework\TestCase;
  */
 final class NowoTiptapEditorTwigExtensionTest extends TestCase
 {
-    public function testGetFunctionsReturnsAssetPathFunction(): void
+    public function testGetFunctionsReturnsAssetHelpers(): void
     {
         $ext = new NowoTiptapEditorTwigExtension();
         $fns = $ext->getFunctions();
 
-        self::assertCount(1, $fns);
+        self::assertCount(2, $fns);
         self::assertSame('nowo_tiptap_editor_asset_path', $fns[0]->getName());
+        self::assertSame('nowo_tiptap_editor_asset_package', $fns[1]->getName());
     }
 
-    public function testAssetPathReturnsPathWithAssetDir(): void
+    public function testAssetPathReturnsRelativeFilename(): void
     {
         $ext = new NowoTiptapEditorTwigExtension();
 
-        self::assertSame('bundles/nowotiptapeditor/tiptap-editor.js', $ext->assetPath('tiptap-editor.js'));
-        self::assertSame('bundles/nowotiptapeditor/tiptap-editor.js', $ext->assetPath('/tiptap-editor.js'));
+        self::assertSame('tiptap-editor.js', $ext->assetPath('tiptap-editor.js'));
+        self::assertSame('tiptap-editor.js', $ext->assetPath('/tiptap-editor.js'));
     }
 
     public function testAssetPathRejectsPathTraversal(): void
     {
-        $ext     = new NowoTiptapEditorTwigExtension();
-        $default = 'bundles/' . NowoTiptapEditorTwigExtension::ASSET_DIR . '/tiptap-editor.js';
-        self::assertSame($default, $ext->assetPath('../other/file.js'));
+        $ext = new NowoTiptapEditorTwigExtension();
+        self::assertSame('tiptap-editor.js', $ext->assetPath('../other/file.js'));
     }
 
     public function testAssetPathRejectsInvalidCharacters(): void
     {
-        $ext     = new NowoTiptapEditorTwigExtension();
-        $default = 'bundles/' . NowoTiptapEditorTwigExtension::ASSET_DIR . '/tiptap-editor.js';
-        self::assertSame($default, $ext->assetPath('bad<script>.js'));
-        self::assertSame($default, $ext->assetPath(''));
+        $ext = new NowoTiptapEditorTwigExtension();
+        self::assertSame('tiptap-editor.js', $ext->assetPath('bad<script>.js'));
+        self::assertSame('tiptap-editor.js', $ext->assetPath(''));
     }
 
     public function testAssetPathAllowsSubpath(): void
     {
         $ext = new NowoTiptapEditorTwigExtension();
-        self::assertSame('bundles/nowotiptapeditor/css/theme.css', $ext->assetPath('css/theme.css'));
+        self::assertSame('css/theme.css', $ext->assetPath('css/theme.css'));
     }
 }

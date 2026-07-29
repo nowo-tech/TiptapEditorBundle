@@ -1,5 +1,12 @@
 # Usage
 
+## Table of contents
+
+- [Form type](#form-type)
+- [Frontend script](#frontend-script)
+- [Toolbar and variants](#toolbar-and-variants)
+- [Examples hub parity](#examples-hub-parity)
+
 ## Form type
 
 ```php
@@ -27,7 +34,7 @@ Submitted data is an **HTML string** (store in `TEXT` / `LONGTEXT` / similar).
 Include the compiled widget **after** your layout loads (once per page):
 
 ```twig
-<script src="{{ asset(nowo_tiptap_editor_asset_path('tiptap-editor.js')) }}"></script>
+<script src="{{ asset(nowo_tiptap_editor_asset_path('tiptap-editor.js'), nowo_tiptap_editor_asset_package()) }}"></script>
 ```
 
 The script finds `[data-tiptap-root="1"]` and `<nowo-tiptap-editor>` nodes (including fragments attached later) and mounts Tiptap. The form field remains a real `<textarea>` in the light DOM so Symfony receives HTML on submit as before.

@@ -1,5 +1,15 @@
 # Configuration reference
 
+## Table of contents
+
+- [Top-level](#top-level)
+- [Per profile](#per-profile-profilesname)
+- [Legacy keys and flat YAML](#legacy-keys-and-flat-yaml)
+- [Form type options](#form-type-tiptapeditortype-options)
+- [Overriding bundle Twig templates](#overriding-bundle-twig-templates)
+- [Translation overrides](#translation-overrides)
+- [Parameters](#parameters-exposed-to-the-container)
+
 Root key: `nowo_tiptap_editor`
 
 ## Top-level

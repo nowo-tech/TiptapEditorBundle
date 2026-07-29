@@ -1,9 +1,17 @@
 # Makefile for Tiptap Editor Bundle Demo
 # Each demo has its own docker-compose.yml and can be run independently
 
+# Prefer Compose V2; absolute docker path avoids shadowing by local docker/ when PATH has "." (REQ-MAKE-010).
+DOCKER_BIN := $(shell PATH="/usr/local/bin:/usr/bin:/bin:$$PATH" command -v docker 2>/dev/null)
+ifeq ($(DOCKER_BIN),)
+COMPOSE ?= docker-compose
+else
+COMPOSE ?= $(shell $(DOCKER_BIN) compose version >/dev/null 2>&1 && echo "$(DOCKER_BIN) compose" || echo "docker-compose")
+endif
+
 DEMOS := symfony7 symfony8
 
-.PHONY: help clean test-all test-coverage-all verify-all release-check release-verify
+.PHONY: help clean test-all test-coverage-all verify-all release-check release-verify demo-smoke
 .PHONY: $(foreach demo,$(DEMOS),up-$(demo) down-$(demo) restart-$(demo) build-$(demo) install-$(demo) update-bundle-$(demo) shell-$(demo) logs-$(demo) test-$(demo) test-coverage-$(demo) verify-$(demo))
 .PHONY: up down restart build install update-bundle test shell logs test-coverage verify
 
@@ -29,6 +37,7 @@ help:
 	done
 	@echo "  release-check    Pre-release: test-coverage-all, release-verify"
 	@echo "  release-verify   For each demo: up → healthcheck HTTP 200 → down"
+	@echo "  demo-smoke       REQ-TEST-011: boot symfony8 and assert HTTP 200"
 	@echo ""
 	@echo "Generic (use DEMO=<name>): make up DEMO=symfony7, make update-bundle DEMO=symfony8, etc."
 	@echo ""
@@ -72,7 +81,7 @@ endef
 
 define logs-target-template
 logs-$(1):
-	@cd $(1) && docker-compose logs -f
+	@cd $(1) && $(COMPOSE) logs -f
 endef
 
 define test-target-template
@@ -161,6 +170,26 @@ verify:
 	@[ -n "$(DEMO)" ] || { echo "Usage: make verify DEMO=symfony7|symfony8"; exit 1; }
 	@$(MAKE) verify-$(DEMO)
 
+# REQ-TEST-011: boot primary demo + HTTP 200 (follow locale redirects)
+demo-smoke:
+	@PORT=$$(grep "^PORT=" symfony8/.env 2>/dev/null | cut -d= -f2 | tr -d '\r'); \
+	[ -z "$$PORT" ] && PORT=$$(grep "^PORT=" symfony8/.env.example 2>/dev/null | cut -d= -f2 | tr -d '\r'); \
+	[ -z "$$PORT" ] && PORT=8011; \
+	echo "Demo smoke: symfony8 (http://127.0.0.1:$$PORT/)"; \
+	$(MAKE) -C symfony8 up || exit 1; \
+	code=000; \
+	i=0; \
+	while [ $$i -lt 30 ]; do \
+		code=$$(curl -sL -o /dev/null -w "%{http_code}" "http://127.0.0.1:$$PORT/" || true); \
+		[ -z "$$code" ] && code=000; \
+		if [ "$$code" = "200" ]; then break; fi; \
+		i=$$((i+1)); \
+		sleep 2; \
+	done; \
+	$(MAKE) -C symfony8 down 2>/dev/null || true; \
+	if [ "$$code" != "200" ]; then echo "symfony8 failed with HTTP $$code"; exit 1; fi; \
+	echo "symfony8 OK (HTTP $$code)"
+
 # release-verify: for each demo up → sleep → healthcheck HTTP 200 (follow locale redirects) → down
 release-verify:
 	@for demo in $(DEMOS); do \
@@ -185,4 +214,5 @@ clean:
 
 # REQ-MAKE-008: update-deps-all (REQ-MAKE-008)
 BUNDLE_ROOT := $(abspath $(dir $(lastword $(MAKEFILE_LIST)))/..)
-include $(BUNDLE_ROOT)/../.scripts/Makefile.demo-aggregate-update-deps.mk
+# Optional: monorepo helper absent on standalone GitHub Actions checkout (REQ-MAKE-009).
+-include $(BUNDLE_ROOT)/../.scripts/Makefile.demo-aggregate-update-deps.mk
