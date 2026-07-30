@@ -8,11 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Table of contents
 
 - [Unreleased](#unreleased)
+- [1.2.2](#122---2026-07-30)
 - [1.2.1](#121---2026-07-29)
 - [1.2.0](#120---2026-07-18)
 - [1.1.2](#112---2026-07-16)
 
 ## [Unreleased]
+
+## [1.2.2] - 2026-07-30
+
+### Documentation
+
+- USAGE: **Overriding templates (REQ-TWIG-001)** — freeze rule, prefer profile `form_theme`, full form-theme `<subpath>` table, `<nowo-tiptap-editor>` / `data-tiptap-*` contract notes.
+- CONFIGURATION: Twig overrides section points to USAGE (single source of truth).
 
 ## [1.2.1] - 2026-07-29
 

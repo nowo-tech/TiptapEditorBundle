@@ -52,17 +52,7 @@ Standard Symfony options (`label`, `required`, `translation_domain`, `attr`, …
 
 ## Overriding bundle Twig templates
 
-Templates use the **`@NowoTiptapEditorBundle`** namespace (e.g. `@NowoTiptapEditorBundle/Form/tiptap_editor_theme.html.twig`). To override one in your application, copy the file to:
-
-```text
-templates/bundles/NowoTiptapEditorBundle/Form/<same-file-name>.html.twig
-```
-
-Use the **logical bundle name** `NowoTiptapEditorBundle` (matches the bundle class without the `Bundle` suffix pattern Symfony expects for overrides). Clear cache after changes: `php bin/console cache:clear`.
-
-Shipped form themes wrap the widget in a **`<nowo-tiptap-editor>`** custom element (light DOM: the `<textarea>` stays a normal form control). Overrides should keep the `data-tiptap-*` contract expected by `tiptap-editor.js` unless you replace the mounting script.
-
-See also Symfony’s [How to Override Templates](https://symfony.com/doc/current/bundles/override.html).
+**REQ-TWIG-001.** Namespace: **`NowoTiptapEditorBundle`**. Full procedure, freeze rule, overridable `<subpath>` table, and widget contract notes: [USAGE.md — Overriding templates](USAGE.md#overriding-templates-req-twig-001).
 
 ## Translation overrides
 
