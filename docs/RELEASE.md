@@ -28,9 +28,9 @@ Replace `x.y.z` with the real version (no `v` inside Composer; the Git tag uses 
 ```bash
 git checkout main
 git pull origin main
-git tag -a v1.2.1 -m "Release 1.2.1 - named asset package, FrankenPHP banner, demo PHP 8.5"
+git tag -a v1.2.2 -m "Release 1.2.2 - docs: Twig override freeze rule and form theme table"
 git push origin main
-git push origin v1.2.1
+git push origin v1.2.2
 ```
 
 ## GitHub Release
@@ -38,6 +38,16 @@ git push origin v1.2.1
 1. Open **Releases** → **Draft a new release**.
 2. Choose tag `vx.y.z`.
 3. Title: `x.y.z` (or `Release x.y.z`).
+
+Current stable target: **v1.2.2**.
+
+### Example for v1.2.1 (previous)
+
+```bash
+git tag -a v1.2.1 -m "Release 1.2.1 - named asset package, FrankenPHP banner, demo PHP 8.5"
+git push origin main
+git push origin v1.2.1
+```
 4. Description: copy the section for `x.y.z` from [`CHANGELOG.md`](CHANGELOG.md) (markdown).
 
 ## Packagist

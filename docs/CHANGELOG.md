@@ -253,7 +253,9 @@ First stable release published on GitHub.
 - Development workflow: Docker, Makefile, PHPUnit, PHPStan, PHP-CS-Fixer, Vitest on shared TS utilities.
 - Demos: Symfony 7 and 8 sample apps under `demo/` (FrankenPHP).
 
-[Unreleased]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.2.2...HEAD
+[1.2.2]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.2.1...v1.2.2
+[1.2.1]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.2.0
 [1.1.2]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.1.2
 [1.1.1]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.1.1

@@ -3,6 +3,7 @@
 ## Table of contents
 
 - [General](#general)
+- [To 1.2.2](#to-122)
 - [To 1.2.1](#to-121)
 - [To 1.2.0](#to-120)
 - [To 1.1.2](#to-112)
@@ -15,6 +16,16 @@
 - Follow [`CHANGELOG.md`](CHANGELOG.md) for each release.
 - Pin versions in `composer.json` (e.g. `^1.0`) instead of relying only on `dev-main` for production apps.
 - After upgrading, run `php bin/console cache:clear` and `php bin/console assets:install public` so Twig and published bundle assets stay in sync.
+
+## To 1.2.2
+
+Documentation polish for Twig form-theme overrides (REQ-TWIG-001 freeze rule). **No config or API migration.**
+
+```bash
+composer require nowo-tech/tiptap-editor-bundle:^1.2.2
+```
+
+See [USAGE.md — Overriding templates](USAGE.md#overriding-templates-req-twig-001). Hosts already on **1.2.1** need no application changes.
 
 ## To 1.2.1
 
