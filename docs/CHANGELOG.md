@@ -8,12 +8,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Table of contents
 
 - [Unreleased](#unreleased)
+- [1.2.3](#123---2026-08-03)
 - [1.2.2](#122---2026-07-30)
 - [1.2.1](#121---2026-07-29)
 - [1.2.0](#120---2026-07-18)
 - [1.1.2](#112---2026-07-16)
 
 ## [Unreleased]
+
+## [1.2.3] - 2026-08-03
+
+### Fixed
+
+- **Demo / FrankenPHP** — entrypoint waits for `vendor/autoload_runtime.php` before starting worker mode so `make demo-smoke` / `make up` work on a clean CI checkout (workers no longer exit before Composer).
+- Demo Makefiles: wait until the `php` service accepts `exec` (up to 30s) instead of a fixed `sleep 5`.
+
+### Added
+
+- GitHub hygiene: Dependabot, stale issues/PRs (`actions/stale` v11), semantic PR title lint, Copilot instructions.
 
 ## [1.2.2] - 2026-07-30
 
@@ -253,7 +265,8 @@ First stable release published on GitHub.
 - Development workflow: Docker, Makefile, PHPUnit, PHPStan, PHP-CS-Fixer, Vitest on shared TS utilities.
 - Demos: Symfony 7 and 8 sample apps under `demo/` (FrankenPHP).
 
-[Unreleased]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.2.2...HEAD
+[Unreleased]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.2.3...HEAD
+[1.2.3]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.2.2...v1.2.3
 [1.2.2]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.2.1...v1.2.2
 [1.2.1]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.2.0

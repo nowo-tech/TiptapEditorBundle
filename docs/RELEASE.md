@@ -39,7 +39,26 @@ git push origin v1.2.2
 2. Choose tag `vx.y.z`.
 3. Title: `x.y.z` (or `Release x.y.z`).
 
-Current stable target: **v1.2.2**.
+Current stable target: **v1.2.3**.
+
+### Example for v1.2.3
+
+```bash
+make release-check
+git add -A
+git commit -m "chore(release): prepare 1.2.3"
+git tag -a v1.2.3 -m "Release 1.2.3 - demo FrankenPHP vendor wait + GitHub hygiene"
+git push origin main
+git push origin v1.2.3
+```
+
+### Example for v1.2.2
+
+```bash
+git tag -a v1.2.2 -m "Release 1.2.2 - docs: Twig override freeze rule and form theme table"
+git push origin main
+git push origin v1.2.2
+```
 
 ### Example for v1.2.1 (previous)
 

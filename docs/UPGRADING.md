@@ -3,6 +3,7 @@
 ## Table of contents
 
 - [General](#general)
+- [To 1.2.3](#to-123)
 - [To 1.2.2](#to-122)
 - [To 1.2.1](#to-121)
 - [To 1.2.0](#to-120)
@@ -16,6 +17,16 @@
 - Follow [`CHANGELOG.md`](CHANGELOG.md) for each release.
 - Pin versions in `composer.json` (e.g. `^1.0`) instead of relying only on `dev-main` for production apps.
 - After upgrading, run `php bin/console cache:clear` and `php bin/console assets:install public` so Twig and published bundle assets stay in sync.
+
+## To 1.2.3
+
+Demo / FrankenPHP reliability only (entrypoint waits for Composer vendor; Makefile waits for `php` exec). **No bundle API or config migration.**
+
+```bash
+composer require nowo-tech/tiptap-editor-bundle:^1.2.3
+```
+
+Hosts already on **1.2.2** need no application changes. Local demos benefit from a clean `make -C demo/symfony8 up` / `make demo-smoke`.
 
 ## To 1.2.2
 

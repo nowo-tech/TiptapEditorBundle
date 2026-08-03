@@ -30,4 +30,20 @@ git config --global --add safe.directory /var/tiptap-editor-bundle 2>/dev/null |
 mkdir -p /app/var/cache /app/var/log
 chmod -R 777 /app/var 2>/dev/null || true
 
+# Worker mode exits if public/index.php boots before Composer install.
+# Makefile runs `composer install` after `docker compose up -d`.
+if [ ! -f /app/vendor/autoload_runtime.php ]; then
+	echo "Waiting for Composer vendor (autoload_runtime.php)..."
+	i=0
+	while [ ! -f /app/vendor/autoload_runtime.php ]; do
+		i=$((i + 1))
+		if [ "$i" -gt 180 ]; then
+			echo "Timed out waiting for /app/vendor/autoload_runtime.php" >&2
+			exit 1
+		fi
+		sleep 1
+	done
+	echo "Vendor ready."
+fi
+
 exec frankenphp run --config /etc/frankenphp/Caddyfile --adapter caddyfile
