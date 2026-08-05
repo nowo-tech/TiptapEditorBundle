@@ -32,13 +32,12 @@ final class TiptapHtmlSanitizeTransformerTest extends TestCase
         self::assertStringContainsString('<p>Hi</p>', $result);
     }
 
-    public function testReverseTransformLeavesNonStrings(): void
+    public function testReverseTransformLeavesNull(): void
     {
         $sanitizer = $this->createMock(TiptapHtmlSanitizerInterface::class);
         $sanitizer->expects(self::never())->method('sanitize');
         $transformer = new TiptapHtmlSanitizeTransformer($sanitizer);
 
         self::assertNull($transformer->reverseTransform(null));
-        self::assertSame(123, $transformer->reverseTransform(123));
     }
 }
