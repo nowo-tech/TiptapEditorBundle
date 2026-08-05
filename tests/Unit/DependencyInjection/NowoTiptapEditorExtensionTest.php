@@ -171,6 +171,7 @@ final class NowoTiptapEditorExtensionTest extends TestCase
         $typeDefinition = $container->getDefinition(TiptapEditorType::class);
         self::assertNull($typeDefinition->getArgument('$htmlSanitizer'));
     }
+
     public function testConfigureHtmlSanitizerRegistersAllowlistWhenMissing(): void
     {
         $container = new ContainerBuilder();
@@ -180,12 +181,11 @@ final class NowoTiptapEditorExtensionTest extends TestCase
             ->addTag('form.type');
 
         $extension = new NowoTiptapEditorExtension();
-        $method = new ReflectionMethod(NowoTiptapEditorExtension::class, 'configureHtmlSanitizer');
+        $method    = new ReflectionMethod(NowoTiptapEditorExtension::class, 'configureHtmlSanitizer');
         $method->setAccessible(true);
         $method->invoke($extension, $container, 'allowlist');
 
         self::assertTrue($container->hasDefinition(AllowlistTiptapHtmlSanitizer::class));
         self::assertTrue($container->hasAlias(TiptapHtmlSanitizerInterface::class));
     }
-
 }
