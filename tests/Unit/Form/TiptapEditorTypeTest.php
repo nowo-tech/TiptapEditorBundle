@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace Nowo\TiptapEditorBundle\Tests\Unit\Form;
 
+use Nowo\TiptapEditorBundle\Form\DataTransformer\TiptapHtmlSanitizeTransformer;
 use Nowo\TiptapEditorBundle\Form\TiptapEditorType;
+use Nowo\TiptapEditorBundle\Security\AllowlistTiptapHtmlSanitizer;
 use Nowo\TiptapEditorBundle\TiptapExample;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
@@ -279,5 +282,25 @@ final class TiptapEditorTypeTest extends TestCase
 
         self::assertSame('light', $m->invoke($type, 'invalid-theme'));
         self::assertSame('auto', $m->invoke($type, ' AuTo '));
+    }
+
+    public function testBuildFormAddsSanitizerTransformer(): void
+    {
+        $type    = new TiptapEditorType($this->sampleConfigs(), 'default', new AllowlistTiptapHtmlSanitizer());
+        $builder = $this->createMock(FormBuilderInterface::class);
+        $builder->expects(self::once())
+            ->method('addModelTransformer')
+            ->with(self::isInstanceOf(TiptapHtmlSanitizeTransformer::class));
+
+        $type->buildForm($builder, []);
+    }
+
+    public function testBuildFormSkipsTransformerWithoutSanitizer(): void
+    {
+        $type    = new TiptapEditorType($this->sampleConfigs(), 'default');
+        $builder = $this->createMock(FormBuilderInterface::class);
+        $builder->expects(self::never())->method('addModelTransformer');
+
+        $type->buildForm($builder, []);
     }
 }
