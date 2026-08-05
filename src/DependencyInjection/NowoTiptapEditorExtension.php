@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace Nowo\TiptapEditorBundle\DependencyInjection;
 
+use Nowo\TiptapEditorBundle\Form\TiptapEditorType;
+use Nowo\TiptapEditorBundle\Security\AllowlistTiptapHtmlSanitizer;
+use Nowo\TiptapEditorBundle\Security\TiptapHtmlSanitizerInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * Loads services and prepends the bundle form theme(s) to Twig.
@@ -54,6 +58,35 @@ final class NowoTiptapEditorExtension extends Extension implements PrependExtens
         $container->setParameter(Configuration::ALIAS . '.debug', $defaultProfile['debug']);
         $container->setParameter(Configuration::ALIAS . '.variant', $defaultProfile['variant']);
         $container->setParameter(Configuration::ALIAS . '.theme', $defaultProfile['theme'] ?? 'light');
+
+        $this->configureHtmlSanitizer($container, $config['html_sanitizer'] ?? null);
+    }
+
+    /**
+     * Opt-in HTML sanitizer for TiptapEditorType (default: off for BC).
+     */
+    private function configureHtmlSanitizer(ContainerBuilder $container, mixed $htmlSanitizer): void
+    {
+        $typeDefinition = $container->getDefinition(TiptapEditorType::class);
+
+        if ($htmlSanitizer === null || $htmlSanitizer === '') {
+            $typeDefinition->setArgument('$htmlSanitizer', null);
+
+            return;
+        }
+
+        if ($htmlSanitizer === 'allowlist') {
+            if (!$container->hasDefinition(AllowlistTiptapHtmlSanitizer::class)
+                && !$container->hasAlias(AllowlistTiptapHtmlSanitizer::class)
+            ) {
+                $container->register(AllowlistTiptapHtmlSanitizer::class, AllowlistTiptapHtmlSanitizer::class);
+            }
+            $container->setAlias(TiptapHtmlSanitizerInterface::class, AllowlistTiptapHtmlSanitizer::class);
+        } else {
+            $container->setAlias(TiptapHtmlSanitizerInterface::class, (string) $htmlSanitizer);
+        }
+
+        $typeDefinition->setArgument('$htmlSanitizer', new Reference(TiptapHtmlSanitizerInterface::class));
     }
 
     public function prepend(ContainerBuilder $container): void

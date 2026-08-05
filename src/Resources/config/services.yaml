@@ -7,9 +7,12 @@ services:
     Nowo\TiptapEditorBundle\Twig\NowoTiptapEditorTwigExtension:
         tags: ['twig.extension']
 
+    Nowo\TiptapEditorBundle\Security\AllowlistTiptapHtmlSanitizer: ~
+
     Nowo\TiptapEditorBundle\Form\TiptapEditorType:
         arguments:
             $profiles: '%nowo_tiptap_editor.profiles%'
             $defaultProfileName: '%nowo_tiptap_editor.default_profile%'
+            $htmlSanitizer: null
         tags:
             - { name: form.type }

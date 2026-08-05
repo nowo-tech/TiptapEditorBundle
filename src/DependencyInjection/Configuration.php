@@ -60,18 +60,27 @@ final class Configuration implements ConfigurationInterface
                     }
                 }
 
-                return [
+                $normalized = [
                     'default_profile' => $defaultProfile,
                     'profiles'        => [
                         'default' => $profile,
                     ],
                 ];
+                if (array_key_exists('html_sanitizer', $v)) {
+                    $normalized['html_sanitizer'] = $v['html_sanitizer'];
+                }
+
+                return $normalized;
             })
             ->end()
             ->children()
                 ->scalarNode('default_profile')
                     ->defaultValue('default')
                     ->info('Profile name used when the form field omits the "config" option (form option key remains "config" for BC).')
+                ->end()
+                ->scalarNode('html_sanitizer')
+                    ->defaultNull()
+                    ->info('Optional service id implementing TiptapHtmlSanitizerInterface, or the special value "allowlist" for the built-in allowlist sanitizer. Null (default) disables server-side sanitization (BC).')
                 ->end()
                 ->arrayNode('profiles')
                     ->info('Named profiles; each field may reference one via the "config" form option.')

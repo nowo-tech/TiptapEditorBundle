@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace Nowo\TiptapEditorBundle\Form;
 
 use Nowo\TiptapEditorBundle\EditorVariant;
+use Nowo\TiptapEditorBundle\Form\DataTransformer\TiptapHtmlSanitizeTransformer;
+use Nowo\TiptapEditorBundle\Security\TiptapHtmlSanitizerInterface;
 use Nowo\TiptapEditorBundle\TiptapExample;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
@@ -35,7 +38,15 @@ final class TiptapEditorType extends AbstractType
     public function __construct(
         private readonly array $profiles,
         private readonly string $defaultProfileName,
+        private readonly ?TiptapHtmlSanitizerInterface $htmlSanitizer = null,
     ) {
+    }
+
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
+        if ($this->htmlSanitizer !== null) {
+            $builder->addModelTransformer(new TiptapHtmlSanitizeTransformer($this->htmlSanitizer));
+        }
     }
 
     public function buildView(FormView $view, FormInterface $form, array $options): void
