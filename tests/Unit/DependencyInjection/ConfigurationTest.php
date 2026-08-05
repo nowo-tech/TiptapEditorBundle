@@ -138,4 +138,23 @@ final class ConfigurationTest extends TestCase
         // Simulates an invalid merge shape; beforeNormalization returns the scalar unchanged.
         $processor->processConfiguration(new Configuration(), [true]);
     }
+
+    public function testHtmlSanitizerDefaultsToNull(): void
+    {
+        $processor = new Processor();
+        $config    = $processor->processConfiguration(new Configuration(), [[]]);
+
+        self::assertArrayHasKey('html_sanitizer', $config);
+        self::assertNull($config['html_sanitizer']);
+    }
+
+    public function testHtmlSanitizerAllowlistIsAccepted(): void
+    {
+        $processor = new Processor();
+        $config    = $processor->processConfiguration(new Configuration(), [[
+            'html_sanitizer' => 'allowlist',
+        ]]);
+
+        self::assertSame('allowlist', $config['html_sanitizer']);
+    }
 }

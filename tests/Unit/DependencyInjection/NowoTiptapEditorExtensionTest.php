@@ -6,10 +6,15 @@ namespace Nowo\TiptapEditorBundle\Tests\Unit\DependencyInjection;
 
 use Nowo\TiptapEditorBundle\DependencyInjection\Configuration;
 use Nowo\TiptapEditorBundle\DependencyInjection\NowoTiptapEditorExtension;
+use Nowo\TiptapEditorBundle\Form\TiptapEditorType;
+use Nowo\TiptapEditorBundle\Security\AllowlistTiptapHtmlSanitizer;
+use Nowo\TiptapEditorBundle\Security\TiptapHtmlSanitizerInterface;
 use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
 use Symfony\Bundle\FrameworkBundle\DependencyInjection\FrameworkExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
+use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * @covers \Nowo\TiptapEditorBundle\DependencyInjection\NowoTiptapEditorExtension
@@ -131,5 +136,56 @@ final class NowoTiptapEditorExtensionTest extends TestCase
         (new NowoTiptapEditorExtension())->prepend($container);
         $configs = $container->getExtensionConfig('framework');
         self::assertSame('/bundles/nowotiptapeditor', $configs[0]['assets']['packages']['nowo_tiptap_editor']['base_path']);
+    }
+
+    public function testLoadWithHtmlSanitizerAllowlist(): void
+    {
+        $container = new ContainerBuilder();
+        $extension = new NowoTiptapEditorExtension();
+        $extension->load([['html_sanitizer' => 'allowlist']], $container);
+
+        $typeDefinition = $container->getDefinition(TiptapEditorType::class);
+        $arg            = $typeDefinition->getArgument('$htmlSanitizer');
+        self::assertInstanceOf(Reference::class, $arg);
+        self::assertSame(TiptapHtmlSanitizerInterface::class, (string) $arg);
+        self::assertTrue($container->hasAlias(TiptapHtmlSanitizerInterface::class));
+        self::assertSame(AllowlistTiptapHtmlSanitizer::class, (string) $container->getAlias(TiptapHtmlSanitizerInterface::class));
+    }
+
+    public function testLoadWithHtmlSanitizerCustomService(): void
+    {
+        $container = new ContainerBuilder();
+        $extension = new NowoTiptapEditorExtension();
+        $extension->load([['html_sanitizer' => 'app.custom_sanitizer']], $container);
+
+        self::assertTrue($container->hasAlias(TiptapHtmlSanitizerInterface::class));
+        self::assertSame('app.custom_sanitizer', (string) $container->getAlias(TiptapHtmlSanitizerInterface::class));
+    }
+
+    public function testLoadWithHtmlSanitizerEmptyDisables(): void
+    {
+        $container = new ContainerBuilder();
+        $extension = new NowoTiptapEditorExtension();
+        $extension->load([['html_sanitizer' => '']], $container);
+
+        $typeDefinition = $container->getDefinition(TiptapEditorType::class);
+        self::assertNull($typeDefinition->getArgument('$htmlSanitizer'));
+    }
+
+    public function testConfigureHtmlSanitizerRegistersAllowlistWhenMissing(): void
+    {
+        $container = new ContainerBuilder();
+        $container->register(TiptapEditorType::class, TiptapEditorType::class)
+            ->setAutowired(true)
+            ->setAutoconfigured(true)
+            ->addTag('form.type');
+
+        $extension = new NowoTiptapEditorExtension();
+        $method    = new ReflectionMethod(NowoTiptapEditorExtension::class, 'configureHtmlSanitizer');
+        $method->setAccessible(true);
+        $method->invoke($extension, $container, 'allowlist');
+
+        self::assertTrue($container->hasDefinition(AllowlistTiptapHtmlSanitizer::class));
+        self::assertTrue($container->hasAlias(TiptapHtmlSanitizerInterface::class));
     }
 }
