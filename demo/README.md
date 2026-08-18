@@ -15,12 +15,12 @@ Override with `PORT` in each demo’s `.env`.
 
 ```bash
 make help
-make up-symfony8    # or up-symfony7
+make up-symfony8
 make verify-symfony8
 make down-symfony8
 ```
 
-Inside `demo/symfony8` or `demo/symfony7`:
+Inside `demo/symfony8` or `demo/symfony8`:
 
 ```bash
 make up          # up -d → wait → composer install → cache/assets → "Demo started at: …"

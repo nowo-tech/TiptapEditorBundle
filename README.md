@@ -43,7 +43,7 @@ $builder->add('article', TiptapEditorType::class, ['label' => 'Article']);
 
 ## Demo preview
 
-**Editor variants** in the Symfony demo app (profiles from `config/packages/nowo_tiptap_editor.yaml`: full reference, `simple`, `notion`, `agent`, `headless`). Start a demo with `make -C demo up-symfony8` or `make -C demo up-symfony7`, then open the **Variants** route in the browser.
+**Editor variants** in the Symfony demo app (profiles from `config/packages/nowo_tiptap_editor.yaml`: full reference, `simple`, `notion`, `agent`, `headless`). Start a demo with `make -C demo up-symfony8` or `make -C demo up-symfony8`, then open the **Variants** route in the browser.
 
 ![Editor variants — Symfony demo screenshot](docs/images/demo-editor-variants.png)
 

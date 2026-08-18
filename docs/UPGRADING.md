@@ -203,7 +203,7 @@ php bin/console assets:install public
 
 **Markup / CSS:** the widget host is `<nowo-tiptap-editor class="tiptap-editor-widget …">` instead of `<div>`. Prefer `.tiptap-editor-widget` in selectors; if you used `div.tiptap-editor-widget`, use `nowo-tiptap-editor.tiptap-editor-widget` or drop the element qualifier.
 
-**Demos (`demo/symfony7`, `demo/symfony8`):** `make up` follows the canonical startup messages and ends with `Demo started at: http://localhost:<PORT>` (see [`CHANGELOG.md`](CHANGELOG.md) for 1.0.3).
+**Demos (`demo/symfony8`):** `make up` follows the canonical startup messages and ends with `Demo started at: http://localhost:<PORT>` (see [`CHANGELOG.md`](CHANGELOG.md) for 1.0.3).
 
 ## To 1.0.2
 

@@ -94,6 +94,5 @@ return (new Config())
             ->in(__DIR__)
             ->exclude(['vendor', 'var', 'coverage', '.phpunit.cache'])
             // Symfony Flex regenerates these without strict_types; do not cs-fix them on every lock update.
-            ->notPath('demo/symfony7/config/reference.php')
             ->notPath('demo/symfony8/config/reference.php')
     );
