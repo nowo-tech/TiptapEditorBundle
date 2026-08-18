@@ -23,7 +23,7 @@ Each demo uses:
 - **`Caddyfile`** (production-oriented, worker) and **`Caddyfile.dev`** (development, classic `php_server`).
 - An **entrypoint** that, when running in dev, activates `Caddyfile.dev` so Twig and bundle changes are visible without restarting workers.
 
-There are two demos: **`demo/symfony7`** (default HTTP port **8010**) and **`demo/symfony8`** (default **8011**). From the bundle root:
+There are two demos: **`demo/symfony8`** (default HTTP port **8010**) and **`demo/symfony8`** (default **8011**). From the bundle root:
 
 ```bash
 make -C demo up-symfony8
@@ -35,6 +35,7 @@ make -C demo up-symfony8
 In **`APP_ENV=dev`** (default for the demos):
 
 - **Symfony Web Profiler** and **Debug** bundles (`require-dev`) for toolbar and profiling.
+- **Nowo Twig Inspector** (`nowo-tech/twig-inspector-bundle`) and **Nowo Hot Reload** (`nowo-tech/hot-reload-bundle`) — required together on FrankenPHP demos (dev/test only; Caddyfile Mercure + `hot_reload`, plus `worker { watch }` in worker mode). Do not enable Hot Reload in production.
 - **`nowo-tech/twig-inspector-bundle`** (optional dev UX) where listed in the demo `composer.json`.
 
 The bundle under test is **`nowo-tech/tiptap-editor-bundle`**, installed from the path repo **`/var/tiptap-editor-bundle`**.
@@ -52,7 +53,7 @@ Goal: edit PHP, Twig, YAML, or bundle sources and see changes after a browser re
 - **`APP_ENV=dev`**, **`APP_DEBUG=1`** in Compose (see each demo’s `docker-compose.yml`).
 - **DNS**: Compose sets **`dns: 8.8.8.8` / `8.8.4.4`** so Composer can resolve Packagist inside Docker/WSL.
 
-Start from **`demo/symfony7`** or **`demo/symfony8`** with `make up` (see **`demo/README.md`**).
+Start from **`demo/symfony8`** or **`demo/symfony8`** with `make up` (see **`demo/README.md`**).
 
 ## Production / worker mode
 
@@ -67,7 +68,6 @@ Exact worker directives depend on the demo image and FrankenPHP version; compare
 
 | Demo       | Default `PORT` | URL                    |
 | ---------- | ---------------- | ---------------------- |
-| symfony7   | 8010             | http://localhost:8010 |
 | symfony8   | 8011             | http://localhost:8011 |
 
 Override `PORT` in the demo `.env` (from `.env.example`) if ports clash.
