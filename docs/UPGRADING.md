@@ -3,6 +3,7 @@
 ## Table of contents
 
 - [Unreleased](#unreleased)
+- [To 1.3.1](#to-131)
 - [To 1.3.0](#to-130)
 - [General](#general)
 - [To 1.2.3](#to-123)
@@ -16,6 +17,14 @@
 
 
 ## Unreleased
+
+## To 1.3.1
+
+From **1.3.0** — No application upgrade steps. **Demos only:** Hot Reload Bundle `^1.4` (FrankenPHP Mercure/`hot_reload`, `dev`/`test`). Shipped demos are Symfony 8 only (Symfony 6/7 demo apps removed).
+
+```bash
+composer update nowo-tech/tiptap-editor-bundle
+```
 
 ## To 1.3.0
 

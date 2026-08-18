@@ -16,6 +16,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.1] - 2026-08-18
+
+### Changed
+
+- **Demos:** pin `nowo-tech/hot-reload-bundle` to `^1.4` with FrankenPHP Mercure/`hot_reload` (`dev`/`test` only).
+- **Demos:** Symfony 8 only; Symfony 6/7 demo apps removed.
+
+[1.3.1]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.3.1
+
 ## [1.3.0] - 2026-08-04
 
 ### Added
@@ -273,7 +282,7 @@ First stable release published on GitHub.
 - Development workflow: Docker, Makefile, PHPUnit, PHPStan, PHP-CS-Fixer, Vitest on shared TS utilities.
 - Demos: Symfony 7 and 8 sample apps under `demo/` (FrankenPHP).
 
-[Unreleased]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.2.3...HEAD
+[Unreleased]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.3.1...HEAD
 [1.2.3]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.2.2...v1.2.3
 [1.2.2]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.2.1...v1.2.2
 [1.2.1]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.2.0...v1.2.1
