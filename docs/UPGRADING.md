@@ -3,6 +3,7 @@
 ## Table of contents
 
 - [Unreleased](#unreleased)
+- [To 1.3.3](#to-133)
 - [To 1.3.2](#to-132)
 - [To 1.3.1](#to-131)
 - [To 1.3.0](#to-130)
@@ -18,6 +19,14 @@
 
 
 ## Unreleased
+
+## To 1.3.3
+
+From **1.3.2** — No application upgrade steps. Documentation-only release.
+
+```bash
+composer update nowo-tech/tiptap-editor-bundle
+```
 
 ## To 1.3.2
 

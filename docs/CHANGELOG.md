@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Table of contents
 
 - [Unreleased](#unreleased)
+- [1.3.3](#133---2026-08-19)
 - [1.3.2](#132---2026-08-19)
 - [1.3.1](#131---2026-08-18)
 - [1.2.3](#123---2026-08-03)
@@ -17,6 +18,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [1.1.2](#112---2026-07-16)
 
 ## [Unreleased]
+
+## [1.3.3] - 2026-08-19
+
+### Documentation
+
+- Sync `CHANGELOG.md` and `UPGRADING.md` for v1.3.2 release notes.
+
+[1.3.3]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.3.3
 
 ## [1.3.2] - 2026-08-19
 
