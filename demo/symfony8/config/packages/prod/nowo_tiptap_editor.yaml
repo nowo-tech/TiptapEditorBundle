@@ -1,0 +1,4 @@
+# Demo — enable built-in allowlist sanitizer in production-like envs.
+when@prod:
+    nowo_tiptap_editor:
+        html_sanitizer: allowlist
