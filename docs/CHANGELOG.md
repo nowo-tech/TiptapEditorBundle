@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Table of contents
 
 - [Unreleased](#unreleased)
+- [1.3.4](#134---2026-08-19)
 - [1.3.3](#133---2026-08-19)
 - [1.3.2](#132---2026-08-19)
 - [1.3.1](#131---2026-08-18)
@@ -18,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [1.1.2](#112---2026-07-16)
 
 ## [Unreleased]
+
+## [1.3.4] - 2026-08-19
+
+### Security
+
+- **Flex recipe:** ship prod `html_sanitizer: allowlist` defaults and manifest (REQ-SEC-004). Prefer **`^1.3.4`** over `v1.3.3`.
 
 ## [1.3.3] - 2026-08-19
 
