@@ -3,6 +3,7 @@
 ## Table of contents
 
 - [Unreleased](#unreleased)
+- [To 1.3.2](#to-132)
 - [To 1.3.1](#to-131)
 - [To 1.3.0](#to-130)
 - [General](#general)
@@ -17,6 +18,15 @@
 
 
 ## Unreleased
+
+## To 1.3.2
+
+From **1.3.1** — Review production HTML sanitization. Shipped demo prod config enables `html_sanitizer: allowlist`. Host apps should mirror this in `config/packages/prod/nowo_tiptap_editor.yaml` when rendering untrusted editor HTML.
+
+```bash
+composer update nowo-tech/tiptap-editor-bundle
+php bin/console cache:clear
+```
 
 ## To 1.3.1
 
