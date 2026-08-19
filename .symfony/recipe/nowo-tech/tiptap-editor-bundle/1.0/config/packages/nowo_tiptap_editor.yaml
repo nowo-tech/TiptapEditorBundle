@@ -1,0 +1,14 @@
+nowo_tiptap_editor:
+    default_profile: default
+    profiles:
+        default:
+            variant: default
+            toolbar: true
+            min_height: 240px
+            form_theme: form_div_layout.html.twig
+            debug: false
+            theme: light
+
+when@prod:
+    nowo_tiptap_editor:
+        html_sanitizer: allowlist
