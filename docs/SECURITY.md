@@ -10,19 +10,20 @@
 
 ## Security considerations for integrators
 
-- **HTML and XSS**: This bundle stores **HTML** produced by the Tiptap editor in a form field. By default the bundle does **not** sanitize HTML (BC). For user-generated content you should enable the optional server-side sanitizer (or sanitize in your app before persist/render).
-- **Optional HTML sanitizer (opt-in)**: Set `nowo_tiptap_editor.html_sanitizer` to `allowlist` to use the built-in allowlist sanitizer (`AllowlistTiptapHtmlSanitizer`), or to a service id implementing `TiptapHtmlSanitizerInterface`. When configured, `TiptapEditorType` applies a model transformer that sanitizes on submit (`reverseTransform`). Example:
+- **HTML and XSS**: This bundle stores **HTML** produced by the Tiptap editor in a form field. The DI default leaves `html_sanitizer` unset (BC for trusted-editor apps). **Flex recipe `when@prod`** enables `html_sanitizer: allowlist` so production installs sanitize on submit by default.
+- **HTML sanitizer**: Set `nowo_tiptap_editor.html_sanitizer` to `allowlist` (`AllowlistTiptapHtmlSanitizer`) or a service id implementing `TiptapHtmlSanitizerInterface`. When configured, `TiptapEditorType` applies a model transformer that sanitizes on submit (`reverseTransform`). Example:
 
   ```yaml
-  # config/packages/nowo_tiptap_editor.yaml
-  nowo_tiptap_editor:
-      html_sanitizer: allowlist
-      # or: html_sanitizer: App\Security\MyHtmlSanitizer
+  # Flex recipe / config/packages/prod (also shipped as when@prod)
+  when@prod:
+      nowo_tiptap_editor:
+          html_sanitizer: allowlist
   ```
 
-  Leaving `html_sanitizer` unset/`null` keeps previous behaviour (no server-side sanitization). Client-side filtering alone is not sufficient for UGC.
+  Leaving `html_sanitizer` unset/`null` (typical in `dev`/`test`) keeps previous behaviour. Do **not** disable the prod recipe allowlist for untrusted editors. Client-side filtering alone is not sufficient for UGC.
 - **Script tags**: The widget injects a single script (`tiptap-editor.js`) from your published assets. Load it only from trusted sources and use standard Symfony `assets:install` / AssetMapper hygiene.
-- **Admin-only fields**: If only trusted staff edit rich text, document that policy and still validate output in line with your threat model.
+- **Admin-only fields**: If only trusted staff edit rich text, you may keep sanitizer off in non-prod; still validate output for your threat model.
+- **AI security audit (REQ-SEC-004)**: **Pass (good)** — overall **Low** (re-audit **2026-08-20**). Residual: host must keep Flex `when@prod` allowlist (or equivalent) when rendering UGC; upload/file endpoints remain app-owned.
 
 ## Bundle responsibility
 
@@ -55,7 +56,7 @@ Before tagging a release, confirm:
 | **SECURITY.md** | This document is current and linked from the README where applicable. |
 | **`.gitignore` and `.env`** | `.env` and local env files are ignored; no committed secrets. |
 | **No secrets in repo** | No API keys, passwords, or tokens in tracked files. |
-| **HTML / XSS** | Opt-in `html_sanitizer` documented; default remains off (BC); integrators must enable for UGC. |
+| **HTML / XSS** | Flex `when@prod` sets `html_sanitizer: allowlist`; DI default remains null for BC in non-prod. |
 | **Input / output** | Form options validated; user HTML is not executed server-side by the bundle. |
 | **Dependencies** | `composer audit` run; issues triaged. |
 | **Logging** | Logs do not print secrets or session identifiers unnecessarily. |

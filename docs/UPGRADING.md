@@ -21,6 +21,14 @@
 
 ## Unreleased
 
+## To 1.3.5
+
+From **1.3.4** — No application upgrade steps (SECURITY re-audit docs only).
+
+```bash
+composer update nowo-tech/tiptap-editor-bundle
+```
+
 ## To 1.3.4
 
 From **1.3.3** — Review shipped Flex recipe prod `nowo_tiptap_editor.yaml` sanitizer defaults.

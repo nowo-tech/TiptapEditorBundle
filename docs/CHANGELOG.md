@@ -20,6 +20,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.5] - 2026-08-20
+
+### Documentation
+
+- **SECURITY.md / REQ-SEC-004:** re-audit **Pass (good)** — Flex `when@prod` `html_sanitizer: allowlist` is the production default path.
+
 ## [1.3.4] - 2026-08-19
 
 ### Security
