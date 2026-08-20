@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Table of contents
 
 - [Unreleased](#unreleased)
+- [1.3.6](#136---2026-08-20)
+- [1.3.5](#135---2026-08-20)
 - [1.3.4](#134---2026-08-19)
 - [1.3.3](#133---2026-08-19)
 - [1.3.2](#132---2026-08-19)
@@ -19,6 +21,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [1.1.2](#112---2026-07-16)
 
 ## [Unreleased]
+
+## [1.3.6] - 2026-08-20
+
+### Changed
+
+- **Allowlist sanitizer:** keep `figure` / `figcaption` / `h5` / `h6` / `sub` / `sup` / `mark` / `caption` so production `html_sanitizer: allowlist` is less lossy for typical Tiptap markup.
+
+### Documentation
+
+- **UPGRADING.md:** production Flex recipe enables the sanitizer; list kept tags and how to supply a custom sanitizer.
+
+[1.3.6]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.3.6
 
 ## [1.3.5] - 2026-08-20
 

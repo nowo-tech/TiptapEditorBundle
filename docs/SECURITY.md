@@ -20,7 +20,7 @@
           html_sanitizer: allowlist
   ```
 
-  Leaving `html_sanitizer` unset/`null` (typical in `dev`/`test`) keeps previous behaviour. Do **not** disable the prod recipe allowlist for untrusted editors. Client-side filtering alone is not sufficient for UGC.
+  Leaving `html_sanitizer` unset/`null` (typical in `dev`/`test`) keeps previous behaviour. Do **not** disable the prod recipe allowlist for untrusted editors. The built-in allowlist keeps common block/inline tags (`p`, headings `h1`–`h6`, lists, tables, `figure`/`figcaption`, `sub`/`sup`/`mark`, YouTube/Vimeo `iframe`) and strips scripts, event handlers, and unknown tags. Client-side filtering alone is not sufficient for UGC.
 - **Script tags**: The widget injects a single script (`tiptap-editor.js`) from your published assets. Load it only from trusted sources and use standard Symfony `assets:install` / AssetMapper hygiene.
 - **Admin-only fields**: If only trusted staff edit rich text, you may keep sanitizer off in non-prod; still validate output for your threat model.
 - **AI security audit (REQ-SEC-004)**: **Pass (good)** — overall **Low** (re-audit **2026-08-20**). Residual: host must keep Flex `when@prod` allowlist (or equivalent) when rendering UGC; upload/file endpoints remain app-owned.

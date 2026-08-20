@@ -65,4 +65,18 @@ final class AllowlistTiptapHtmlSanitizerTest extends TestCase
         self::assertStringNotContainsString('iframe', $result);
         self::assertStringContainsString('<p>ok</p>', $result);
     }
+
+    public function testKeepsCommonBlockAndInlineMarkup(): void
+    {
+        $sanitizer = new AllowlistTiptapHtmlSanitizer();
+        $html      = '<figure><img src="/x.png"><figcaption>Cap</figcaption></figure><h5>H</h5><p>a<sub>2</sub><sup>3</sup><mark>m</mark></p>';
+        $result    = $sanitizer->sanitize($html);
+
+        self::assertStringContainsString('<figure>', $result);
+        self::assertStringContainsString('<figcaption>', $result);
+        self::assertStringContainsString('<h5>', $result);
+        self::assertStringContainsString('<sub>', $result);
+        self::assertStringContainsString('<sup>', $result);
+        self::assertStringContainsString('<mark>', $result);
+    }
 }

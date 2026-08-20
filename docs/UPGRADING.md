@@ -3,6 +3,8 @@
 ## Table of contents
 
 - [Unreleased](#unreleased)
+- [To 1.3.6](#to-136)
+- [To 1.3.5](#to-135)
 - [To 1.3.4](#to-134)
 - [To 1.3.3](#to-133)
 - [To 1.3.2](#to-132)
@@ -20,6 +22,23 @@
 
 
 ## Unreleased
+
+## To 1.3.6
+
+From **1.3.5** — If production uses `html_sanitizer: allowlist` (Flex recipe `when@prod`, **not** applied automatically to YAML you already copied), submitted HTML is **lossy**.
+
+**Kept tags:** `p`, `br`, `strong`, `b`, `em`, `i`, `u`, `s`, `del`, `h1`–`h6`, `ul`, `ol`, `li`, `blockquote`, `code`, `pre`, `a`, `img`, `table`, `thead`, `tbody`, `tr`, `th`, `td`, `caption`, `hr`, `span`, `div`, `figure`, `figcaption`, `sub`, `sup`, `mark`, `iframe` (YouTube / Vimeo hosts only).
+
+**Stripped:** `<script>`, event handlers, `javascript:` URLs, unknown tags, iframes from other hosts.
+
+1. Re-copying or merging the Flex recipe into an existing app **enables** the sanitizer in `prod` even if you previously had none — review stored HTML after the first prod deploy.
+2. If the allowlist still drops markup you need, set `html_sanitizer` to your own service id implementing `TiptapHtmlSanitizerInterface` (do not disable sanitization for untrusted UGC).
+3. Trusted-staff-only editors may keep `html_sanitizer` unset (PHP default) — document that choice.
+
+```bash
+composer update nowo-tech/tiptap-editor-bundle
+php bin/console cache:clear --env=prod
+```
 
 ## To 1.3.5
 

@@ -14,7 +14,7 @@ use const PHP_URL_HOST;
  */
 final class AllowlistTiptapHtmlSanitizer implements TiptapHtmlSanitizerInterface
 {
-    private const ALLOWED_TAGS = '<p><br><strong><b><em><i><u><s><del><h1><h2><h3><h4><ul><ol><li><blockquote><code><pre><a><img><table><thead><tbody><tr><th><td><hr><span><div><iframe>';
+    private const ALLOWED_TAGS = '<p><br><strong><b><em><i><u><s><del><h1><h2><h3><h4><h5><h6><ul><ol><li><blockquote><code><pre><a><img><table><thead><tbody><tr><th><td><caption><hr><span><div><figure><figcaption><sub><sup><mark><iframe>';
 
     /** @var list<string> */
     private const ALLOWED_EMBED_HOSTS = [
