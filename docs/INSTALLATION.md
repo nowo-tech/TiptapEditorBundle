@@ -11,6 +11,10 @@
 composer require nowo-tech/tiptap-editor-bundle:^1.0
 ```
 
+### With Symfony Flex
+
+If you use Symfony Flex, the recipe in this repository (`.symfony/recipe/nowo-tech/tiptap-editor-bundle/1.0/`) registers the bundle and copies `config/packages/nowo_tiptap_editor.yaml` (named profiles). Until the recipe is published in [symfony/recipes-contrib](https://github.com/symfony/recipes-contrib), you can point Flex at this stub or register the bundle and config manually as below.
+
 Symfony Flex usually registers the bundle. If not:
 
 ```php
