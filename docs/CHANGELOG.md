@@ -22,6 +22,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+## [1.3.7] - 2026-08-24
+
+### Changed
+
+- **QA:** add `phpstan-frankenphp` extension (REQ-CS-005).
+- **Docs:** Flex recipe installation notes (REQ-RECIPE-001).
+- **Docs:** PHP-FIG PSR evaluation (REQ-CS-007).
+
+### Notes
+
+- **No API or configuration changes** for integrators unless noted above.
+
+[1.3.7]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.3.7
+
 ## [1.3.6] - 2026-08-20
 
 ### Changed

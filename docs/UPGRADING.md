@@ -2,6 +2,8 @@
 
 ## Table of contents
 
+
+- [From 1.3.6 to 1.3.7](#from-136-to-137)
 - [Unreleased](#unreleased)
 - [To 1.3.6](#to-136)
 - [To 1.3.5](#to-135)
@@ -19,6 +21,22 @@
 - [To 1.1.1](#to-111)
 - [To 1.1.0](#to-110)
 - [To 1.0.0](#to-100)
+
+## From 1.3.6 to 1.3.7
+
+No breaking changes. **No application upgrade steps.**
+
+```bash
+composer update nowo-tech/tiptap-editor-bundle
+```
+
+## From 1.3.6 to 1.3.7
+
+No breaking changes. **No application upgrade steps.**
+
+```bash
+composer update nowo-tech/tiptap-editor-bundle
+```
 
 
 ## Unreleased
