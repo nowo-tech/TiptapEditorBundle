@@ -3,6 +3,7 @@
 ## Table of contents
 
 
+- [From 1.3.7 to 1.3.8](#from-137-to-138)
 - [From 1.3.6 to 1.3.7](#from-136-to-137)
 - [Unreleased](#unreleased)
 - [To 1.3.6](#to-136)
@@ -22,7 +23,7 @@
 - [To 1.1.0](#to-110)
 - [To 1.0.0](#to-100)
 
-## From 1.3.6 to 1.3.7
+## From 1.3.7 to 1.3.8
 
 No breaking changes. **No application upgrade steps.**
 
@@ -30,6 +31,8 @@ No breaking changes. **No application upgrade steps.**
 composer update nowo-tech/tiptap-editor-bundle
 ```
 
+**Maintainers / operators:** the bundle is documented as FrankenPHP worker-safe with kernel **not** reset ([`FRANKENPHP-WORKER-AUDIT.md`](FRANKENPHP-WORKER-AUDIT.md)). If you inject a custom `html_sanitizer` service, keep it stateless (or implement `ResetInterface`).
+
 ## From 1.3.6 to 1.3.7
 
 No breaking changes. **No application upgrade steps.**
@@ -37,7 +40,6 @@ No breaking changes. **No application upgrade steps.**
 ```bash
 composer update nowo-tech/tiptap-editor-bundle
 ```
-
 
 ## Unreleased
 

@@ -57,7 +57,8 @@ The sections below state **behavior**; this subsection states **intent** in back
 
 | ID | Where | What it marks |
 | --- | --- | --- |
-| **REQ-MAKE-008** | `Makefile`, `demo/Makefile`, `demo/symfony8/Makefile`, `demo/symfony8/Makefile` | **`update-deps`** (root bundle): Composer update in a one-off container. **`update-deps`** / **`update-deps-all`** (demos): per-demo or all-demo Composer refresh, then start containers and warm Symfony cache. Demo includes require `COMPOSE` and `SERVICE_PHP` before the shared fragment. |
+| **REQ-MAKE-008** | `Makefile`, `demo/Makefile`, `demo/symfony8/Makefile` | **`update-deps`** (root bundle): Composer update in a one-off container. **`update-deps`** / **`update-deps-all`** (demos): per-demo or all-demo Composer refresh, then start containers and warm Symfony cache. Demo includes require `COMPOSE` and `SERVICE_PHP` before the shared fragment. |
+| **REQ-WORKER-001** | `docs/FRANKENPHP-WORKER-AUDIT.md`, `tests/Unit/FrankenPhpWorkerSafetyTest.php` | Bundle shared services stay worker-safe with kernel **not** reset (no mutable per-request state). |
 
 When you change scripted behavior, **update the existing `REQ-*` comment** if the ID still matches the rule, or **add a new `REQ-*`** and document it here and in the PR description.
 

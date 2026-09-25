@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Table of contents
 
 - [Unreleased](#unreleased)
+- [1.3.8](#138---2026-09-25)
+- [1.3.7](#137---2026-08-24)
 - [1.3.6](#136---2026-08-20)
 - [1.3.5](#135---2026-08-20)
 - [1.3.4](#134---2026-08-19)
@@ -22,6 +24,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+## [1.3.8] - 2026-09-25
+
+### Added
+
+- **FrankenPHP worker audit** ([`docs/FRANKENPHP-WORKER-AUDIT.md`](FRANKENPHP-WORKER-AUDIT.md)): confirms **100%** compatibility with worker mode when the kernel is **not** reset between requests (scenario B).
+- PHPUnit **`FrankenPhpWorkerSafetyTest`**: asserts shared services have no static / non-readonly instance properties (**FR-WORKER-001**).
+
+### Changed
+
+- Specs baseline: **FR-WORKER-001**, **FR-SEC-001**; code inventory updated for sanitizer classes (34 production sources).
+- Docs: [`DEMO-FRANKENPHP.md`](DEMO-FRANKENPHP.md) aligned with `demo/symfony8` + `FRANKENPHP_MODE`; README links the worker audit.
+- Dev **`composer.lock`**: refreshed tooling / Symfony patch versions.
+
+### Notes
+
+- **No PHP form type or YAML schema changes** for integrators.
+- Custom `html_sanitizer` services remain host-owned: they must stay worker-safe (see audit).
 
 ## [1.3.7] - 2026-08-24
 
@@ -344,7 +364,8 @@ First stable release published on GitHub.
 - Development workflow: Docker, Makefile, PHPUnit, PHPStan, PHP-CS-Fixer, Vitest on shared TS utilities.
 - Demos: Symfony 7 and 8 sample apps under `demo/` (FrankenPHP).
 
-[Unreleased]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.3.1...HEAD
+[Unreleased]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.3.8...HEAD
+[1.3.8]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.3.8
 [1.2.3]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.2.2...v1.2.3
 [1.2.2]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.2.1...v1.2.2
 [1.2.1]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.2.0...v1.2.1

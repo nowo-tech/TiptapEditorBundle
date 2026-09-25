@@ -9,7 +9,7 @@
 
 ![FrankenPHP Friendly Worker Mode](docs/images/frankenphp-friendly.png)
 
-This bundle is **FrankenPHP worker mode friendly**.
+This bundle is **FrankenPHP worker mode friendly** (including **kernel not reset** between requests). Audit: [docs/FRANKENPHP-WORKER-AUDIT.md](docs/FRANKENPHP-WORKER-AUDIT.md).
 
 ## Features
 
@@ -20,7 +20,7 @@ This bundle is **FrankenPHP worker mode friendly**.
 - **pnpm + Vite** frontend; **Vitest** on the bundle logger and the widget lifecycle (custom element).
 - **Form submit:** before POST, the bundle syncs ProseMirror HTML into each hidden Symfony textarea (capture-phase `submit`); see [Usage](docs/USAGE.md).
 - **Dockerfile + Makefile** workflow matching other Nowo bundles.
-- **Demos**: Symfony 7 & 8 under `demo/` (FrankenPHP).
+- **Demo**: Symfony 8 under `demo/symfony8` (FrankenPHP; `FRANKENPHP_MODE=worker` by default).
 
 ## Quick start
 
@@ -43,7 +43,7 @@ $builder->add('article', TiptapEditorType::class, ['label' => 'Article']);
 
 ## Demo preview
 
-**Editor variants** in the Symfony demo app (profiles from `config/packages/nowo_tiptap_editor.yaml`: full reference, `simple`, `notion`, `agent`, `headless`). Start a demo with `make -C demo up-symfony8` or `make -C demo up-symfony8`, then open the **Variants** route in the browser.
+**Editor variants** in the Symfony demo app (profiles from `config/packages/nowo_tiptap_editor.yaml`: full reference, `simple`, `notion`, `agent`, `headless`). Start the demo with `make -C demo up-symfony8`, then open the **Variants** route in the browser.
 
 ![Editor variants — Symfony demo screenshot](docs/images/demo-editor-variants.png)
 
@@ -86,6 +86,7 @@ make -C demo up-symfony8
 ### Additional documentation
 
 - [Demo with FrankenPHP (development and production)](docs/DEMO-FRANKENPHP.md)
+- [FrankenPHP worker audit (kernel not reset)](docs/FRANKENPHP-WORKER-AUDIT.md)
 - [GitHub Actions CI requirements](docs/GITHUB_CI.md)
 
 ## Tests and coverage

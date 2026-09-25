@@ -2,7 +2,7 @@
 
 **Baseline spec**: [`spec.md`](spec.md)  
 **Package**: `nowo-tech/tiptap-editor-bundle`  
-**Last audited**: 2026-07-07
+**Last audited**: 2026-09-25
 
 Production scope excludes Vitest sources (`*.test.ts`).
 
@@ -15,9 +15,12 @@ Production scope excludes Vitest sources (`*.test.ts`).
 | `DependencyInjection/NowoTiptapEditorExtension.php` | DI extension | FR-CFG-002 |
 | `DependencyInjection/Compiler/TwigPathsPass.php` | Twig namespace | FR-TWIG-001 |
 | `EditorVariant.php` | UX presets enum | FR-VARIANT-001 |
-| `Form/TiptapEditorType.php` | Rich text form type | FR-FORM-001 |
+| `Form/TiptapEditorType.php` | Rich text form type | FR-FORM-001, FR-WORKER-001 |
+| `Form/DataTransformer/TiptapHtmlSanitizeTransformer.php` | Sanitize on submit | FR-SEC-001 |
+| `Security/AllowlistTiptapHtmlSanitizer.php` | Allowlist sanitizer | FR-SEC-001, FR-WORKER-001 |
+| `Security/TiptapHtmlSanitizerInterface.php` | Sanitizer contract | FR-SEC-001 |
 | `TiptapExample.php` | Doc/demo samples | FR-EXAMPLE-001 |
-| `Twig/NowoTiptapEditorTwigExtension.php` | Twig helpers | FR-TWIG-EXT-001 |
+| `Twig/NowoTiptapEditorTwigExtension.php` | Twig helpers | FR-TWIG-EXT-001, FR-WORKER-001 |
 
 ## TypeScript production (`src/Resources/assets/src/`)
 
@@ -71,12 +74,12 @@ Production scope excludes Vitest sources (`*.test.ts`).
 
 | Category | Files | Mapped |
 | --- | ---: | ---: |
-| PHP classes | 8 | 8 |
+| PHP classes | 11 | 11 |
 | TS production | 3 | 3 |
 | Legacy JS | 1 | 1 |
 | YAML config | 1 | 1 |
 | Twig themes | 11 | 11 |
 | Translations | 7 | 7 |
-| **Total production sources** | **31** | **31** |
+| **Total production sources** | **34** | **34** |
 
 Excluded: `logger.test.ts`, `tiptap-editor.lifecycle.test.ts`.

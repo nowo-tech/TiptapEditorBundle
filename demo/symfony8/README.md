@@ -1,6 +1,6 @@
-# Icon Selector Bundle — Demo (Symfony 8)
+# Tiptap Editor Bundle — Demo (Symfony 8)
 
-This demo runs with **FrankenPHP** (Caddy, HTTP on port 80). In **dev** (`APP_ENV=dev`), worker mode is disabled so each request runs in a new PHP process and **code/template changes are visible on refresh** without restarting the container.
+This demo runs with **FrankenPHP** (Caddy, HTTP on port 80). Runtime mode is selected with **`FRANKENPHP_MODE`** (`worker` by default, or `classic` for per-request PHP so Twig/PHP changes apply on refresh). See [DEMO-FRANKENPHP.md](../../docs/DEMO-FRANKENPHP.md).
 
 ## Quick start
 

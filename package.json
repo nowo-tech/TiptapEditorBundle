@@ -1,6 +1,6 @@
 {
   "name": "@nowo-tech/tiptap-editor-bundle",
-  "version": "1.2.0",
+  "version": "1.3.8",
   "description": "Vite + Tiptap build for Tiptap Editor Bundle (TypeScript)",
   "private": true,
   "packageManager": "pnpm@10.32.1",

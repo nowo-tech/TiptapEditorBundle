@@ -93,22 +93,29 @@ As a template author, I render read-only HTML or iframe embeds via Twig function
 - **FR-I18N-001**: Translation catalogs (`de`, `en`, `es`, `fr`, `it`, `nl`, `pt`) MUST cover bundle UI strings.
 - **FR-BUILD-001**: Vite MUST emit `tiptap-editor.js` from `Resources/assets/src/` before Packagist releases when sources change.
 
+### Security & FrankenPHP worker
+
+- **FR-SEC-001**: When `html_sanitizer: allowlist` is configured, submitted HTML MUST be sanitized via `AllowlistTiptapHtmlSanitizer` / `TiptapHtmlSanitizeTransformer` before model binding.
+- **FR-WORKER-001**: Shared container services (`TiptapEditorType`, `AllowlistTiptapHtmlSanitizer`, `NowoTiptapEditorTwigExtension`) MUST NOT keep mutable per-request state (no non-readonly instance properties, no static mutable properties), so the bundle remains safe under FrankenPHP worker mode with kernel **not** reset between requests. Documented in [`docs/FRANKENPHP-WORKER-AUDIT.md`](../../docs/FRANKENPHP-WORKER-AUDIT.md); guarded by `FrankenPhpWorkerSafetyTest`.
+
 ---
 
 ## Success Criteria
 
-- **SC-001**: 31/31 production files mapped in [`code-inventory.md`](code-inventory.md) (`*.test.ts` excluded).
+- **SC-001**: Production files mapped in [`code-inventory.md`](code-inventory.md) (`*.test.ts` excluded).
 - **SC-002**: Profile keys in docs match `Configuration.php`.
 - **SC-003**: `composer qa` and Vitest pass.
 - **SC-004**: Demo forms persist HTML round-trip for each documented variant.
+- **SC-005**: PHPUnit `FrankenPhpWorkerSafetyTest` passes for all shared service classes.
+- **SC-006**: PHPStan includes `phpstan-frankenphp` classic + worker rulesets.
 
 ---
 
 ## Explicit non-goals
 
-- Server-side HTML sanitization policy (host app responsibility unless documented elsewhere).
 - Collaborative/real-time editing.
-- File upload/image storage backend.
+- File upload/image storage backend beyond iframe URL embeds.
+- Guaranteeing custom `html_sanitizer` implementations stay worker-safe (host responsibility; see audit).
 
 ---
 
