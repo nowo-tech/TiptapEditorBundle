@@ -12,6 +12,8 @@ use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionProperty;
 
+use function sprintf;
+
 /**
  * Guards FrankenPHP worker mode with kernel not reset between requests (scenario B).
  *
