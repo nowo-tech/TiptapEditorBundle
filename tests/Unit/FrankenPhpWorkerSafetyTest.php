@@ -65,7 +65,5 @@ final class FrankenPhpWorkerSafetyTest extends TestCase
             $checked,
             sprintf('%s was inspected for mutable instance state.', $class),
         );
-        // Classes with only constants (sanitizer, Twig extension) still pass when $checked === 0.
-        self::assertTrue(true);
     }
 }
