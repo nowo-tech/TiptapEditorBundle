@@ -6,6 +6,7 @@
 - [From 1.3.7 to 1.3.8](#from-137-to-138)
 - [From 1.3.6 to 1.3.7](#from-136-to-137)
 - [Unreleased](#unreleased)
+- [To 1.3.10](#to-1310)
 - [To 1.3.9](#to-139)
 - [To 1.3.6](#to-136)
 - [To 1.3.5](#to-135)
@@ -43,6 +44,14 @@ composer update nowo-tech/tiptap-editor-bundle
 ```
 
 ## Unreleased
+
+## To 1.3.10
+
+From **1.3.9** — dependency refresh only. No breaking changes. No application upgrade steps.
+
+```bash
+composer update nowo-tech/tiptap-editor-bundle
+```
 
 ## To 1.3.9
 
