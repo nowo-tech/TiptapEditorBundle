@@ -5,6 +5,7 @@
 - [From 1.3.7 to 1.3.8](#from-137-to-138)
 - [From 1.3.6 to 1.3.7](#from-136-to-137)
 - [Unreleased](#unreleased)
+- [To 1.4.0](#to-140)
 - [To 1.3.11](#to-1311)
 - [To 1.3.10](#to-1310)
 - [To 1.3.9](#to-139)
@@ -44,6 +45,14 @@ composer update nowo-tech/tiptap-editor-bundle
 ```
 
 ## Unreleased
+
+## To 1.4.0
+
+From **1.3.11** — security: allowlist sanitizer rebuilt on symfony/html-sanitizer, embed URLs validated, translated prompts.
+
+```bash
+composer update nowo-tech/tiptap-editor-bundle
+```
 
 - **Sanitizer (`html_sanitizer: allowlist`)**: stricter output. Unknown attributes (event handlers, `srcdoc`, `id`, arbitrary `data-*`, `style` other than `text-align: …`) are removed, `javascript:`/`data:` URLs are dropped, and unknown elements are removed (formatting wrappers such as `<section>`, `<label>` or `<font>` are unwrapped, keeping their text). Iframes need an https `src` on the YouTube/Vimeo allowlist; register your own `AllowlistTiptapHtmlSanitizer` service with a custom host list if you embed other providers. Content is re-sanitized only when the form is submitted again.
 - **Embed iframes in the editor**: only `https://` URLs are accepted (existing non-https iframes are dropped when loaded into the editor).
