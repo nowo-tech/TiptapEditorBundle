@@ -4,7 +4,7 @@
 
 import { Editor } from '@tiptap/core';
 import StarterKit from '@tiptap/starter-kit';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { EmbedIframe, safeEmbedSrc } from './embed-iframe';
 import { readPromptLabels, runIframePrompt } from './tiptap-editor';
@@ -53,8 +53,16 @@ describe('safeEmbedSrc', () => {
 });
 
 describe('EmbedIframe node', () => {
+  beforeEach(() => {
+    // happy-dom 20 no longer implements window.prompt; install a stub so tests can spy on it.
+    if (typeof window.prompt !== 'function') {
+      vi.stubGlobal('prompt', () => null);
+    }
+  });
+
   afterEach(() => {
     vi.restoreAllMocks();
+    vi.unstubAllGlobals();
   });
 
   /** Runs the node's parse rule on a detached element (avoids happy-dom loading connected iframes). */

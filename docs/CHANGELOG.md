@@ -24,6 +24,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Requirements:** Symfony floor raised to **7.4** (`^7.4 || ^8.0`, was `^6.4 || ^7.0 || ^8.0`) so the lowest allowed version is the one CI tests (7.0 cell dropped; coverage runs on PHP 8.2 + Symfony 7.4).
+- **Docs:** `docs/CONFIGURATION.md` documents the root `html_sanitizer` key (`null` / `allowlist` / service id, sanitizes on submit).
+- **Dev:** Vitest 4 (`vitest` / `@vitest/coverage-v8` `^4.1.11`), Vite 8 and happy-dom 20 for the TS toolchain (shipped assets not rebuilt). The embed prompt tests stub `window.prompt`, which happy-dom 20 no longer provides.
+
 ## [1.4.0] - 2026-10-13
 
 ### Security

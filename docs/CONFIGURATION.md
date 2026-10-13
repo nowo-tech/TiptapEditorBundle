@@ -12,11 +12,22 @@
 
 Root key: `nowo_tiptap_editor`
 
+```yaml
+nowo_tiptap_editor:
+    default_profile: default
+    html_sanitizer: allowlist # or null (default) or a service id implementing TiptapHtmlSanitizerInterface
+    profiles:
+        default:
+            toolbar: true
+            min_height: 240px
+```
+
 ## Top-level
 
 | Option            | Type   | Default   | Description |
 |-------------------|--------|-----------|-------------|
 | `default_profile` | string | `default` | Profile name used when a form field omits the `config` option. **Must** exist as a key under `profiles`. |
+| `html_sanitizer`  | string\|null | `null` | Server-side HTML sanitization on submit. `null` / empty (default, BC) stores the editor HTML as submitted. `allowlist` uses the built-in `Nowo\TiptapEditorBundle\Security\AllowlistTiptapHtmlSanitizer` (built on `symfony/html-sanitizer`). Any other value is a **service id** implementing `Nowo\TiptapEditorBundle\Security\TiptapHtmlSanitizerInterface`. When set, `TiptapEditorType` adds a model transformer that sanitizes on `reverseTransform` (submit). The Flex recipe enables `allowlist` under `when@prod`. Applies to every profile. See [SECURITY.md](SECURITY.md). |
 | `profiles`        | map    | —         | Named profiles. At least one profile is required (or use [legacy flat](#legacy-keys-and-flat-yaml) input, which creates `profiles.default`). |
 
 ## Per profile (`profiles.<name>`)
@@ -36,6 +47,8 @@ Root key: `nowo_tiptap_editor`
 - **Flat layout:** If the root has no `profiles` (nor legacy `configs`) key, the extension treats these keys (when present) as a single profile and maps them to `profiles` under the name given by `default_profile` (default `default`):
 
 - `toolbar`, `min_height`, `form_theme`, `debug`, `variant`, `theme`
+
+`html_sanitizer` is not a profile key: it stays at the root in both layouts.
 
 ## Form type `TiptapEditorType` options
 

@@ -46,6 +46,8 @@ composer update nowo-tech/tiptap-editor-bundle
 
 ## Unreleased
 
+- **Symfony 7.4+ required** (`^7.4 || ^8.0`). Apps on Symfony 6.4 or 7.0–7.3 stay on 1.4.x until they upgrade Symfony.
+
 ## To 1.4.0
 
 From **1.3.11** — security: allowlist sanitizer rebuilt on symfony/html-sanitizer, embed URLs validated, translated prompts.

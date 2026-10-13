@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5d9bc066e1b98436fd91865fce0bcddc",
+    "content-hash": "b6394e959dad7d2750e96127b3d8c374",
     "packages": [
         {
             "name": "league/uri",
