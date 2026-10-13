@@ -45,6 +45,10 @@ composer update nowo-tech/tiptap-editor-bundle
 
 ## Unreleased
 
+- **Sanitizer (`html_sanitizer: allowlist`)**: stricter output. Unknown attributes (event handlers, `srcdoc`, `id`, arbitrary `data-*`, `style` other than `text-align: …`) are removed, `javascript:`/`data:` URLs are dropped, and unknown elements are removed (formatting wrappers such as `<section>`, `<label>` or `<font>` are unwrapped, keeping their text). Iframes need an https `src` on the YouTube/Vimeo allowlist; register your own `AllowlistTiptapHtmlSanitizer` service with a custom host list if you embed other providers. Content is re-sanitized only when the form is submitted again.
+- **Embed iframes in the editor**: only `https://` URLs are accepted (existing non-https iframes are dropped when loaded into the editor).
+- If you override the `tiptap_editor_widget` block, add the `data-tiptap-prompt-*-value` attributes to get translated prompts (English fallback otherwise).
+
 ## To 1.3.11
 
 From **1.3.10** — dependency refresh and repository maintenance.

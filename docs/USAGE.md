@@ -52,7 +52,7 @@ The `<nowo-tiptap-editor>` host uses the **custom elements** lifecycle (`connect
 
 When the resolved `toolbar` option is `true`, the bundle renders a compact bar (bold, italic, lists, undo/redo, etc.). The **`variant`** from the active YAML profile controls layout/CSS presets (`simple`, `notion`, `agent`, `headless`, …).
 
-**`notion` variant:** bubble menu on text selection (formatting + link) and a floating **Insert** menu on empty paragraphs (link, image, embed iframe, bullet list). **Ctrl/Cmd+K** opens the link prompt. Double-click an **image** or **iframe** to edit its URL. Embed iframes in saved HTML are preserved when the document is loaded back into the editor.
+**`notion` variant:** bubble menu on text selection (formatting + link) and a floating **Insert** menu on empty paragraphs (link, image, embed iframe, bullet list). **Ctrl/Cmd+K** opens the link prompt. Double-click an **image** or **iframe** to edit its URL. Embed iframes in saved HTML are preserved when the document is loaded back into the editor (only `https://` embed URLs are accepted). Prompt labels are translated via the `NowoTiptapEditorBundle` domain (`tiptap_prompt_*` keys).
 
 ## Examples hub parity
 

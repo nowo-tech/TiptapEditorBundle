@@ -1,1 +1,4 @@
 tiptap_placeholder: 'Begin met typen…'
+tiptap_prompt_link_url: 'URL'
+tiptap_prompt_image_url: 'Afbeeldings-URL'
+tiptap_prompt_embed_url: 'Insluit-URL (iframe)'

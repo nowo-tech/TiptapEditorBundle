@@ -28,7 +28,7 @@ import StarterKit from '@tiptap/starter-kit';
 import { common, createLowlight } from 'lowlight';
 
 import { createBundleLogger } from './logger';
-import { EmbedIframe } from './embed-iframe';
+import { EmbedIframe, safeEmbedSrc } from './embed-iframe';
 
 declare const __TIPTAP_EDITOR_BUILD_TIME__: string;
 
@@ -133,9 +133,40 @@ export type ToolbarBtn = {
   run: () => void;
 };
 
+/** Translated `window.prompt` labels (rendered by the form theme as `data-tiptap-prompt-*-value`). */
+export type PromptLabels = {
+  linkUrl: string;
+  imageUrl: string;
+  embedUrl: string;
+};
+
+const DEFAULT_PROMPT_LABELS: PromptLabels = {
+  linkUrl: 'URL',
+  imageUrl: 'Image URL',
+  embedUrl: 'Embed URL (iframe)',
+};
+
+/** Per-editor prompt labels, keyed by the live editor instance. */
+const editorPromptLabels = new WeakMap<Editor, PromptLabels>();
+
+/** Reads the prompt labels from a widget root, falling back to English defaults. */
+export function readPromptLabels(root: HTMLElement): PromptLabels {
+  const pick = (value: string | undefined, fallback: string): string =>
+    value !== undefined && value.trim() !== '' ? value : fallback;
+  return {
+    linkUrl: pick(root.dataset.tiptapPromptLinkUrlValue, DEFAULT_PROMPT_LABELS.linkUrl),
+    imageUrl: pick(root.dataset.tiptapPromptImageUrlValue, DEFAULT_PROMPT_LABELS.imageUrl),
+    embedUrl: pick(root.dataset.tiptapPromptEmbedUrlValue, DEFAULT_PROMPT_LABELS.embedUrl),
+  };
+}
+
+function promptLabels(editor: Editor): PromptLabels {
+  return editorPromptLabels.get(editor) ?? DEFAULT_PROMPT_LABELS;
+}
+
 function runLinkPrompt(editor: Editor): void {
   const prev = editor.getAttributes('link').href as string | undefined;
-  const url = window.prompt('URL', prev ?? 'https://');
+  const url = window.prompt(promptLabels(editor).linkUrl, prev ?? 'https://');
   if (url === null) {
     return;
   }
@@ -147,7 +178,7 @@ function runLinkPrompt(editor: Editor): void {
 }
 
 function runImagePrompt(editor: Editor, existingSrc?: string): void {
-  const url = window.prompt('URL de imagen', existingSrc ?? 'https://');
+  const url = window.prompt(promptLabels(editor).imageUrl, existingSrc ?? 'https://');
   if (url === null || url.trim() === '') {
     return;
   }
@@ -158,21 +189,36 @@ function runImagePrompt(editor: Editor, existingSrc?: string): void {
   editor.chain().focus().setImage({ src: url.trim() }).run();
 }
 
-function runIframePrompt(editor: Editor, existingSrc?: string): void {
-  const url = window.prompt('URL del embed (iframe)', existingSrc ?? 'https://');
+/**
+ * Asks for an embed URL and inserts/updates an `embedIframe` node through the editor API
+ * (never via an HTML string). Non-https URLs (e.g. `javascript:`) and hosts outside the
+ * extension's `allowedHosts` are rejected.
+ */
+export function runIframePrompt(editor: Editor, existingSrc?: string): void {
+  const url = window.prompt(promptLabels(editor).embedUrl, existingSrc ?? 'https://');
   if (url === null || url.trim() === '') {
     return;
   }
+  const allowedHosts =
+    (editor.extensionManager.extensions.find((ext) => ext.name === 'embedIframe')?.options as
+      | { allowedHosts?: string[] }
+      | undefined)?.allowedHosts ?? [];
+  const src = safeEmbedSrc(url, allowedHosts);
+  if (src === null) {
+    log.warn('embed URL rejected (https only)');
+    return;
+  }
   if (editor.isActive('embedIframe')) {
-    editor.chain().focus().updateAttributes('embedIframe', { src: url.trim() }).run();
+    editor.chain().focus().updateAttributes('embedIframe', { src }).run();
     return;
   }
   editor
     .chain()
     .focus()
-    .insertContent(
-      `<iframe src="${url.trim()}" width="100%" height="360" allowfullscreen="allowfullscreen"></iframe>`,
-    )
+    .insertContent({
+      type: 'embedIframe',
+      attrs: { src, width: '100%', height: '360', allowfullscreen: 'allowfullscreen' },
+    })
     .run();
 }
 
@@ -944,6 +990,7 @@ export function initTiptapRoot(root: HTMLElement): void {
   });
 
   mountedEditors.set(root, editor);
+  editorPromptLabels.set(editor, readPromptLabels(root));
 
   if (example === 'menus' && menuMount) {
     wireMenuDom(editor, menuMount);

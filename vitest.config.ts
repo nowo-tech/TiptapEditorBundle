@@ -1,7 +1,7 @@
 import { defineConfig } from 'vitest/config';
 
 /**
- * Vitest: happy-dom, coverage focused on `logger.ts` (100% threshold) per bundle standard.
+ * Vitest: happy-dom, coverage focused on `logger.ts` and `embed-iframe.ts` (100% threshold) per bundle standard.
  */
 export default defineConfig({
   test: {
@@ -12,7 +12,7 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'text-summary', 'html'],
       reportsDirectory: './coverage-ts',
-      include: ['src/Resources/assets/src/logger.ts'],
+      include: ['src/Resources/assets/src/logger.ts', 'src/Resources/assets/src/embed-iframe.ts'],
       exclude: ['**/*.test.ts', '**/node_modules/**'],
       thresholds: {
         lines: 100,

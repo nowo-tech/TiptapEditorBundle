@@ -21,6 +21,9 @@
      data-tiptap-debug-value="{{ tiptap_debug ? '1' : '0' }}"
      data-tiptap-theme-value="{{ theme|e('html_attr') }}"
      {% if tiptap_example %}data-tiptap-example-value="{{ tiptap_example|e('html_attr') }}"{% endif %}
+     data-tiptap-prompt-link-url-value="{{ 'tiptap_prompt_link_url'|trans({}, 'NowoTiptapEditorBundle')|e('html_attr') }}"
+     data-tiptap-prompt-image-url-value="{{ 'tiptap_prompt_image_url'|trans({}, 'NowoTiptapEditorBundle')|e('html_attr') }}"
+     data-tiptap-prompt-embed-url-value="{{ 'tiptap_prompt_embed_url'|trans({}, 'NowoTiptapEditorBundle')|e('html_attr') }}"
      {% if placeholder_text != '' %}data-tiptap-placeholder-value="{{ placeholder_text|e('html_attr') }}"{% endif %}>
     {% set attr = attr|merge({
         'class': (attr.class|default('') ~ ' tiptap-editor-hidden-input')|trim,

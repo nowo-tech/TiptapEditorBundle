@@ -24,6 +24,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Security
+
+- `AllowlistTiptapHtmlSanitizer` (`html_sanitizer: allowlist`) is now built on `symfony/html-sanitizer` (DOM parsing, per-element attribute allowlist). The former regex/`strip_tags` implementation could be bypassed with unquoted event handlers (`<img src=x onerror=…>`), unquoted or entity-encoded `javascript:` URLs, `style` attributes and `<iframe srcdoc>`. Links now accept only http/https/mailto (or relative) URLs, media only http/https (or relative), `style` only a plain `text-align`, and iframes only an https `src` on the embed host allowlist.
+- Embed iframe node: `src` is validated (absolute `https:` only, no credentials) when parsing HTML, when rendering and in the embed prompt; the prompt now inserts the node through the editor API instead of an unescaped HTML string, so `javascript:` URLs and attribute injection are rejected.
+
+### Added
+
+- `symfony/html-sanitizer` is now a runtime dependency.
+- `AllowlistTiptapHtmlSanitizer` accepts an optional list of embed hosts (defaults to `AllowlistTiptapHtmlSanitizer::DEFAULT_EMBED_HOSTS`: YouTube, youtube-nocookie and Vimeo).
+
+### Fixed
+
+- Link, image and embed URL prompts are translated (`tiptap_prompt_link_url`, `tiptap_prompt_image_url`, `tiptap_prompt_embed_url` in the `NowoTiptapEditorBundle` domain) and passed to the script via `data-tiptap-prompt-*-value` attributes instead of hard-coded Spanish labels.
+
 ## [1.3.11] - 2026-10-13
 
 ### Changed

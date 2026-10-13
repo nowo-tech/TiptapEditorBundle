@@ -1,1 +1,4 @@
 tiptap_placeholder: 'Commencez à taper…'
+tiptap_prompt_link_url: 'URL'
+tiptap_prompt_image_url: 'URL de l’image'
+tiptap_prompt_embed_url: 'URL d’intégration (iframe)'
