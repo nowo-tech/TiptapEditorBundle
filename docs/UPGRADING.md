@@ -2,10 +2,10 @@
 
 ## Table of contents
 
-
 - [From 1.3.7 to 1.3.8](#from-137-to-138)
 - [From 1.3.6 to 1.3.7](#from-136-to-137)
 - [Unreleased](#unreleased)
+- [To 1.3.11](#to-1311)
 - [To 1.3.10](#to-1310)
 - [To 1.3.9](#to-139)
 - [To 1.3.6](#to-136)
@@ -45,6 +45,16 @@ composer update nowo-tech/tiptap-editor-bundle
 
 ## Unreleased
 
+## To 1.3.11
+
+From **1.3.10** — dependency refresh and repository maintenance.
+
+```bash
+composer update nowo-tech/tiptap-editor-bundle
+```
+
+- No breaking changes. No application upgrade steps.
+
 ## To 1.3.10
 
 From **1.3.9** — dependency refresh only. No breaking changes. No application upgrade steps.
@@ -63,7 +73,6 @@ php bin/console cache:clear
 ```
 
 - No application upgrade steps for require-dev Igor tooling (REQ-CS-008). Consumers do not pull `igor-php/igor-php` transitively.
-
 
 ## To 1.3.6
 
@@ -145,7 +154,6 @@ and enable `Twig\Extra\TwigExtraBundle\TwigExtraBundle`. Flex recipes usually re
 ### Twig-CS-Fixer (maintainers)
 
 Package maintainers: `composer twig:lint` / `composer twig:fix` use `.twig-cs-fixer.php` over `src/` (and `templates/` when present).
-
 
 ## General
 
