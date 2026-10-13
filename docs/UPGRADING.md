@@ -5,6 +5,7 @@
 - [From 1.3.7 to 1.3.8](#from-137-to-138)
 - [From 1.3.6 to 1.3.7](#from-136-to-137)
 - [Unreleased](#unreleased)
+- [To 1.5.0](#to-150)
 - [To 1.4.0](#to-140)
 - [To 1.3.11](#to-1311)
 - [To 1.3.10](#to-1310)
@@ -45,6 +46,14 @@ composer update nowo-tech/tiptap-editor-bundle
 ```
 
 ## Unreleased
+
+## To 1.5.0
+
+From **1.4.0** — html_sanitizer documented; Symfony >=7.4; vitest 4.
+
+```bash
+composer update nowo-tech/tiptap-editor-bundle
+```
 
 - **Symfony 7.4+ required** (`^7.4 || ^8.0`). Apps on Symfony 6.4 or 7.0–7.3 stay on 1.4.x until they upgrade Symfony.
 
