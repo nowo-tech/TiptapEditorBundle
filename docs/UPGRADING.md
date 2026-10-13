@@ -17,6 +17,8 @@
 - [To 1.3.2](#to-132)
 - [To 1.3.1](#to-131)
 - [To 1.3.0](#to-130)
+  - [Twig Extra Bundle (REQ-TWIG-004)](#twig-extra-bundle-req-twig-004)
+  - [Twig-CS-Fixer (maintainers)](#twig-cs-fixer-maintainers)
 - [General](#general)
 - [To 1.2.3](#to-123)
 - [To 1.2.2](#to-122)
@@ -25,7 +27,15 @@
 - [To 1.1.2](#to-112)
 - [To 1.1.1](#to-111)
 - [To 1.1.0](#to-110)
+- [To 1.0.7](#to-107)
+- [To 1.0.6](#to-106)
+- [To 1.0.5](#to-105)
+- [To 1.0.4](#to-104)
+- [To 1.0.3](#to-103)
+- [To 1.0.2](#to-102)
+- [To 1.0.1](#to-101)
 - [To 1.0.0](#to-100)
+- [Future major versions (placeholder)](#future-major-versions-placeholder)
 
 ## From 1.3.7 to 1.3.8
 
