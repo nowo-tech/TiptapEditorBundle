@@ -42,6 +42,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Dependencies refreshed (Composer and pnpm/npm lock files of the bundle and its demos, campaign 2026-10-19); shipped assets rebuilt.
+- `.php-cs-fixer.dist.php`: `new ParallelConfig(2)` (REQ-CS-001).
 - Documentation: wave-1 REQ compliance — README GitHub stars + Coverage badges, canonical FrankenPHP claim and documentation list order, canonical issue templates, CONTRIBUTING Cursor Agent settings (REQ-IDE-006), tables of contents, demo README links the FrankenPHP guide, commented demo `.env.example`, demo compose project name `tiptap-editor-bundle-demo-symfony-8`, Spec Kit inventory refresh (36/36, attribute sanitizers as FR-SEC-002).
 
 ## [1.5.0] - 2026-10-13
