@@ -3,7 +3,9 @@
 ## Table of contents
 
 - [Install](#install)
+  - [With Symfony Flex](#with-symfony-flex)
 - [Assets](#assets)
+- [Twig Extra Bundle (REQ-TWIG-004)](#twig-extra-bundle-req-twig-004)
 
 ## Install
 

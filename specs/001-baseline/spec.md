@@ -96,13 +96,14 @@ As a template author, I render read-only HTML or iframe embeds via Twig function
 ### Security & FrankenPHP worker
 
 - **FR-SEC-001**: When `html_sanitizer: allowlist` is configured, submitted HTML MUST be sanitized via `AllowlistTiptapHtmlSanitizer` / `TiptapHtmlSanitizeTransformer` before model binding.
+- **FR-SEC-002**: Attribute sanitizers of the allowlist MUST keep `<iframe src>` only for https URLs whose host is on the embed allowlist (`EmbedIframeSrcAttributeSanitizer`) and `style` only when it is exactly a Tiptap TextAlign declaration (`TextAlignStyleAttributeSanitizer`).
 - **FR-WORKER-001**: Shared container services (`TiptapEditorType`, `AllowlistTiptapHtmlSanitizer`, `NowoTiptapEditorTwigExtension`) MUST NOT keep mutable per-request state (no non-readonly instance properties, no static mutable properties), so the bundle remains safe under FrankenPHP worker mode with kernel **not** reset between requests. Documented in [`docs/FRANKENPHP-WORKER-AUDIT.md`](../../docs/FRANKENPHP-WORKER-AUDIT.md); guarded by `FrankenPhpWorkerSafetyTest`.
 
 ---
 
 ## Success Criteria
 
-- **SC-001**: Production files mapped in [`code-inventory.md`](code-inventory.md) (`*.test.ts` excluded).
+- **SC-001**: **36/36** production files mapped in [`code-inventory.md`](code-inventory.md) (audited 2026-10-20; `*.test.ts` excluded).
 - **SC-002**: Profile keys in docs match `Configuration.php`.
 - **SC-003**: `composer qa` and Vitest pass.
 - **SC-004**: Demo forms persist HTML round-trip for each documented variant.

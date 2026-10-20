@@ -4,6 +4,7 @@
 
 - [Form type](#form-type)
 - [Frontend script](#frontend-script)
+  - [Optional global API](#optional-global-api)
 - [Toolbar and variants](#toolbar-and-variants)
 - [Examples hub parity](#examples-hub-parity)
 - [Overriding templates (REQ-TWIG-001)](#overriding-templates-req-twig-001)

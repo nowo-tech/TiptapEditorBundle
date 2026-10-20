@@ -4,6 +4,13 @@ Repository-local **product spec** and **`REQ-*`** traceability (Makefiles, demos
 
 This repository is **prepared to use Engram** with Cursor (and other MCP-compatible editors). The configuration is already present so that once you install the Engram CLI, your AI agent can use persistent memory across sessions.
 
+## Table of contents
+
+- [Repository setup](#repository-setup)
+- [How to install Engram](#how-to-install-engram)
+- [How to use](#how-to-use)
+- [References](#references)
+
 ## Repository setup
 
 In the **root of this repository** you will find:

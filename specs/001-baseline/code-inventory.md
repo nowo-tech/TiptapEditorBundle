@@ -2,7 +2,7 @@
 
 **Baseline spec**: [`spec.md`](spec.md)  
 **Package**: `nowo-tech/tiptap-editor-bundle`  
-**Last audited**: 2026-09-25
+**Last audited**: 2026-10-20
 
 Production scope excludes Vitest sources (`*.test.ts`).
 
@@ -19,6 +19,8 @@ Production scope excludes Vitest sources (`*.test.ts`).
 | `Form/DataTransformer/TiptapHtmlSanitizeTransformer.php` | Sanitize on submit | FR-SEC-001 |
 | `Security/AllowlistTiptapHtmlSanitizer.php` | Allowlist sanitizer | FR-SEC-001, FR-WORKER-001 |
 | `Security/TiptapHtmlSanitizerInterface.php` | Sanitizer contract | FR-SEC-001 |
+| `Security/AttributeSanitizer/EmbedIframeSrcAttributeSanitizer.php` | Keeps `<iframe src>` only for https URLs on the embed host allowlist | FR-SEC-001, FR-SEC-002 |
+| `Security/AttributeSanitizer/TextAlignStyleAttributeSanitizer.php` | Keeps `style` only when it is exactly a Tiptap TextAlign declaration | FR-SEC-001, FR-SEC-002 |
 | `TiptapExample.php` | Doc/demo samples | FR-EXAMPLE-001 |
 | `Twig/NowoTiptapEditorTwigExtension.php` | Twig helpers | FR-TWIG-EXT-001, FR-WORKER-001 |
 
@@ -74,12 +76,14 @@ Production scope excludes Vitest sources (`*.test.ts`).
 
 | Category | Files | Mapped |
 | --- | ---: | ---: |
-| PHP classes | 11 | 11 |
+| PHP classes | 13 | 13 |
 | TS production | 3 | 3 |
 | Legacy JS | 1 | 1 |
 | YAML config | 1 | 1 |
 | Twig themes | 11 | 11 |
 | Translations | 7 | 7 |
-| **Total production sources** | **34** | **34** |
+| **Total production sources** | **36** | **36** |
 
-Excluded: `logger.test.ts`, `tiptap-editor.lifecycle.test.ts`.
+Excluded: `embed-iframe.test.ts`, `logger.test.ts`, `tiptap-editor.lifecycle.test.ts` (co-located Vitest files).
+
+Audit command (production count): `git ls-files src | grep -v '\.test\.ts$' | wc -l` → **36** (2026-10-20).

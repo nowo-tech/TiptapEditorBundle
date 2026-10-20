@@ -6,7 +6,11 @@
 - [Version bump](#version-bump)
 - [Tag and push](#tag-and-push)
 - [GitHub Release](#github-release)
+  - [Example for v1.2.3](#example-for-v123)
+  - [Example for v1.2.2](#example-for-v122)
+  - [Example for v1.2.1 (previous)](#example-for-v121-previous)
 - [Packagist](#packagist)
+- [Automated releases](#automated-releases)
 
 ## Prerequisites
 

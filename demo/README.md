@@ -2,6 +2,8 @@
 
 Two Symfony apps (7.x and 8.x) served with **FrankenPHP**. Each mounts this repository at `/var/tiptap-editor-bundle` so Composer can install `nowo-tech/tiptap-editor-bundle` from the path repository.
 
+See [FrankenPHP demo guide](../docs/DEMO-FRANKENPHP.md) for development and production start, `FRANKENPHP_MODE` switching and troubleshooting.
+
 ## Ports
 
 | Demo    | Default URL            |

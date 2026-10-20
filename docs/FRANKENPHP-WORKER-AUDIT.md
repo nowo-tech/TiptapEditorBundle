@@ -8,6 +8,15 @@
 | Method | Manual review of every file under `src/` (form type, data transformer, sanitizer, Twig extension, enums, DI extension, compiler pass, `Resources/config/services.yaml`) plus PHPUnit `FrankenPhpWorkerSafetyTest` |
 | **Verdict** | ✅ **Compatible (100%)** — safe under FrankenPHP worker mode **with or without** kernel reset; shared services only hold compiled / readonly configuration |
 
+## Table of contents
+
+- [Execution model assumed](#execution-model-assumed)
+- [Summary](#summary)
+- [Services reviewed](#services-reviewed)
+- [Findings](#findings)
+- [Usage recommendations in worker mode](#usage-recommendations-in-worker-mode)
+- [Re-audit triggers](#re-audit-triggers)
+
 ## Execution model assumed
 
 FrankenPHP worker mode boots the Symfony kernel once per worker and serves many requests with the same container. This audit assumes the **strict** variant: the kernel is **not** rebooted between requests, so every shared service, static property and PHP global survives from one request to the next. Two scenarios are evaluated:

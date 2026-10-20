@@ -1,11 +1,8 @@
 ---
 name: "❓ Support Question"
-about: Question about installation or usage
+about: You have a question about this bundle or need help?
 title: ''
-labels: question
+labels: ''
 assignees: ''
 
 ---
-
-<!-- Your question (versions, Symfony, what you tried). -->
-

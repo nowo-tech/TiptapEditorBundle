@@ -1,6 +1,6 @@
 # Tiptap Editor Bundle
 
-[![CI](https://github.com/nowo-tech/TiptapEditorBundle/actions/workflows/ci.yml/badge.svg)](https://github.com/nowo-tech/TiptapEditorBundle/actions/workflows/ci.yml) [![Packagist Version](https://img.shields.io/packagist/v/nowo-tech/tiptap-editor-bundle.svg?style=flat)](https://packagist.org/packages/nowo-tech/tiptap-editor-bundle) [![Packagist Downloads](https://img.shields.io/packagist/dt/nowo-tech/tiptap-editor-bundle.svg)](https://packagist.org/packages/nowo-tech/tiptap-editor-bundle) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![PHP](https://img.shields.io/badge/PHP-8.2%2B-777BB4?logo=php)](https://php.net) [![Symfony](https://img.shields.io/badge/Symfony-7.4%20%7C%208.0%20%7C%208.1%2B-000000?logo=symfony)](https://symfony.com)
+[![CI](https://github.com/nowo-tech/TiptapEditorBundle/actions/workflows/ci.yml/badge.svg)](https://github.com/nowo-tech/TiptapEditorBundle/actions/workflows/ci.yml) [![Packagist Version](https://img.shields.io/packagist/v/nowo-tech/tiptap-editor-bundle.svg?style=flat)](https://packagist.org/packages/nowo-tech/tiptap-editor-bundle) [![Packagist Downloads](https://img.shields.io/packagist/dt/nowo-tech/tiptap-editor-bundle.svg)](https://packagist.org/packages/nowo-tech/tiptap-editor-bundle) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![PHP](https://img.shields.io/badge/PHP-8.2%2B-777BB4?logo=php)](https://php.net) [![Symfony](https://img.shields.io/badge/Symfony-7.4%20%7C%208.0%20%7C%208.1%2B-000000?logo=symfony)](https://symfony.com) [![GitHub stars](https://img.shields.io/github/stars/nowo-tech/tiptap-editor-bundle.svg?style=social&label=Star)](https://github.com/nowo-tech/TiptapEditorBundle) [![Coverage](https://img.shields.io/badge/Coverage-100%25-brightgreen)](#tests-and-coverage)
 
 > **Found this useful?** [Install from Packagist](https://packagist.org/packages/nowo-tech/tiptap-editor-bundle) · Star the repo on [GitHub](https://github.com/nowo-tech/TiptapEditorBundle).
 
@@ -9,7 +9,7 @@
 
 ![FrankenPHP Friendly Worker Mode](docs/images/frankenphp-friendly.png)
 
-This bundle is **FrankenPHP worker mode friendly** (including **kernel not reset** between requests). Audit: [docs/FRANKENPHP-WORKER-AUDIT.md](docs/FRANKENPHP-WORKER-AUDIT.md).
+This bundle is **FrankenPHP worker mode friendly**.
 
 ## Features
 
@@ -21,6 +21,7 @@ This bundle is **FrankenPHP worker mode friendly** (including **kernel not reset
 - **Form submit:** before POST, the bundle syncs ProseMirror HTML into each hidden Symfony textarea (capture-phase `submit`); see [Usage](docs/USAGE.md).
 - **Dockerfile + Makefile** workflow matching other Nowo bundles.
 - **Demo**: Symfony 8 under `demo/symfony8` (FrankenPHP; `FRANKENPHP_MODE=worker` by default).
+- **FrankenPHP worker** safe with the kernel not reset between requests; see the [worker audit](docs/FRANKENPHP-WORKER-AUDIT.md).
 
 ## Quick start
 
@@ -71,7 +72,6 @@ make -C demo up-symfony8
 
 - [Installation](docs/INSTALLATION.md)
 - [Configuration](docs/CONFIGURATION.md)
-- [PSR evaluation (REQ-CS-007)](docs/PSR.md)
 - [Usage](docs/USAGE.md)
 - [Contributing](docs/CONTRIBUTING.md)
 - [Code of Conduct](CODE_OF_CONDUCT.md)
@@ -85,6 +85,7 @@ make -C demo up-symfony8
 
 ### Additional documentation
 
+- [PSR evaluation (REQ-CS-007)](docs/PSR.md)
 - [Demo with FrankenPHP (development and production)](docs/DEMO-FRANKENPHP.md)
 - [FrankenPHP worker audit (kernel not reset)](docs/FRANKENPHP-WORKER-AUDIT.md)
 - [GitHub Actions CI requirements](docs/GITHUB_CI.md)

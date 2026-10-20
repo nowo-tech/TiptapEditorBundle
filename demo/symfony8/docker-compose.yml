@@ -1,4 +1,4 @@
-name: tiptap-editor-demo-symfony8
+name: tiptap-editor-bundle-demo-symfony-8
 
 services:
   php:

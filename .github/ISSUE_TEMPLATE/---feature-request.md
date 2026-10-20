@@ -7,5 +7,4 @@ assignees: ''
 
 ---
 
-<!-- Describe the feature and the problem it solves. -->
-
+<!-- Provide a summary of the feature you would like to see implemented. -->
