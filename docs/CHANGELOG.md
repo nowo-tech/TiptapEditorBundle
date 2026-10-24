@@ -43,6 +43,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Developer tooling: `make release-check` runs the full REQ-MAKE-002 chain with `ensure-up` first, then the
+  Cursor co-author, open-PR, Twig `extra` and new `check-no-raw-html-form` (REQ-TWIG-005) gates, composer-sync,
+  cs-fix, cs-check, rector-dry, phpstan, igor, test-coverage, the demo release-check and test-ts.
 - Demo: `tiptap_demo/show.html.twig` and `examples_show.html.twig` render the form body through the child loop
   (`{% for child in form %}` + `not child.rendered` + `form_row(child)`); `configs.html.twig` (one section per editor)
   and `showcase.html.twig` (one tab per editor) keep their custom layout and end with the same loop, per
