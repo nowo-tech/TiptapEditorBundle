@@ -20,7 +20,7 @@ use function array_merge;
  * http/https/mailto (or relative) URLs, media only http/https (or relative), and iframes are kept
  * only with an https `src` on the embed host allowlist.
  */
-final class AllowlistTiptapHtmlSanitizer implements TiptapHtmlSanitizerInterface
+final readonly class AllowlistTiptapHtmlSanitizer implements TiptapHtmlSanitizerInterface
 {
     /** @var list<string> */
     public const DEFAULT_EMBED_HOSTS = [
@@ -82,7 +82,7 @@ final class AllowlistTiptapHtmlSanitizer implements TiptapHtmlSanitizerInterface
         'footer', 'header', 'ins', 'kbd', 'label', 'main', 'nav', 'q', 'samp', 'section', 'small', 'time', 'tfoot', 'var',
     ];
 
-    private readonly HtmlSanitizerInterface $sanitizer;
+    private HtmlSanitizerInterface $sanitizer;
 
     /**
      * @param list<string> $allowedEmbedHosts Hosts allowed in `<iframe src="https://…">`

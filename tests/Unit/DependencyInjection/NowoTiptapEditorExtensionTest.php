@@ -182,7 +182,6 @@ final class NowoTiptapEditorExtensionTest extends TestCase
 
         $extension = new NowoTiptapEditorExtension();
         $method    = new ReflectionMethod(NowoTiptapEditorExtension::class, 'configureHtmlSanitizer');
-        $method->setAccessible(true);
         $method->invoke($extension, $container, 'allowlist');
 
         self::assertTrue($container->hasDefinition(AllowlistTiptapHtmlSanitizer::class));

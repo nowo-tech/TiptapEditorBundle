@@ -14,10 +14,10 @@ use function is_string;
  *
  * @implements DataTransformerInterface<string|null, string|null>
  */
-final class TiptapHtmlSanitizeTransformer implements DataTransformerInterface
+final readonly class TiptapHtmlSanitizeTransformer implements DataTransformerInterface
 {
     public function __construct(
-        private readonly TiptapHtmlSanitizerInterface $sanitizer,
+        private TiptapHtmlSanitizerInterface $sanitizer,
     ) {
     }
 

@@ -50,6 +50,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (`{% for child in form %}` + `not child.rendered` + `form_row(child)`); `configs.html.twig` (one section per editor)
   and `showcase.html.twig` (one tab per editor) keep their custom layout and end with the same loop, per
   REQ-TWIG-003.
+- Internal: applied the pending Rector suggestions (`readonly` on the final classes `TiptapHtmlSanitizeTransformer`, `AllowlistTiptapHtmlSanitizer`, `EmbedIframeSrcAttributeSanitizer`; `instanceof` null check in `TiptapEditorType`; no-op `setAccessible()` dropped from a DI test); no behaviour change. `make rector-dry` is clean again.
 
 ## [1.5.1] - 2026-10-20
 

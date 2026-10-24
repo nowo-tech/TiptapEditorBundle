@@ -44,7 +44,7 @@ final class TiptapEditorType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        if ($this->htmlSanitizer !== null) {
+        if ($this->htmlSanitizer instanceof TiptapHtmlSanitizerInterface) {
             $builder->addModelTransformer(new TiptapHtmlSanitizeTransformer($this->htmlSanitizer));
         }
     }
