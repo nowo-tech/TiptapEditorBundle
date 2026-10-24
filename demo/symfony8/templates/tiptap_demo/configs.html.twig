@@ -35,6 +35,13 @@
         <p class="small text-muted">{{ 'demo.section_headless_hint'|trans({}, 'messages') }}</p>
         {{ form_row(form.content_headless) }}
 
+        {# Each editor above has its own heading and hint (REQ-TWIG-003 rule 3); the loop renders any remaining child. #}
+        {% for child in form %}
+            {% if not child.rendered %}
+                {{ form_row(child) }}
+            {% endif %}
+        {% endfor %}
+
         <button type="submit" class="btn btn-primary mt-3">{{ 'demo.submit_all'|trans({}, 'messages') }}</button>
     {{ form_end(form) }}
 

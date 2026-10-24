@@ -47,6 +47,13 @@
         </div>
     </div>
 
+    {# Each editor lives in its own tab pane (REQ-TWIG-003 rule 3); the loop renders any remaining child. #}
+    {% for child in form %}
+        {% if not child.rendered %}
+            {{ form_row(child) }}
+        {% endif %}
+    {% endfor %}
+
     <button type="submit" class="btn btn-primary">{{ 'demo.submit_showcase'|trans({}, 'messages') }}</button>
 
     {{ form_end(form) }}

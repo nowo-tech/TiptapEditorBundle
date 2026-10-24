@@ -12,7 +12,11 @@
     {% endfor %}
 
     {{ form_start(form) }}
-        {{ form_row(form.content) }}
+        {% for child in form %}
+            {% if not child.rendered %}
+                {{ form_row(child) }}
+            {% endif %}
+        {% endfor %}
         <button type="submit" class="btn btn-primary">{{ 'demo.submit'|trans({}, 'messages') }}</button>
     {{ form_end(form) }}
 

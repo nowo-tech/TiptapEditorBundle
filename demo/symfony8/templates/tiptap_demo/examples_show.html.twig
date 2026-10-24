@@ -26,7 +26,11 @@
     {% endif %}
 
     {{ form_start(form, { attr: { class: 'mb-4' } }) }}
-        {{ form_widget(form.content) }}
+        {% for child in form %}
+            {% if not child.rendered %}
+                {{ form_row(child) }}
+            {% endif %}
+        {% endfor %}
         <button type="submit" class="btn btn-primary mt-2">{{ 'examples.submit'|trans({}, 'messages') }}</button>
     {{ form_end(form) }}
 
