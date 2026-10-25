@@ -31,6 +31,21 @@ $builder->add('body', TiptapEditorType::class, [
 
 Submitted data is an **HTML string** (store in `TEXT` / `LONGTEXT` / similar).
 
+**Forms (REQ-TWIG-003 / REQ-TWIG-005):** host pages and the demo render the form that contains this field only through a PHP Form Type and the Twig form helpers, with the rendered-aware child loop:
+
+```twig
+{{ form_start(form) }}
+    {% for child in form %}
+        {% if not child.rendered %}
+            {{ form_row(child) }}
+        {% endif %}
+    {% endfor %}
+    <button type="submit">Save</button>
+{{ form_end(form) }}
+```
+
+Hosts and demos must not reintroduce raw `<form>` / `<input>` / `<textarea>` / `<select>` markup; `make check-no-raw-html-form` (part of `make release-check`) fails when bundle or demo Twig contains them.
+
 ## Frontend script
 
 Include the compiled widget **after** your layout loads (once per page):
