@@ -1,10 +1,10 @@
 export type BundleLoggerOptions = {
-  /** Optional ISO or display build timestamp shown on scriptLoaded(). */
+  /** Optional ISO or display build id shown on scriptLoaded(). */
   buildTime?: string;
 };
 
 export type BundleLogger = {
-  /** Logs a styled “script loaded” line (optionally with build time). */
+  /** Logs a styled “script loaded” line (optionally with build id). */
   scriptLoaded: () => void;
   /** Enables or disables debug/info/warn/error console output. */
   setDebug: (enabled: boolean) => void;
@@ -52,7 +52,7 @@ export function createBundleLogger(name: string, options: BundleLoggerOptions = 
     scriptLoaded(): void {
       if (buildTime !== undefined && buildTime !== '') {
         console.log(
-          `%c${EMOJI.script} ${prefix} script loaded, build time: %c${buildTime}`,
+          `%c${EMOJI.script} ${prefix} script loaded, build: %c${buildTime}`,
           STYLES.script,
           'color:#059669',
         );
