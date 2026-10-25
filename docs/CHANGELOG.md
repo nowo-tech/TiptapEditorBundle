@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Table of contents
 
 - [[Unreleased]](#unreleased)
+- [[1.5.2] - 2026-10-25](#152---2026-10-25)
 - [[1.5.1] - 2026-10-20](#151---2026-10-20)
 - [[1.5.0] - 2026-10-13](#150---2026-10-13)
 - [[1.4.0] - 2026-10-13](#140---2026-10-13)
@@ -41,6 +42,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.5.2] - 2026-10-25
+
+Reproducible JS bundle: the build stamp is a hash of the sources instead of the build time. See [UPGRADING](UPGRADING.md#to-152).
+
 ### Changed
 
 - **Assets:** reproducible bundle build. `__TIPTAP_EDITOR_BUILD_TIME__` now holds a build id (a hash of the TypeScript/CSS sources and `pnpm-lock.yaml`) instead of the build time, so rebuilding unchanged sources (`make assets`, `make release-check`) no longer rewrites the committed JS; the console line reads `script loaded, build: <id>`.
@@ -52,6 +57,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and `showcase.html.twig` (one tab per editor) keep their custom layout and end with the same loop, per
   REQ-TWIG-003.
 - Internal: applied the pending Rector suggestions (`readonly` on the final classes `TiptapHtmlSanitizeTransformer`, `AllowlistTiptapHtmlSanitizer`, `EmbedIframeSrcAttributeSanitizer`; `instanceof` null check in `TiptapEditorType`; no-op `setAccessible()` dropped from a DI test); no behaviour change. `make rector-dry` is clean again.
+
+[1.5.2]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.5.2
 
 ## [1.5.1] - 2026-10-20
 
@@ -462,7 +469,7 @@ First stable release published on GitHub.
 - Development workflow: Docker, Makefile, PHPUnit, PHPStan, PHP-CS-Fixer, Vitest on shared TS utilities.
 - Demos: Symfony 7 and 8 sample apps under `demo/` (FrankenPHP).
 
-[Unreleased]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.5.1...HEAD
+[Unreleased]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.5.2...HEAD
 [1.3.8]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.3.8
 [1.2.3]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.2.2...v1.2.3
 [1.2.2]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.2.1...v1.2.2
