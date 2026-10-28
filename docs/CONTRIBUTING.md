@@ -8,6 +8,7 @@
   - [Suggesting enhancements](#suggesting-enhancements)
   - [Contributing code](#contributing-code)
 - [Project layout](#project-layout)
+- [End-to-end tests and screenshots (REQ-DEMO-013)](#end-to-end-tests-and-screenshots-req-demo-013)
 - [Code style](#code-style)
 - [Questions](#questions)
 - [Git hooks (REQ-GIT-001)](#git-hooks-req-git-001)
@@ -44,6 +45,17 @@ Open an issue describing the use case, expected behavior, and optional implement
 - `src/Resources/` — Twig themes, translations, Vite sources, published `public/` JS.
 - `tests/` — PHPUnit (`Unit`, `Integration`).
 - `demo/` — Symfony 7 & 8 FrankenPHP demos (not shipped in the Composer package).
+
+## End-to-end tests and screenshots (REQ-DEMO-013)
+
+The Symfony 8 demo ships a Playwright suite in `demo/symfony8/e2e/` (official Playwright image, nothing to install on the host):
+
+```bash
+make -C demo/symfony8 test-e2e          # starts the demo if needed, runs the happy-path specs
+make -C demo/symfony8 demo-screenshots  # recaptures docs/images/demo/*.webp (PNG → WebP via sharp)
+```
+
+Refresh the screenshots when the demo UI changes and commit only the `.webp` files.
 
 ## Code style
 

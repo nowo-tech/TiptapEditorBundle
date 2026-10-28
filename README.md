@@ -48,6 +48,8 @@ $builder->add('article', TiptapEditorType::class, ['label' => 'Article']);
 
 ![Editor variants — Symfony demo screenshot](docs/images/demo/demo-editor-variants.webp)
 
+Playwright e2e: `make -C demo/symfony8 test-e2e`; refresh the README screenshots with `make -C demo/symfony8 demo-screenshots` (see [CONTRIBUTING](docs/CONTRIBUTING.md#end-to-end-tests-and-screenshots-req-demo-013)).
+
 ## Development
 
 Requirements: Docker (recommended), or PHP 8.2+ with Composer + pnpm locally.
