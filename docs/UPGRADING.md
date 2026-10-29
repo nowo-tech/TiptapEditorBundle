@@ -5,6 +5,7 @@
 - [From 1.3.7 to 1.3.8](#from-137-to-138)
 - [From 1.3.6 to 1.3.7](#from-136-to-137)
 - [Unreleased](#unreleased)
+- [To 1.6.0](#to-160)
 - [To 1.5.2](#to-152)
 - [To 1.5.1](#to-151)
 - [To 1.5.0](#to-150)
@@ -58,6 +59,24 @@ composer update nowo-tech/tiptap-editor-bundle
 ```
 
 ## Unreleased
+
+## To 1.6.0
+
+From **1.5.2**:
+
+```bash
+composer update nowo-tech/tiptap-editor-bundle
+```
+
+From **1.5.2**:
+
+```bash
+composer update nowo-tech/tiptap-editor-bundle
+```
+
+No change is required: the upload and suggestion hooks are off until a form sets `upload_url` / `suggestions`. If you
+override `tiptap_editor_widget`, copy the new `data-tiptap-upload-*` and `data-tiptap-suggestions-*` attributes from
+`tiptap_editor_theme.html.twig`. The host endpoints decide who may upload and which candidates a user may see.
 
 ## To 1.5.2
 

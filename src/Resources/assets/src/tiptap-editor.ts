@@ -29,6 +29,8 @@ import { common, createLowlight } from 'lowlight';
 
 import { createBundleLogger } from './logger';
 import { EmbedIframe, safeEmbedSrc } from './embed-iframe';
+import { attachSuggestionHook, readSuggestionConfig } from './suggestion';
+import { attachUploadHook, readUploadConfig } from './upload';
 
 declare const __TIPTAP_EDITOR_BUILD_TIME__: string;
 
@@ -893,6 +895,68 @@ function attachCharacterCountFooter(chrome: HTMLElement, editor: Editor): void {
   upd();
 }
 
+const hostFetch = (input: string, init?: RequestInit): Promise<Response> => fetch(input, init);
+
+/**
+ * 1.6: the upload hook (drop / paste of files) and the suggestion hook (`@`, `#doc`, … candidates), each only when
+ * the form theme rendered its configuration.
+ */
+function attachHostHooks(root: HTMLElement, editor: Editor): void {
+  const surface = editor.view.dom as HTMLElement;
+  const upload = readUploadConfig(root);
+  if (upload) {
+    const hasImage = editor.extensionManager.extensions.some((extension) => extension.name === 'image');
+    const link = (url: string, text: string): void => {
+      editor
+        .chain()
+        .focus()
+        .insertContent([
+          { type: 'text', text, marks: [{ type: 'link', attrs: { href: url } }] },
+          { type: 'text', text: ' ' },
+        ])
+        .run();
+    };
+    attachUploadHook(
+      root,
+      surface,
+      upload,
+      {
+        image: (url, alt) => (hasImage ? editor.chain().focus().setImage({ src: url, alt }).run() : link(url, alt)),
+        link,
+      },
+      hostFetch,
+    );
+  }
+
+  const suggestions = readSuggestionConfig(root);
+  if (suggestions) {
+    attachSuggestionHook(
+      root,
+      {
+        surface,
+        textBefore: () => {
+          const { $from } = editor.state.selection;
+          return $from.parent.textBetween(0, $from.parentOffset, undefined, '\ufffc');
+        },
+        replaceBefore: (length, text) => {
+          const position = editor.state.selection.from;
+          editor
+            .chain()
+            .focus()
+            .insertContentAt({ from: position - length, to: position }, { type: 'text', text })
+            .run();
+        },
+        onChange: (callback) => {
+          editor.on('update', callback);
+          editor.on('selectionUpdate', callback);
+        },
+      },
+      suggestions,
+      hostFetch,
+    );
+  }
+}
+
 /**
  * Initializes one widget root (textarea + mount).
  */
@@ -1014,6 +1078,8 @@ export function initTiptapRoot(root: HTMLElement): void {
   if (variant === 'agent' && !example) {
     attachAgentFab(root);
   }
+
+  attachHostHooks(root, editor);
 
   root.dataset.tiptapInitialized = '1';
 }

@@ -18,6 +18,8 @@ use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use function in_array;
+use function is_array;
+use function is_string;
 use function sprintf;
 
 /**
@@ -59,6 +61,10 @@ final class TiptapEditorType extends AbstractType
         $view->vars['tiptap_variant']         = EditorVariant::fromString($this->profiles[$name]['variant'])->value;
         $view->vars['tiptap_example']         = $options['example'] instanceof TiptapExample ? $options['example']->value : null;
         $view->vars['tiptap_theme']           = $options['theme'];
+        // 1.6: upload and suggestion hooks (rendered as data attributes; off when empty).
+        $view->vars['tiptap_upload_url']        = $options['upload_url'];
+        $view->vars['tiptap_upload_csrf_token'] = $options['upload_csrf_token'];
+        $view->vars['tiptap_suggestions']       = $options['suggestions'];
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -71,7 +77,28 @@ final class TiptapEditorType extends AbstractType
             'translation_domain' => 'NowoTiptapEditorBundle',
             'required'           => false,
             'empty_data'         => '',
+            // 1.6: POST target of dropped / pasted files (JSON answer {url, name, image}); null = no upload hook.
+            'upload_url' => null,
+            // 1.6: value sent as the X-CSRF-Token header of the uploads.
+            'upload_csrf_token' => null,
+            // 1.6: suggestion triggers, e.g. [{trigger: '@', url: '/mentions'}, {trigger: '#doc', url: '/pages'}].
+            'suggestions' => [],
         ]);
+        $resolver->setAllowedTypes('upload_url', ['null', 'string']);
+        $resolver->setAllowedTypes('upload_csrf_token', ['null', 'string']);
+        $resolver->setAllowedTypes('suggestions', 'array');
+        $resolver->setNormalizer('suggestions', static function (Options $options, array $value): array {
+            $triggers = [];
+            foreach ($value as $item) {
+                if (!is_array($item) || !is_string($item['trigger'] ?? null) || $item['trigger'] === '' || !is_string($item['url'] ?? null)) {
+                    throw new InvalidOptionsException('Each Tiptap suggestion needs a non-empty "trigger" and a "url".');
+                }
+
+                $triggers[] = ['trigger' => $item['trigger'], 'url' => $item['url']];
+            }
+
+            return $triggers;
+        });
 
         $resolver->setDefault('toolbar', fn (Options $options): bool => $this->profileFor($options)['toolbar']);
         $resolver->setDefault('min_height', fn (Options $options): string => $this->profileFor($options)['min_height']);

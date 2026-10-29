@@ -12,7 +12,7 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'text-summary', 'html'],
       reportsDirectory: './coverage-ts',
-      include: ['src/Resources/assets/src/logger.ts', 'src/Resources/assets/src/embed-iframe.ts'],
+      include: ['src/Resources/assets/src/logger.ts', 'src/Resources/assets/src/embed-iframe.ts', 'src/Resources/assets/src/upload.ts', 'src/Resources/assets/src/suggestion.ts'],
       exclude: ['**/*.test.ts', '**/node_modules/**'],
       thresholds: {
         lines: 100,
