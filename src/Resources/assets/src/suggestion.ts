@@ -79,7 +79,9 @@ export function readSuggestionConfig(root: HTMLElement): SuggestionConfig | null
  * longer one an optional query after a space (`#doc deploy plan`). The trigger starts the text or follows a space.
  */
 export function matchTrigger(textBefore: string, triggers: SuggestionTrigger[]): TriggerMatch | null {
-  for (const trigger of triggers) {
+  // The longest trigger first: with `#` and `#doc`, typing `#doc` belongs to `#doc`.
+  const ordered = [...triggers].sort((a, b) => b.trigger.length - a.trigger.length);
+  for (const trigger of ordered) {
     const t = escapeRegExp(trigger.trigger);
     const pattern =
       trigger.trigger.length === 1
@@ -222,8 +224,9 @@ export class SuggestionList {
 }
 
 /**
- * Wires the hook: matches triggers on every change, fetches candidates (debounced, latest query wins), handles the
- * list keys before ProseMirror (capture phase on the root) and inserts the picked token.
+ * Wires the hook: matches triggers on every change, fetches candidates (debounced, latest query wins; a change or
+ * Escape invalidates the pending request), handles the list keys typed in the editor before ProseMirror (capture
+ * phase on the root) and inserts the picked token. `dispose()` removes everything (editor teardown).
  */
 export function attachSuggestionHook(
   root: HTMLElement,
@@ -231,7 +234,7 @@ export function attachSuggestionHook(
   config: SuggestionConfig,
   fetchImpl: FetchLike,
   debounceMs = 150,
-): { list: SuggestionList; refresh: () => Promise<void> } {
+): { list: SuggestionList; refresh: () => Promise<void>; dispose: () => void } {
   let match: TriggerMatch | null = null;
   let timer: ReturnType<typeof setTimeout> | undefined;
   let sequence = 0;
@@ -259,15 +262,24 @@ export function attachSuggestionHook(
     }
   };
 
+  const invalidate = (): void => {
+    sequence += 1;
+    match = null;
+    list.close();
+  };
+
+  let disposed = false;
   editor.onChange(() => {
+    if (disposed) {
+      return;
+    }
     clearTimeout(timer);
+    invalidate();
     timer = setTimeout(() => void refresh(), debounceMs);
   });
 
-  root.addEventListener(
-    'keydown',
-    (event: KeyboardEvent) => {
-      if (!list.isOpen) {
+  const onKeydown = (event: KeyboardEvent): void => {
+      if (!list.isOpen || !(event.target instanceof Node) || !editor.surface.contains(event.target)) {
         return;
       }
       const handled = ((): boolean => {
@@ -283,13 +295,14 @@ export function attachSuggestionHook(
             const item = list.current();
             if (item) {
               pick(item);
-            } else {
-              list.close();
+              return true;
             }
-            return true;
+            list.close();
+            // Nothing to insert: Tab keeps moving the focus; Enter is swallowed so it does not split the line.
+            return event.key === 'Enter';
           }
           case 'Escape':
-            list.close();
+            invalidate();
             return true;
           default:
             return false;
@@ -299,9 +312,16 @@ export function attachSuggestionHook(
         event.preventDefault();
         event.stopPropagation();
       }
-    },
-    true,
-  );
+  };
+  root.addEventListener('keydown', onKeydown, true);
 
-  return { list, refresh };
+  const dispose = (): void => {
+    disposed = true;
+    clearTimeout(timer);
+    invalidate();
+    root.removeEventListener('keydown', onKeydown, true);
+    list.element.remove();
+  };
+
+  return { list, refresh, dispose };
 }

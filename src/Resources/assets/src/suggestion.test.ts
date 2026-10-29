@@ -43,6 +43,9 @@ describe('matchTrigger', () => {
     expect(matchTrigger('see #doc deploy plan', triggers)).toEqual({ trigger: triggers[1], query: 'deploy plan', length: 16 });
     expect(matchTrigger('/doc', triggers)).toEqual({ trigger: triggers[2], query: '', length: 4 });
     expect(matchTrigger('plain text', triggers)).toBeNull();
+    const withHash = [{ trigger: '#', url: '/tags' }, ...triggers];
+    expect(matchTrigger('see #doc', withHash)?.trigger.url).toBe('/pages?space=x');
+    expect(matchTrigger('see #bug', withHash)?.trigger.url).toBe('/tags');
   });
 });
 
@@ -123,7 +126,7 @@ describe('attachSuggestionHook', () => {
   }
 
   it('opens on a trigger, drives the list with the keyboard and inserts the token', async () => {
-    const { root, editor, hook } = setup('ping @a', [
+    const { root, surface, editor, hook } = setup('ping @a', [
       { id: '1', label: 'Ana', token: '@ana' },
       { id: '2', label: 'Al', token: '@al' },
     ]);
@@ -131,37 +134,37 @@ describe('attachSuggestionHook', () => {
     expect(hook.list.isOpen).toBe(true);
 
     const other = key('a');
-    root.dispatchEvent(other);
+    surface.dispatchEvent(other);
     expect(other.defaultPrevented).toBe(false);
 
     const down = key('ArrowDown');
-    root.dispatchEvent(down);
+    surface.dispatchEvent(down);
     expect(down.defaultPrevented).toBe(true);
-    root.dispatchEvent(key('ArrowUp'));
-    root.dispatchEvent(key('ArrowDown'));
-    root.dispatchEvent(key('Enter'));
+    surface.dispatchEvent(key('ArrowUp'));
+    surface.dispatchEvent(key('ArrowDown'));
+    surface.dispatchEvent(key('Enter'));
     expect(editor.replaced).toEqual([[2, '@al ']]);
     expect(hook.list.isOpen).toBe(false);
 
     const idle = key('Enter');
-    root.dispatchEvent(idle);
+    surface.dispatchEvent(idle);
     expect(idle.defaultPrevented).toBe(false);
   });
 
   it('Tab inserts, Escape closes, an empty list closes on Enter, text without a trigger closes', async () => {
-    const { root, editor, hook } = setup('#doc dep', [{ id: 'p', label: 'Deploy', token: '[[wiki:p]]' }]);
+    const { root, surface, editor, hook } = setup('#doc dep', [{ id: 'p', label: 'Deploy', token: '[[wiki:p]]' }]);
     await hook.refresh();
-    root.dispatchEvent(key('Tab'));
+    surface.dispatchEvent(key('Tab'));
     expect(editor.replaced).toEqual([[8, '[[wiki:p]] ']]);
 
     await hook.refresh();
-    root.dispatchEvent(key('Escape'));
+    surface.dispatchEvent(key('Escape'));
     expect(hook.list.isOpen).toBe(false);
 
     const empty = setup('@zz', []);
     await empty.hook.refresh();
     expect(empty.hook.list.isOpen).toBe(true);
-    empty.root.dispatchEvent(key('Enter'));
+    empty.surface.dispatchEvent(key('Enter'));
     expect(empty.hook.list.isOpen).toBe(false);
     expect(empty.editor.replaced).toEqual([]);
 
@@ -186,6 +189,49 @@ describe('attachSuggestionHook', () => {
     await first;
     expect(slow.hook.list.isOpen).toBe(false);
     expect(editor.replaced).toEqual([]);
+  });
+
+  it('ignores keys typed outside the editor, lets Tab move on with no candidate and can be disposed', async () => {
+    const { root, surface, editor, hook, change } = setup('@zz', []);
+    await hook.refresh();
+    const button = document.createElement('button');
+    root.appendChild(button);
+    const outside = new KeyboardEvent('keydown', { key: 'Enter', cancelable: true, bubbles: true });
+    button.dispatchEvent(outside);
+    expect(outside.defaultPrevented).toBe(false);
+    expect(hook.list.isOpen).toBe(true);
+
+    const tab = key('Tab');
+    surface.dispatchEvent(tab);
+    expect(tab.defaultPrevented).toBe(false);
+    expect(hook.list.isOpen).toBe(false);
+
+    await hook.refresh();
+    const pending = hook.refresh();
+    surface.dispatchEvent(key('Escape'));
+    await pending;
+    expect(hook.list.isOpen).toBe(false);
+
+    hook.dispose();
+    expect(root.contains(hook.list.element)).toBe(false);
+    change();
+    const after = key('ArrowDown');
+    surface.dispatchEvent(after);
+    expect(after.defaultPrevented).toBe(false);
+    expect(editor.replaced).toEqual([]);
+  });
+
+  it('a change closes the list and drops the answer of the previous query', async () => {
+    vi.useFakeTimers();
+    const { hook, change } = setup('@a', [{ id: '1', label: 'Ana', token: '@ana' }]);
+    await hook.refresh();
+    expect(hook.list.isOpen).toBe(true);
+    const pending = hook.refresh();
+    change();
+    expect(hook.list.isOpen).toBe(false);
+    await pending;
+    expect(hook.list.isOpen).toBe(false);
+    vi.useRealTimers();
   });
 
   it('a pick without a pending match only closes the list', () => {

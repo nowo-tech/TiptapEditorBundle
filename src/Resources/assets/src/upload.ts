@@ -22,10 +22,16 @@ export type UploadResult = {
   image: boolean;
 };
 
-/** Where the uploaded file goes in the document. */
+/** Where the uploaded file goes in the document (`at`: the mapped drop / paste position, when known). */
 export type UploadInserter = {
-  image(url: string, alt: string): void;
-  link(url: string, text: string): void;
+  image(url: string, alt: string, at: number | null): void;
+  link(url: string, text: string, at: number | null): void;
+};
+
+/** The document position of a drop or paste, kept up to date while the upload runs. */
+export type UploadAnchor = {
+  position(): number | null;
+  release(): void;
 };
 
 export type FetchLike = (input: string, init?: RequestInit) => Promise<Response>;
@@ -115,28 +121,36 @@ export async function handleFiles(
   live: HTMLElement,
   inserter: UploadInserter,
   fetchImpl: FetchLike,
+  anchor: UploadAnchor | null = null,
 ): Promise<void> {
-  for (const file of files) {
-    live.textContent = format(config.labels.uploading, file.name);
-    try {
-      const result = await uploadFile(file, config, fetchImpl);
-      if (result.image) {
-        inserter.image(result.url, result.name);
-      } else {
-        inserter.link(result.url, result.name);
+  try {
+    for (const file of files) {
+      live.textContent = format(config.labels.uploading, file.name);
+      try {
+        const result = await uploadFile(file, config, fetchImpl);
+        const at = anchor ? anchor.position() : null;
+        if (result.image) {
+          inserter.image(result.url, result.name, at);
+        } else {
+          inserter.link(result.url, result.name, at);
+        }
+        live.textContent = format(config.labels.uploaded, result.name);
+      } catch (error) {
+        live.textContent = format(config.labels.failed, file.name, (error as Error).message);
       }
-      live.textContent = format(config.labels.uploaded, result.name);
-    } catch (error) {
-      live.textContent = format(config.labels.failed, file.name, (error as Error).message);
     }
+  } finally {
+    anchor?.release();
   }
 }
 
 /**
- * Listens to drop and paste on the editor surface (capture phase, before ProseMirror) and uploads the files.
- * Text-only drops and pastes are left to the editor.
+ * Listens to drop and paste on the editor surface (capture phase, before ProseMirror) and uploads the files, one run
+ * after the other (files land in drop order; status messages do not overwrite each other). Each run inserts at the
+ * position where the files were dropped or pasted (`anchorFor`, mapped through later edits). Text-only drops and
+ * pastes are left to the editor.
  *
- * @return the pending upload of the last handled event, for tests
+ * @return the pending upload chain, for tests
  */
 export function attachUploadHook(
   root: HTMLElement,
@@ -144,6 +158,7 @@ export function attachUploadHook(
   config: UploadConfig,
   inserter: UploadInserter,
   fetchImpl: FetchLike,
+  anchorFor: (event: Event) => UploadAnchor | null = () => null,
 ): { last: () => Promise<void> } {
   const live = ensureLiveRegion(root);
   let pending: Promise<void> = Promise.resolve();
@@ -156,7 +171,8 @@ export function attachUploadHook(
 
     event.preventDefault();
     event.stopPropagation();
-    pending = handleFiles(files, config, live, inserter, fetchImpl);
+    const anchor = anchorFor(event);
+    pending = pending.then(() => handleFiles(files, config, live, inserter, fetchImpl, anchor));
   };
 
   surface.addEventListener('drop', (event) => onTransfer(event, (event as DragEvent).dataTransfer), true);

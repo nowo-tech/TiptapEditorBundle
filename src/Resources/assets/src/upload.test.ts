@@ -78,6 +78,38 @@ describe('uploadFile', () => {
 });
 
 describe('handleFiles and the hook', () => {
+  it('inserts at the anchor, releases it and runs drops one after the other', async () => {
+    const root = document.createElement('div');
+    const surface = document.createElement('div');
+    const inserter = { image: vi.fn(), link: vi.fn() };
+    const released: number[] = [];
+    let next = 10;
+    const anchorFor = vi.fn(() => {
+      const at = next;
+      next += 5;
+      return { position: () => at, release: () => released.push(at) };
+    });
+    const order: string[] = [];
+    const fetchImpl = vi.fn(async (_url: string, init?: RequestInit) => {
+      const name = ((init?.body as FormData).get('file') as File).name;
+      order.push(name);
+      return json(201, { url: `/${name}`, name, image: name.endsWith('.png') });
+    });
+    const hook = attachUploadHook(root, surface, config, inserter, fetchImpl, anchorFor);
+
+    for (const name of ['a.png', 'b.txt']) {
+      const drop = new Event('drop', { cancelable: true });
+      Object.defineProperty(drop, 'dataTransfer', { value: transfer([new File(['x'], name)]) });
+      surface.dispatchEvent(drop);
+    }
+    await hook.last();
+
+    expect(order).toEqual(['a.png', 'b.txt']);
+    expect(inserter.image).toHaveBeenCalledWith('/a.png', 'a.png', 10);
+    expect(inserter.link).toHaveBeenCalledWith('/b.txt', 'b.txt', 15);
+    expect(released).toEqual([10, 15]);
+  });
+
   it('inserts images and links and announces each step', async () => {
     const live = document.createElement('div');
     const inserter = { image: vi.fn(), link: vi.fn() };
@@ -89,8 +121,8 @@ describe('handleFiles and the hook', () => {
 
     await handleFiles([new File(['1'], 'i.png'), new File(['2'], 'd.pdf'), new File(['3'], 'big.zip')], config, live, inserter, fetchImpl);
 
-    expect(inserter.image).toHaveBeenCalledWith('/i', 'i.png');
-    expect(inserter.link).toHaveBeenCalledWith('/d', 'd.pdf');
+    expect(inserter.image).toHaveBeenCalledWith('/i', 'i.png', null);
+    expect(inserter.link).toHaveBeenCalledWith('/d', 'd.pdf', null);
     expect(live.textContent).toBe('Fail big.zip: too_large');
   });
 
@@ -111,7 +143,7 @@ describe('handleFiles and the hook', () => {
     surface.dispatchEvent(drop);
     expect(drop.defaultPrevented).toBe(true);
     await hook.last();
-    expect(inserter.link).toHaveBeenCalledWith('/x', 'x.txt');
+    expect(inserter.link).toHaveBeenCalledWith('/x', 'x.txt', null);
 
     const paste = new Event('paste', { cancelable: true });
     Object.defineProperty(paste, 'clipboardData', { value: transfer([new File(['y'], 'y.txt')]) });
