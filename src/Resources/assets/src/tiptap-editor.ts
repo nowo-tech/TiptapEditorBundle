@@ -29,6 +29,9 @@ import { common, createLowlight } from 'lowlight';
 
 import { createBundleLogger } from './logger';
 import { EmbedIframe, safeEmbedSrc } from './embed-iframe';
+import { attachSuggestionHook, readSuggestionConfig } from './suggestion';
+import { attachUploadHook, readUploadConfig } from './upload';
+import type { UploadAnchor } from './upload';
 
 declare const __TIPTAP_EDITOR_BUILD_TIME__: string;
 
@@ -43,6 +46,9 @@ const ROOT_SELECTOR = '[data-tiptap-root="1"], nowo-tiptap-editor';
 
 /** Maps widget roots to live Tiptap instances for teardown on DOM disconnect. */
 const mountedEditors = new WeakMap<HTMLElement, Editor>();
+
+/** 1.6: teardown of the suggestion hook (listener, timer, list) per widget root. */
+const hookDisposers = new WeakMap<HTMLElement, () => void>();
 
 export type EditorVariant = 'default' | 'simple' | 'notion' | 'agent' | 'headless';
 
@@ -103,6 +109,8 @@ function syncTextarea(textarea: HTMLTextAreaElement, html: string): void {
  * Destroys the Tiptap instance for a widget root (e.g. when `<nowo-tiptap-editor>` disconnects).
  */
 export function destroyTiptapRoot(root: HTMLElement): void {
+  hookDisposers.get(root)?.();
+  hookDisposers.delete(root);
   const ed = mountedEditors.get(root);
   if (ed) {
     ed.destroy();
@@ -893,6 +901,104 @@ function attachCharacterCountFooter(chrome: HTMLElement, editor: Editor): void {
   upd();
 }
 
+const hostFetch = (input: string, init?: RequestInit): Promise<Response> => fetch(input, init);
+
+/**
+ * 1.6: the upload hook (drop / paste of files) and the suggestion hook (`@`, `#doc`, … candidates), each only when
+ * the form theme rendered its configuration.
+ */
+function attachHostHooks(root: HTMLElement, editor: Editor): void {
+  const surface = editor.view.dom as HTMLElement;
+  const upload = readUploadConfig(root);
+  if (upload) {
+    const hasImage = editor.extensionManager.extensions.some((extension) => extension.name === 'image');
+    const link = (url: string, text: string, at: number | null): void => {
+      const content = [
+        { type: 'text', text, marks: [{ type: 'link', attrs: { href: url } }] },
+        { type: 'text', text: ' ' },
+      ];
+      if (at === null) {
+        editor.chain().focus().insertContent(content).run();
+        return;
+      }
+      editor.chain().focus().insertContentAt(at, content).run();
+    };
+    attachUploadHook(
+      root,
+      surface,
+      upload,
+      {
+        image: (url, alt, at) => {
+          if (!hasImage) {
+            link(url, alt, at);
+            return;
+          }
+          if (at === null) {
+            editor.chain().focus().setImage({ src: url, alt }).run();
+            return;
+          }
+          editor.chain().focus().insertContentAt(at, { type: 'image', attrs: { src: url, alt } }).run();
+        },
+        link,
+      },
+      hostFetch,
+      (event) => uploadAnchor(editor, event),
+    );
+  }
+
+  const suggestions = readSuggestionConfig(root);
+  if (suggestions) {
+    const hook = attachSuggestionHook(
+      root,
+      {
+        surface,
+        textBefore: () => {
+          const { $from } = editor.state.selection;
+          return $from.parent.textBetween(0, $from.parentOffset, undefined, '\ufffc');
+        },
+        replaceBefore: (length, text) => {
+          const position = editor.state.selection.from;
+          editor
+            .chain()
+            .focus()
+            .insertContentAt({ from: position - length, to: position }, { type: 'text', text })
+            .run();
+        },
+        onChange: (callback) => {
+          editor.on('update', callback);
+          editor.on('selectionUpdate', callback);
+        },
+      },
+      suggestions,
+      hostFetch,
+    );
+    hookDisposers.set(root, hook.dispose);
+  }
+}
+
+/**
+ * The drop point (or the caret for a paste), mapped through every later transaction until the upload is inserted.
+ */
+function uploadAnchor(editor: Editor, event: Event): UploadAnchor {
+  const drag = event as DragEvent;
+  const dropped =
+    event.type === 'drop' && typeof drag.clientX === 'number'
+      ? editor.view.posAtCoords({ left: drag.clientX, top: drag.clientY })?.pos
+      : undefined;
+  let position = dropped ?? editor.state.selection.from;
+  const follow = ({ transaction }: { transaction: { mapping: { map(pos: number, assoc?: number): number } } }): void => {
+    position = transaction.mapping.map(position, 1);
+  };
+  editor.on('transaction', follow);
+
+  return {
+    position: () => position,
+    release: () => {
+      editor.off('transaction', follow);
+    },
+  };
+}
+
 /**
  * Initializes one widget root (textarea + mount).
  */
@@ -1014,6 +1120,8 @@ export function initTiptapRoot(root: HTMLElement): void {
   if (variant === 'agent' && !example) {
     attachAgentFab(root);
   }
+
+  attachHostHooks(root, editor);
 
   root.dataset.tiptapInitialized = '1';
 }

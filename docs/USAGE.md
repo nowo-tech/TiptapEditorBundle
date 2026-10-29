@@ -4,7 +4,6 @@
 
 - [Form type](#form-type)
 - [Frontend script](#frontend-script)
-  - [Optional global API](#optional-global-api)
 - [Toolbar and variants](#toolbar-and-variants)
 - [Examples hub parity](#examples-hub-parity)
 - [Overriding templates (REQ-TWIG-001)](#overriding-templates-req-twig-001)
@@ -30,6 +29,27 @@ $builder->add('body', TiptapEditorType::class, [
 ```
 
 Submitted data is an **HTML string** (store in `TEXT` / `LONGTEXT` / similar).
+
+### Upload and suggestion hooks (1.6)
+
+```php
+$builder->add('body', TiptapEditorType::class, [
+    // Drop / paste files: POST multipart "file" + header X-CSRF-Token; answer 2xx {"url", "name", "image"}
+    // or 4xx {"error": "<reason>"} (announced to the user).
+    'upload_url'        => $urlGenerator->generate('app_upload', ['id' => $page->getId()]),
+    'upload_csrf_token' => $csrfTokenManager->getToken('upload_' . $page->getId())->getValue(),
+    // Candidates: GET <url>?q=<query> answering [{"id", "label", "hint"?, "token"}]; the token is inserted as text.
+    'suggestions' => [
+        ['trigger' => '@', 'url' => '/mentions/candidates'],
+        ['trigger' => '#doc', 'url' => '/pages/candidates'],
+    ],
+]);
+```
+
+The endpoints are the host's: authorize the upload and return only candidates the user may see. The editor inserts
+the upload answer's `url` as an image `src` / link `href` and its `name` as text without further checks (any valid
+http(s) or relative URL), so the endpoint must return a URL it built itself (e.g. its own download route) and a
+sanitized name; the host's HTML sanitizer still runs on save. Candidate tokens are inserted as plain text.
 
 **Forms (REQ-TWIG-003 / REQ-TWIG-005):** host pages and the demo render the form that contains this field only through a PHP Form Type and the Twig form helpers, with the rendered-aware child loop:
 

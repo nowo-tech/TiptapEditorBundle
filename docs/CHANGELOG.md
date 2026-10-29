@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Table of contents
 
 - [[Unreleased]](#unreleased)
+- [[1.6.0] - 2026-10-29](#160---2026-10-29)
 - [[1.5.2] - 2026-10-25](#152---2026-10-25)
 - [[1.5.1] - 2026-10-20](#151---2026-10-20)
 - [[1.5.0] - 2026-10-13](#150---2026-10-13)
@@ -42,9 +43,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.6.0] - 2026-10-29
+
+Editor: upload hook (drop / paste of files to a host URL) and suggestion hook (@ mentions, #doc references from host candidates). See [UPGRADING](UPGRADING.md#to-160).
+
+### Added
+
+- **Upload hook** (`upload_url`, `upload_csrf_token` options): files dropped or pasted into the editor are POSTed (multipart field `file`, header `X-CSRF-Token`) to the host URL, which answers `{url, name, image}`; images are inserted inline (as a link when the editor profile has no image extension, e.g. `simple`), other files as a link, at the position where they were dropped or pasted (mapped through edits made while the upload runs). Several drops upload one after the other. Progress and failures (the host's `{error}` reason) are announced in an `aria-live="polite"` status region next to the editor. Text-only drops and pastes are untouched; the hook is off unless `upload_url` is set. The host answer is trusted as is: the endpoint must return a URL and a name it validated.
+- **Suggestion hook** (`suggestions` option: a list of `{trigger, url}`, e.g. `@`, `#doc`, `/doc`): typing a trigger fetches candidates from the host URL (`?q=`, debounced, latest query wins) and shows a `role="listbox"` list with the chat-mention keyboard pattern (Up / Down, Enter / Tab inserts, Escape closes; the editor carries `aria-autocomplete="list"` and points `aria-controls` / `aria-activedescendant` at the open list only). The picked candidate's `token` (e.g. `@ana`, `[[wiki:<uuid>]]`) is inserted as text. A one-character trigger takes a query without spaces; a longer one takes an optional query after a space.
+- New translation keys `tiptap_upload_uploading`, `tiptap_upload_uploaded`, `tiptap_upload_failed`, `tiptap_suggestions_label`, `tiptap_suggestions_empty` (7 locales); classes `.tiptap-editor-suggestions*` and `.tiptap-editor-upload-status`.
+
 ### Changed
 
 - Docs: USAGE states that host and demo forms are Symfony Form Types rendered with `form_start` / the `not child.rendered` child loop / `form_end`, and that raw `<form>` / `<input>` must not be reintroduced; `check-no-raw-html-form` enforces it in `release-check` (REQ-TWIG-005 rule 9).
+
+[1.6.0]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.6.0
 
 ## [1.5.2] - 2026-10-25
 
@@ -473,7 +486,7 @@ First stable release published on GitHub.
 - Development workflow: Docker, Makefile, PHPUnit, PHPStan, PHP-CS-Fixer, Vitest on shared TS utilities.
 - Demos: Symfony 7 and 8 sample apps under `demo/` (FrankenPHP).
 
-[Unreleased]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.5.2...HEAD
+[Unreleased]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.6.0...HEAD
 [1.3.8]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.3.8
 [1.2.3]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.2.2...v1.2.3
 [1.2.2]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.2.1...v1.2.2
