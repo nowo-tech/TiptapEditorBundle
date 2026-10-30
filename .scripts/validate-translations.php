@@ -7,7 +7,7 @@ declare(strict_types=1);
  * Validates the bundle translation catalogues (REQ-MAKE-004 / REQ-I18N-002 / REQ-I18N-003).
  *
  * - every file under src/Resources/translations/ is a NowoTiptapEditorBundle.<locale>.yaml catalogue (no other domain);
- * - every required locale exists and parses as a YAML map of scalar messages (nested maps are flattened to dotted keys);
+ * - every required locale exists; every present catalogue parses as a YAML map of scalar messages (nested maps are flattened to dotted keys);
  * - every locale has exactly the keys of the reference locale (en), and no message is empty.
  *
  * Exit code 0 when everything is valid, 1 otherwise (errors on STDERR).
@@ -44,13 +44,19 @@ $flatten = static function (array $tree, string $prefix = '') use (&$flatten): a
 $errors     = [];
 $catalogues = [];
 
+// Every catalogue present is validated too (parse + key parity), not only the required locales.
+$locales = $requiredLocales;
 foreach (glob($dir . '/*') ?: [] as $file) {
-    if (preg_match('/^' . preg_quote($domain, '/') . '\.[a-z]{2}(?:_[A-Z]{2})?\.yaml$/', basename($file)) !== 1) {
+    if (preg_match('/^' . preg_quote($domain, '/') . '\.([a-z]{2}(?:_[A-Z]{2})?)\.yaml$/', basename($file), $m) !== 1) {
         $errors[] = sprintf('Unexpected catalogue %s: only %s.<locale>.yaml files are allowed (REQ-I18N-003).', basename($file), $domain);
+        continue;
+    }
+    if (!in_array($m[1], $locales, true)) {
+        $locales[] = $m[1];
     }
 }
 
-foreach ($requiredLocales as $locale) {
+foreach ($locales as $locale) {
     $file = sprintf('%s/%s.%s.yaml', $dir, $domain, $locale);
     if (!is_file($file)) {
         $errors[] = sprintf('Missing catalogue: %s', $file);

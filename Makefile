@@ -46,7 +46,7 @@ help:
 	@echo ""
 	@echo "Composer:"
 	@echo "  update                composer update in the bundle container"
-	@echo "  update-deps           composer update in the bundle and every demo (REQ-MAKE-008)"
+	@echo "  update-deps           composer update in the bundle and every demo (needs the monorepo helper, REQ-MAKE-008)"
 	@echo "  validate              composer validate --strict"
 	@echo ""
 	@echo "Bundle-specific:"

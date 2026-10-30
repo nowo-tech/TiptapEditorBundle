@@ -209,7 +209,11 @@ release-verify:
 	done
 	@echo "All demos passed release-verify."
 # REQ-DEMO-007: demos run the current bundle code before tests and the HTTP verify.
-release-check: update-bundle-all test-coverage-all release-verify
+# Sequential recipe steps (not prerequisites) so the order holds under `make -j`.
+release-check:
+	@$(MAKE) update-bundle-all
+	@$(MAKE) test-coverage-all
+	@$(MAKE) release-verify
 	@echo "All demos passed release-check."
 
 clean:
