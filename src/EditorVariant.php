@@ -25,6 +25,13 @@ enum EditorVariant: string
         return array_map(static fn (self $c): string => $c->value, self::cases());
     }
 
+    /**
+     * Parses a variant name (case-insensitive, trimmed), falling back to the default variant.
+     *
+     * @param string $value the variant name
+     *
+     * @return self the matching variant
+     */
     public static function fromString(string $value): self
     {
         $v = strtolower(trim($value));

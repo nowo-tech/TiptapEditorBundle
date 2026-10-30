@@ -30,16 +30,36 @@ final readonly class EmbedIframeSrcAttributeSanitizer implements AttributeSaniti
         $this->allowedHosts = array_map(strtolower(...), $allowedHosts);
     }
 
+    /**
+     * Elements handled by this sanitizer (`iframe`).
+     *
+     * @return list<string> the supported element names
+     */
     public function getSupportedElements(): array
     {
         return ['iframe'];
     }
 
+    /**
+     * Attributes handled by this sanitizer (`src`).
+     *
+     * @return list<string> the supported attribute names
+     */
     public function getSupportedAttributes(): array
     {
         return ['src'];
     }
 
+    /**
+     * Keeps an iframe `src` only when it is an https URL without credentials on an allowed host.
+     *
+     * @param string $element element name
+     * @param string $attribute attribute name
+     * @param string $value raw attribute value
+     * @param HtmlSanitizerConfig $config sanitizer configuration
+     *
+     * @return string|null the safe value, or null to drop the attribute
+     */
     public function sanitizeAttribute(string $element, string $attribute, string $value, HtmlSanitizerConfig $config): ?string
     {
         $parts = parse_url(trim($value));

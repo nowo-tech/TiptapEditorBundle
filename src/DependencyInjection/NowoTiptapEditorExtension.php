@@ -36,6 +36,12 @@ final class NowoTiptapEditorExtension extends Extension implements PrependExtens
         'tailwind_2_layout.html.twig'             => '@NowoTiptapEditorBundle/Form/tiptap_editor_theme_tailwind2.html.twig',
     ];
 
+    /**
+     * Loads the bundle services and wires the processed configuration into the form type.
+     *
+     * @param array<int, array<string, mixed>> $configs raw configuration arrays
+     * @param ContainerBuilder $container the container being built
+     */
     public function load(array $configs, ContainerBuilder $container): void
     {
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
@@ -89,6 +95,11 @@ final class NowoTiptapEditorExtension extends Extension implements PrependExtens
         $typeDefinition->setArgument('$htmlSanitizer', new Reference(TiptapHtmlSanitizerInterface::class));
     }
 
+    /**
+     * Prepends the `nowo_tiptap_editor` asset package and the Twig form theme.
+     *
+     * @param ContainerBuilder $container the container being built
+     */
     public function prepend(ContainerBuilder $container): void
     {
         if ($container->hasExtension('framework')) {
@@ -145,6 +156,11 @@ final class NowoTiptapEditorExtension extends Extension implements PrependExtens
         return array_merge([$defaultPath], $rest);
     }
 
+    /**
+     * Returns the configuration alias (`nowo_tiptap_editor`).
+     *
+     * @return string the extension alias
+     */
     public function getAlias(): string
     {
         return Configuration::ALIAS;

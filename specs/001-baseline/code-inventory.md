@@ -84,6 +84,6 @@ Production scope excludes Vitest sources (`*.test.ts`).
 | Translations | 7 | 7 |
 | **Total production sources** | **36** | **36** |
 
-Excluded: `embed-iframe.test.ts`, `logger.test.ts`, `tiptap-editor.lifecycle.test.ts` (co-located Vitest files).
+Excluded: `embed-iframe.test.ts`, `logger.test.ts`, `suggestion.test.ts`, `tiptap-editor.lifecycle.test.ts`, `tiptap-editor.test.ts`, `upload.test.ts` (co-located Vitest files).
 
 Audit command (production count): `git ls-files src | grep -v '\.test\.ts$' | wc -l` → **36** (2026-10-20).

@@ -43,6 +43,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Tests (REQ-TEST-003 / REQ-TEST-007):** Vitest coverage now includes `tiptap-editor.ts` (new `tiptap-editor.test.ts`: variants, example recipes, toolbar / Notion / example menus, prompts, theme, upload and suggestion hook adapters, custom element, discovery). Gates: 100% for `logger`, `embed-iframe`, `upload`, `suggestion`; global 99% lines / statements, 100% functions, 97% branches. The README publishes the measured percentages.
+- **Makefile (REQ-MAKE-001 / REQ-MAKE-004 / REQ-CS-001):** canonical `help` block; `validate-translations` checks YAML syntax and key parity against `en` (`.scripts/validate-translations.php`); new `validate-phpdoc` (`.scripts/complete-public-phpdoc.php`); both run in `release-check`.
+- **Demos (REQ-DEMO-007):** `make -C demo release-check` runs the new `update-bundle-all` before the demo tests and the HTTP verify.
+- **PHPDoc (REQ-CS-001):** every public method in `src/` has a docblock (no behaviour change).
+- **Security docs (REQ-SEC-001):** `docs/SECURITY.md` gains scope, attack surface, threat model and mitigations, secrets, logging, exposure and dependency policy sections.
+
+### Removed
+
+- **Assets (REQ-ASSETS-001):** stray root `package-lock.json` (pnpm is the package manager; `pnpm-lock.yaml` is the only lockfile, npm/yarn lockfiles are ignored).
+
 ## [1.6.0] - 2026-10-29
 
 Editor: upload hook (drop / paste of files to a host URL) and suggestion hook (@ mentions, #doc references from host candidates). See [UPGRADING](UPGRADING.md#to-160).
