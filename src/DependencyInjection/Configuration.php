@@ -27,6 +27,11 @@ final class Configuration implements ConfigurationInterface
 {
     public const ALIAS = 'nowo_tiptap_editor';
 
+    /**
+     * Builds the `nowo_tiptap_editor` configuration tree (profiles, default profile, sanitizer).
+     *
+     * @return TreeBuilder the configuration tree
+     */
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder(self::ALIAS);

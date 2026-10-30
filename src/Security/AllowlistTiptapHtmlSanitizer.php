@@ -108,6 +108,13 @@ final readonly class AllowlistTiptapHtmlSanitizer implements TiptapHtmlSanitizer
         $this->sanitizer = new HtmlSanitizer($config);
     }
 
+    /**
+     * Sanitizes the HTML with the allow-list and drops iframes whose `src` was rejected.
+     *
+     * @param string $html raw HTML submitted by the editor
+     *
+     * @return string the sanitized HTML
+     */
     public function sanitize(string $html): string
     {
         $html = $this->sanitizer->sanitize($html);

@@ -11,7 +11,7 @@ endif
 
 DEMOS := symfony8
 
-.PHONY: help clean test-all test-coverage-all verify-all release-check release-verify demo-smoke
+.PHONY: help clean test-all test-coverage-all verify-all update-bundle-all release-check release-verify demo-smoke
 .PHONY: $(foreach demo,$(DEMOS),up-$(demo) down-$(demo) restart-$(demo) build-$(demo) install-$(demo) update-bundle-$(demo) shell-$(demo) logs-$(demo) test-$(demo) test-coverage-$(demo) verify-$(demo))
 .PHONY: up down restart build install update-bundle test shell logs test-coverage verify
 
@@ -35,7 +35,8 @@ help:
 		echo "  test-coverage-$$demo  Run tests with coverage for $$version demo"; \
 		echo ""; \
 	done
-	@echo "  release-check    Pre-release: test-coverage-all, release-verify"
+	@echo "  update-bundle-all  Sync every demo with the bundle source (composer update + cache:clear)"
+	@echo "  release-check    Pre-release: update-bundle-all, test-coverage-all, release-verify (REQ-DEMO-007)"
 	@echo "  release-verify   For each demo: up → healthcheck HTTP 200 → down"
 	@echo "  demo-smoke       REQ-TEST-011: boot symfony8 and assert HTTP 200"
 	@echo ""
@@ -115,6 +116,9 @@ $(foreach demo,$(DEMOS),$(eval $(call logs-target-template,$(demo))))
 $(foreach demo,$(DEMOS),$(eval $(call test-target-template,$(demo))))
 $(foreach demo,$(DEMOS),$(eval $(call test-coverage-target-template,$(demo))))
 $(foreach demo,$(DEMOS),$(eval $(call verify-target-template,$(demo))))
+
+update-bundle-all:
+	@$(foreach demo,$(DEMOS),$(MAKE) update-bundle-$(demo);)
 
 test-all:
 	@$(foreach demo,$(DEMOS),$(MAKE) test-$(demo);)
@@ -204,7 +208,12 @@ release-verify:
 		echo "OK $$demo (HTTP $$code)"; \
 	done
 	@echo "All demos passed release-verify."
-release-check: test-coverage-all release-verify
+# REQ-DEMO-007: demos run the current bundle code before tests and the HTTP verify.
+# Sequential recipe steps (not prerequisites) so the order holds under `make -j`.
+release-check:
+	@$(MAKE) update-bundle-all
+	@$(MAKE) test-coverage-all
+	@$(MAKE) release-verify
 	@echo "All demos passed release-check."
 
 clean:

@@ -44,6 +44,12 @@ final class TiptapEditorType extends AbstractType
     ) {
     }
 
+    /**
+     * Adds the HTML sanitizing model transformer when a sanitizer is configured.
+     *
+     * @param FormBuilderInterface<mixed> $builder the form builder
+     * @param array<string, mixed> $options resolved field options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         if ($this->htmlSanitizer instanceof TiptapHtmlSanitizerInterface) {
@@ -51,6 +57,13 @@ final class TiptapEditorType extends AbstractType
         }
     }
 
+    /**
+     * Exposes the resolved editor profile (variant, toolbar, theme, hooks, labels) to the form theme.
+     *
+     * @param FormView $view the field view
+     * @param FormInterface<mixed> $form the field
+     * @param array<string, mixed> $options resolved field options
+     */
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $name                                 = $options['config'] ?? $this->defaultProfileName;
@@ -67,6 +80,11 @@ final class TiptapEditorType extends AbstractType
         $view->vars['tiptap_suggestions']       = $options['suggestions'];
     }
 
+    /**
+     * Declares the editor options (profile, variant, toolbar, theme, placeholder, upload and suggestion hooks).
+     *
+     * @param OptionsResolver $resolver the options resolver
+     */
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
@@ -163,11 +181,21 @@ final class TiptapEditorType extends AbstractType
         return $this->profiles[$name];
     }
 
+    /**
+     * The field renders as a textarea that the editor keeps in sync.
+     *
+     * @return string the parent type class
+     */
     public function getParent(): string
     {
         return TextareaType::class;
     }
 
+    /**
+     * Block prefix used by the `tiptap_editor_*` form theme blocks.
+     *
+     * @return string the block prefix
+     */
     public function getBlockPrefix(): string
     {
         return 'tiptap_editor';

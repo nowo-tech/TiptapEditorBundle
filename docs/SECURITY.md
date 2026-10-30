@@ -2,11 +2,82 @@
 
 ## Table of contents
 
+- [Scope](#scope)
+- [Attack surface](#attack-surface)
+- [Threat model and mitigations](#threat-model-and-mitigations)
+- [Secrets and cryptography](#secrets-and-cryptography)
+- [Logging](#logging)
+- [Permissions and exposure](#permissions-and-exposure)
+- [Dependencies and updates](#dependencies-and-updates)
 - [Security considerations for integrators](#security-considerations-for-integrators)
 - [Bundle responsibility](#bundle-responsibility)
 - [Supported versions](#supported-versions)
 - [Reporting a vulnerability](#reporting-a-vulnerability)
 - [Release security checklist (12.4.1)](#release-security-checklist-1241)
+
+## Scope
+
+**Covered:** the `TiptapEditorType` form field (Symfony `TextareaType` child), its Twig form themes, the optional
+server-side HTML sanitizer (`html_sanitizer`: `AllowlistTiptapHtmlSanitizer` or a host service) and the browser bundle
+`tiptap-editor.js` (editor, toolbar / menus, embed prompt, 1.6 upload and suggestion hooks).
+
+**Not covered (host-owned):** controllers and routes (the bundle ships none), the upload and suggestion endpoints, the
+storage and rendering of the saved HTML (Twig `|raw`, e-mails, exports), form CSRF protection, authentication and
+authorization, Content-Security-Policy headers.
+
+## Attack surface
+
+| Input | Source | Where it is handled |
+| ----- | ------ | ------------------- |
+| Submitted field value (HTML string) | Any user who can submit the host form | `TiptapHtmlSanitizeTransformer::reverseTransform()` (when `html_sanitizer` is set), then the host |
+| Initial field value (stored HTML) | Host database | Parsed by Tiptap/ProseMirror into its schema in the browser; unknown nodes/attributes are dropped |
+| Field options (`config`, `toolbar`, `variant`, `theme`, `placeholder`, `upload_url`, `upload_csrf_token`, `suggestions`, …) | Host code | `OptionsResolver` types / allowed values; rendered as escaped `data-*` attributes by the form theme |
+| Bundle configuration (`nowo_tiptap_editor.*`) | Host config | Typed config tree; unknown `default_profile` fails at compile time |
+| Toolbar prompts (link, image, embed URL) | Editing user | `window.prompt`; embed URLs pass `safeEmbedSrc()` (https only, no credentials, optional host allow-list) |
+| Dropped / pasted files (1.6 upload hook) | Editing user | `POST upload_url` (multipart `file`, `X-CSRF-Token` header, `credentials: same-origin`); response JSON `{url, name, image}` |
+| Suggestion queries (1.6 suggestion hook) | Editing user | `GET <url>?q=<query>` (`encodeURIComponent`, `credentials: same-origin`); candidates rendered with `textContent`, tokens inserted as plain text |
+
+The bundle exposes **no HTTP endpoint, console command, message handler or outgoing server-side request**.
+
+## Threat model and mitigations
+
+| Threat | Risk | Mitigation in the bundle | Host responsibility |
+| ------ | ---- | ------------------------ | ------------------- |
+| **Stored XSS** through the HTML field (`<script>`, `on*` handlers, `javascript:` URLs, `srcdoc`, CSS) | High for UGC | `html_sanitizer: allowlist` (Flex recipe `when@prod`) uses `symfony/html-sanitizer`: per-element attribute allow-list, http/https/mailto links, http/https images, `style` only as `text-align`, scripts and unknown elements removed | Keep the sanitizer on wherever untrusted users edit; render saved HTML only after sanitizing; add a CSP |
+| **Malicious iframe embeds** (phishing, clickjacking, credential URLs) | Medium | Client `safeEmbedSrc()` and server `EmbedIframeSrcAttributeSanitizer`: `https` only, no user/password, host allow-list (YouTube, youtube-nocookie, Vimeo by default); iframes without a valid `src` are removed | Narrow the host list when needed |
+| **DOM XSS in the widget** | Low | No `eval`; `innerHTML` is only assigned static markup; embeds are inserted as editor nodes, never as HTML strings; suggestion labels / hints and upload messages use `textContent` | — |
+| **CSRF** on form submit / upload | Medium | Upload requests send the host-provided `upload_csrf_token` as `X-CSRF-Token` and only same-origin credentials | Keep Symfony form CSRF on; validate the upload token and authorize the upload in the endpoint |
+| **Malicious upload answers** (`url` / `name`) | Medium | Inserted through the editor API (image `src` / link `href` / text), then re-sanitized on save when the sanitizer is on | Return URLs the endpoint built itself and a sanitized name; validate MIME type and size server-side |
+| **Data disclosure via suggestions** | Medium | Queries are URL-encoded and sent same-origin only | Return only candidates the current user may see |
+| **SSRF / injection / deserialization / path traversal** | n/a | The bundle performs no server-side requests, no shell, no `unserialize`, no file-system access from user input | — |
+| **Denial of service** (very large HTML) | Low | Sanitizer runs once per submit | Enforce request size / field length limits |
+
+## Secrets and cryptography
+
+The bundle uses no cryptography and stores no secrets. The upload CSRF token is generated by the host
+(`CsrfTokenManagerInterface`) and only rendered in the field's `data-*` attributes; never hard-code it. Tests and
+fixtures use obvious placeholders only.
+
+## Logging
+
+The PHP side does not log. The browser bundle logs to the console only when the profile option `debug: true` is set
+(script-loaded banner, warnings such as a rejected embed URL); it never logs field contents, upload tokens or responses.
+Keep `debug` off in production.
+
+## Permissions and exposure
+
+Nothing is exposed by the bundle itself: no routes, no controllers, no public services beyond the form type and the
+sanitizer. Who can edit a field is decided by the host form / controller; who can upload or query suggestions is
+decided by the host endpoints configured in `upload_url` / `suggestions`.
+
+## Dependencies and updates
+
+- PHP: runtime dependencies are Symfony components (`form`, `framework-bundle`, `html-sanitizer`, `twig-bundle`, …) and `twig/extra-bundle`.
+  `composer audit` runs before every release (see the checklist below); Dependabot (`composer`, `github-actions`)
+  proposes weekly updates, and security advisories are released as patch versions.
+- JavaScript: Tiptap and its extensions are bundled into `tiptap-editor.js` from `pnpm-lock.yaml` (the only lockfile).
+  Run `pnpm audit` when updating, rebuild the asset (`make assets`) and ship it in the same release.
+- Report vulnerabilities privately (see below); fixes are published with a GitHub security advisory.
 
 ## Security considerations for integrators
 

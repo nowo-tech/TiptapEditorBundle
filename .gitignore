@@ -2,6 +2,9 @@
 /vendor
 /node_modules
 /.pnpm-store
+# pnpm is the package manager (REQ-ASSETS-001): never commit npm/yarn lockfiles at the root
+/package-lock.json
+/yarn.lock
 
 # Environment
 .env

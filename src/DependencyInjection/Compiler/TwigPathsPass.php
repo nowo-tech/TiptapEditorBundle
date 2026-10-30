@@ -16,6 +16,11 @@ final class TwigPathsPass implements CompilerPassInterface
 {
     private const TWIG_NAMESPACE = 'NowoTiptapEditorBundle';
 
+    /**
+     * Registers the bundle views under the `@NowoTiptapEditorBundle` Twig namespace.
+     *
+     * @param ContainerBuilder $container the container being compiled
+     */
     public function process(ContainerBuilder $container): void
     {
         $loaderId = $this->getNativeLoaderServiceId($container);

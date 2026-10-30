@@ -16,16 +16,33 @@ use function is_string;
  */
 final readonly class TiptapHtmlSanitizeTransformer implements DataTransformerInterface
 {
+    /**
+     * @param TiptapHtmlSanitizerInterface $sanitizer sanitizer applied to submitted HTML
+     */
     public function __construct(
         private TiptapHtmlSanitizerInterface $sanitizer,
     ) {
     }
 
+    /**
+     * Model to view: the stored HTML is rendered unchanged.
+     *
+     * @param mixed $value the model value
+     *
+     * @return mixed the view value
+     */
     public function transform(mixed $value): mixed
     {
         return $value;
     }
 
+    /**
+     * View to model: sanitizes submitted HTML strings; other values pass through.
+     *
+     * @param mixed $value the submitted value
+     *
+     * @return mixed the sanitized value
+     */
     public function reverseTransform(mixed $value): mixed
     {
         if (!is_string($value)) {
