@@ -5,6 +5,7 @@
 - [From 1.3.7 to 1.3.8](#from-137-to-138)
 - [From 1.3.6 to 1.3.7](#from-136-to-137)
 - [Unreleased](#unreleased)
+- [To 1.7.0](#to-170)
 - [To 1.6.0](#to-160)
 - [To 1.5.2](#to-152)
 - [To 1.5.1](#to-151)
@@ -59,6 +60,31 @@ composer update nowo-tech/tiptap-editor-bundle
 ```
 
 ## Unreleased
+
+## To 1.7.0
+
+From **1.6.0**:
+
+```bash
+composer update nowo-tech/tiptap-editor-bundle
+php bin/console assets:install public
+```
+
+`assets:install` publishes the new `tiptap-editor.css` (and the rebuilt `tiptap-editor.js`).
+
+- **Styles:** the widget links `/bundles/nowotiptapeditor/tiptap-editor.css` (with the request attribute `csp_nonce` as `nonce`, when set) instead of printing an inline `<style>`. Nothing to do unless you load the styles yourself: then set `nowo_tiptap_editor.stylesheet: false` and add `<link rel="stylesheet" href="{{ asset(nowo_tiptap_editor_asset_path('tiptap-editor.css'), nowo_tiptap_editor_asset_package()) }}">` to your layout (or keep your own copy of the rules). Copies of the 1.6 inline rules in your app can be dropped.
+- **Overridden `tiptap_editor_widget` blocks:** the textarea is hidden with `hidden` + `.tiptap-editor-hidden-input` (no `style` attribute) and the mount has no `style="min-height: …"` (the script sets it). A copy of the 1.6 block keeps working, but its `<style>` is then printed twice (once by you, once from the stylesheet file): drop it.
+- **Placeholder:** the default key `tiptap_placeholder` is translated in `NowoTiptapEditorBundle` whatever the field's `translation_domain`: an app copy of `tiptap_placeholder` in another domain (e.g. the parent form's) is no longer read — override it in `translations/NowoTiptapEditorBundle.<locale>.yaml`.
+- **Toolbar:** buttons now carry `aria-label` / `title` from `tiptap_toolbar.*` (override them like any bundle key). To show icons set `toolbar_display: icon` on a profile (or the field option); to use your icon set, override the block `tiptap_editor_toolbar_icons` in your form theme:
+
+  ```twig
+  {% use '@NowoTiptapEditorBundle/Form/tiptap_editor_theme.html.twig' %}
+  {% block tiptap_editor_toolbar_icons %}
+      {% for command, icon in {bold: 'tabler:bold', italic: 'tabler:italic', link: 'tabler:link'} %}
+          <template data-tiptap-icon="{{ command }}">{{ ux_icon(icon) }}</template>
+      {% endfor %}
+  {% endblock %}
+  ```
 
 ## To 1.6.0
 

@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { readdirSync, readFileSync, statSync } from 'node:fs';
+import { copyFileSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { defineConfig } from 'vite';
 
 /**
@@ -22,9 +22,22 @@ function sourceBuildId(dir: string): string {
 }
 
 /**
- * Vite IIFE build for the Tiptap form widget. Output: `src/Resources/public/tiptap-editor.js` for `assets:install`.
+ * Vite IIFE build for the Tiptap form widget. Output: `src/Resources/public/tiptap-editor.js` for `assets:install`, and
+ * (1.7) the widget stylesheet `src/Resources/assets/src/tiptap-editor.css` copied as is to
+ * `src/Resources/public/tiptap-editor.css` (linked by the form theme; not bundled into the script).
  */
 export default defineConfig({
+  plugins: [
+    {
+      name: 'nowo-tiptap-editor-stylesheet',
+      closeBundle(): void {
+        copyFileSync(
+          new URL('src/Resources/assets/src/tiptap-editor.css', import.meta.url),
+          new URL('src/Resources/public/tiptap-editor.css', import.meta.url),
+        );
+      },
+    },
+  ],
   define: {
     __TIPTAP_EDITOR_BUILD_TIME__: JSON.stringify(sourceBuildId('src/Resources/assets/src')),
   },

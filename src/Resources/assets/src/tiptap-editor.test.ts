@@ -116,6 +116,38 @@ afterEach(() => {
 });
 
 describe('initTiptapRoot', () => {
+  it('labels the toolbar buttons and draws icons in icon mode (1.7)', () => {
+    const root = makeRoot({
+      tiptapToolbarValue: '1',
+      tiptapToolbarDisplayValue: 'icon',
+      tiptapToolbarLabelsValue: JSON.stringify({ toolbar: 'Formato', bold: 'Negrita' }),
+    });
+    initTiptapRoot(root);
+
+    const bar = root.querySelector('.tiptap-editor-toolbar') as HTMLElement;
+    expect(bar.getAttribute('aria-label')).toBe('Formato');
+    expect(bar.classList.contains('tiptap-editor-toolbar--icon')).toBe(true);
+    const bold = toolbarButtons(root).find((b) => b.dataset.tiptapCommand === 'bold') as HTMLButtonElement;
+    expect([bold.title, bold.getAttribute('aria-label'), bold.getAttribute('aria-pressed')]).toEqual(['Negrita', 'Negrita', 'false']);
+    expect(bold.querySelector('svg')).not.toBeNull();
+    const undo = toolbarButtons(root).find((b) => b.dataset.tiptapCommand === 'undo') as HTMLButtonElement;
+    expect(undo.getAttribute('aria-label')).toBe('Undo');
+    expect(undo.hasAttribute('aria-pressed')).toBe(false);
+
+    editorOf(root).chain().selectAll().toggleBold().run();
+    expect(bold.getAttribute('aria-pressed')).toBe('true');
+  });
+
+  it('keeps the 1.x text glyphs by default (1.7)', () => {
+    const root = makeRoot({ tiptapToolbarValue: '1' });
+    initTiptapRoot(root);
+
+    const bar = root.querySelector('.tiptap-editor-toolbar') as HTMLElement;
+    expect(bar.hasAttribute('aria-label')).toBe(false);
+    const bold = toolbarButtons(root).find((b) => b.dataset.tiptapCommand === 'bold') as HTMLButtonElement;
+    expect([bold.textContent, bold.getAttribute('aria-label')]).toEqual(['B', 'Bold']);
+  });
+
   it('skips roots without textarea or mount and is idempotent', () => {
     const empty = document.createElement('div');
     initTiptapRoot(empty);

@@ -59,6 +59,8 @@ In your base layout, load the bundle script **once** per page via the named pack
 <script src="{{ asset(nowo_tiptap_editor_asset_path('tiptap-editor.js'), nowo_tiptap_editor_asset_package()) }}"></script>
 ```
 
+The widget links its stylesheet `tiptap-editor.css` from the same package itself (1.7; with the request attribute `csp_nonce` as `nonce`, so a strict Content-Security-Policy does not need `'unsafe-inline'` styles). Set `nowo_tiptap_editor.stylesheet: false` to load it from your layout instead.
+
 When developing the bundle from a git clone, rebuild the JS with `pnpm run build` in the bundle root, then re-run `assets:install` in the app.
 
 Persisted HTML may require sanitization in your app — see [SECURITY.md](SECURITY.md). To override Twig themes or translations, see [CONFIGURATION.md](CONFIGURATION.md#overriding-bundle-twig-templates).

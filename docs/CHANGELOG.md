@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Table of contents
 
 - [[Unreleased]](#unreleased)
+- [[1.7.0] - 2026-10-31](#170---2026-10-31)
 - [[1.6.0] - 2026-10-29](#160---2026-10-29)
 - [[1.5.2] - 2026-10-25](#152---2026-10-25)
 - [[1.5.1] - 2026-10-20](#151---2026-10-20)
@@ -43,13 +44,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.7.0] - 2026-10-31
+
+Widget host polish: strict-CSP friendly (stylesheet asset instead of an inline `<style>`), the default placeholder translated in the bundle domain, translated toolbar labels and optional icon buttons with a host icon hook. See [UPGRADING](UPGRADING.md#to-170).
+
+### Added
+
+- **Stylesheet asset `tiptap-editor.css`** (`nowo_tiptap_editor` asset package): the widget styles move out of the form theme into `src/Resources/public/tiptap-editor.css` (source `src/Resources/assets/src/tiptap-editor.css`, copied by `pnpm run build`). The widget links it with the request attribute `csp_nonce` as `nonce` (new Twig function `nowo_tiptap_editor_csp_nonce()`). New root option **`stylesheet`** (default `true`): `false` when the host layout loads the file (or its own styles).
+- **Toolbar labels:** every toolbar button gets a translated `aria-label` and `title` (tooltip) from the new `tiptap_toolbar.*` keys (7 locales; `tiptap_toolbar.toolbar` names the toolbar), toggle buttons expose `aria-pressed`; the notion menu buttons get an `aria-label`.
+- **Icon buttons:** new profile / field option **`toolbar_display`** (`text` default = the 1.x glyphs, `icon`): built-in inline SVG icons (no icon font, nothing fetched). Hosts can supply their own icons by overriding the form theme block **`tiptap_editor_toolbar_icons`** with `<template data-tiptap-icon="<command>">…</template>` elements (e.g. `ux_icon('tabler:bold')`); command ids in `TiptapEditorType::TOOLBAR_COMMANDS`.
+
 ### Changed
+
+- **No inline styles (strict CSP):** the form theme no longer prints a `<style>` element; the synced textarea is hidden with the `hidden` attribute and the `tiptap-editor-hidden-input` class instead of `style="display:none!important"`, and the mount's `min-height` is set by the script only (no `style` attribute).
 
 - **Tests (REQ-TEST-003 / REQ-TEST-007):** Vitest coverage now includes `tiptap-editor.ts` (new `tiptap-editor.test.ts`: variants, example recipes, toolbar / Notion / example menus, prompts, theme, upload and suggestion hook adapters, custom element, discovery). Gates: 100% for `logger`, `embed-iframe`, `upload`, `suggestion`; global 99% lines / statements, 100% functions, 97% branches. The README publishes the measured percentages.
 - **Makefile (REQ-MAKE-001 / REQ-MAKE-004 / REQ-CS-001):** canonical `help` block; `validate-translations` checks YAML syntax and key parity against `en` (`.scripts/validate-translations.php`); new `validate-phpdoc` (`.scripts/complete-public-phpdoc.php`); both run in `release-check`.
 - **Demos (REQ-DEMO-007):** `make -C demo release-check` runs the new `update-bundle-all` before the demo tests and the HTTP verify.
 - **PHPDoc (REQ-CS-001):** every public method in `src/` has a docblock (no behaviour change).
 - **Security docs (REQ-SEC-001):** `docs/SECURITY.md` gains scope, attack surface, threat model and mitigations, secrets, logging, exposure and dependency policy sections.
+
+### Fixed
+
+- **Default placeholder translated in the wrong domain:** the default `placeholder` key `tiptap_placeholder` is translated in `NowoTiptapEditorBundle` even when the field's `translation_domain` is another one (a parent form or a FormKit profile set it), so hosts no longer need to copy `tiptap_placeholder` into their own domain. A custom placeholder key is still translated in the field's domain.
 
 ### Removed
 

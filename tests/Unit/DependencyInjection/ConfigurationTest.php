@@ -28,6 +28,23 @@ final class ConfigurationTest extends TestCase
         self::assertFalse($profile['debug']);
         self::assertSame('default', $profile['variant']);
         self::assertSame('light', $profile['theme']);
+        self::assertSame('text', $profile['toolbar_display']);
+        self::assertTrue($config['stylesheet']);
+    }
+
+    public function testStylesheetAndToolbarDisplay(): void
+    {
+        $processor = new Processor();
+        $flat      = $processor->processConfiguration(new Configuration(), [['stylesheet' => false, 'toolbar_display' => 'icon']]);
+        self::assertFalse($flat['stylesheet']);
+        self::assertSame('icon', $flat['profiles']['default']['toolbar_display']);
+
+        $profiles = $processor->processConfiguration(new Configuration(), [['stylesheet' => false, 'profiles' => ['wiki' => ['toolbar_display' => 'icon']], 'default_profile' => 'wiki']]);
+        self::assertFalse($profiles['stylesheet']);
+        self::assertSame('icon', $profiles['profiles']['wiki']['toolbar_display']);
+
+        $this->expectException(InvalidConfigurationException::class);
+        $processor->processConfiguration(new Configuration(), [['toolbar_display' => 'emoji']]);
     }
 
     public function testCustomConfiguration(): void

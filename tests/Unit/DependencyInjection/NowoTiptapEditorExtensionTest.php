@@ -49,6 +49,17 @@ final class NowoTiptapEditorExtensionTest extends TestCase
         self::assertTrue($container->hasParameter('nowo_tiptap_editor.min_height'));
         self::assertTrue($container->hasParameter('nowo_tiptap_editor.form_theme'));
         self::assertTrue($container->hasParameter('nowo_tiptap_editor.debug'));
+        self::assertTrue($container->getParameter('nowo_tiptap_editor.stylesheet'));
+        self::assertTrue($container->getDefinition(TiptapEditorType::class)->getArgument('$linkStylesheet'));
+    }
+
+    public function testLoadWithoutStylesheetLink(): void
+    {
+        $container = new ContainerBuilder();
+        (new NowoTiptapEditorExtension())->load([['stylesheet' => false]], $container);
+
+        self::assertFalse($container->getParameter('nowo_tiptap_editor.stylesheet'));
+        self::assertFalse($container->getDefinition(TiptapEditorType::class)->getArgument('$linkStylesheet'));
     }
 
     public function testLoadWithCustomConfig(): void
