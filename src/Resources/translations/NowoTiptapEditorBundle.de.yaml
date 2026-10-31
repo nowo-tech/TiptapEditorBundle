@@ -7,7 +7,8 @@ tiptap_upload_uploaded: '%name% hochgeladen.'
 tiptap_upload_failed: '%name% konnte nicht hochgeladen werden (%reason%).'
 tiptap_suggestions_label: 'Vorschläge'
 tiptap_suggestions_empty: 'Keine Ergebnisse'
-# 1.7: accessible names / tooltips of the toolbar buttons (aria-label, title); `toolbar` names the toolbar itself.
+# 1.7: accessible names / tooltips of the toolbar buttons (aria-label, title); `toolbar` names the toolbar itself,
+# `embed` / `insert` the Notion insert menu.
 tiptap_toolbar:
   toolbar: "Formatierung"
   undo: "Rückgängig"
@@ -45,3 +46,5 @@ tiptap_toolbar:
   table_delete: "Tabelle löschen"
   task_list: "Aufgabenliste"
   image: "Bild einfügen"
+  embed: "Einbetten"
+  insert: "Einfügen"

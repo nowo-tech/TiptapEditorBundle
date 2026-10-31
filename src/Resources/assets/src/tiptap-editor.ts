@@ -689,8 +689,15 @@ function wireMenuDom(editor: Editor, menu: MenuMount): void {
   wire(menu.floating);
 }
 
+/** Escapes a translated label for an HTML attribute / text node of the static menu markup. */
+function escapeHtml(value: string): string {
+  return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
 function notionMenuButton(label: string, title: string, action: string): string {
-  return `<button type="button" class="tiptap-editor-toolbar__btn" data-tiptap-notion-action="${action}" title="${title}" aria-label="${title}">${label}</button>`;
+  const name = escapeHtml(title);
+
+  return `<button type="button" class="tiptap-editor-toolbar__btn" data-tiptap-notion-action="${action}" title="${name}" aria-label="${name}">${escapeHtml(label)}</button>`;
 }
 
 function wireNotionMenus(editor: Editor, menu: MenuMount): void {
@@ -775,6 +782,7 @@ function buildExtensions(
   example: ExampleId | null,
   menuMount: MenuMount | null,
   notionMenus: MenuMount | null,
+  labels: Record<string, string> = {},
 ): Extension[] {
   const headingLevels =
     variant === 'headless' && !example ? ([1, 2, 3, 4, 5, 6] as const) : ([1, 2, 3] as const);
@@ -890,21 +898,23 @@ function buildExtensions(
 
   if (notionMenus) {
     notionMenus.bubble.className = 'tiptap-notion-bubble';
+    // 1.7: translated names (tiptap_toolbar.*, data-tiptap-toolbar-labels-value), English fallbacks.
+    const name = (id: string, fallback: string): string => labels[id] ?? fallback;
     notionMenus.bubble.innerHTML =
-      notionMenuButton('B', 'Negrita', 'bold') +
-      notionMenuButton('I', 'Cursiva', 'italic') +
-      notionMenuButton('U', 'Subrayado', 'underline') +
-      notionMenuButton('S', 'Tachado', 'strike') +
-      notionMenuButton('</>', 'Código', 'code') +
-      notionMenuButton('🔗', 'Enlace (Ctrl+K)', 'link');
+      notionMenuButton('B', name('bold', 'Bold'), 'bold') +
+      notionMenuButton('I', name('italic', 'Italic'), 'italic') +
+      notionMenuButton('U', name('underline', 'Underline'), 'underline') +
+      notionMenuButton('S', name('strike', 'Strikethrough'), 'strike') +
+      notionMenuButton('</>', name('code', 'Inline code'), 'code') +
+      notionMenuButton('🔗', `${name('link', 'Link')} (Ctrl+K)`, 'link');
 
     notionMenus.floating.className = 'tiptap-notion-floating';
     notionMenus.floating.innerHTML =
-      '<span class="tiptap-notion-floating__hint">Insertar</span>' +
-      notionMenuButton('🔗', 'Enlace', 'link') +
-      notionMenuButton('🖼', 'Imagen', 'image') +
-      notionMenuButton('▶', 'Embed', 'embed') +
-      notionMenuButton('•', 'Lista', 'bullet');
+      `<span class="tiptap-notion-floating__hint">${escapeHtml(name('insert', 'Insert'))}</span>` +
+      notionMenuButton('🔗', name('link', 'Link'), 'link') +
+      notionMenuButton('🖼', name('image', 'Insert image'), 'image') +
+      notionMenuButton('▶', name('embed', 'Embed'), 'embed') +
+      notionMenuButton('•', name('bullet_list', 'Bulleted list'), 'bullet');
 
     exts.push(
       BubbleMenu.configure({
@@ -1130,7 +1140,7 @@ export function initTiptapRoot(root: HTMLElement): void {
 
   editor = new Editor({
     element: mount,
-    extensions: buildExtensions(placeholder, variant, example, menuMount, notionMenus),
+    extensions: buildExtensions(placeholder, variant, example, menuMount, notionMenus, readToolbarLabels(root)),
     content: textarea.value || '<p></p>',
     editorProps,
     onUpdate: () => {

@@ -86,8 +86,9 @@ export function readToolbarLabels(root: HTMLElement): Record<string, string> {
  * null (the button keeps its text glyph).
  */
 export function toolbarIcon(root: HTMLElement, id: string): DocumentFragment | null {
+  // An empty host template (e.g. ux_icon() of an icon that is not installed) falls back to the built-in icon.
   const custom = Array.from(root.querySelectorAll<HTMLTemplateElement>('template[data-tiptap-icon]')).find(
-    (template) => template.dataset.tiptapIcon === id,
+    (template) => template.dataset.tiptapIcon === id && template.content.childNodes.length > 0,
   );
   if (custom) {
     return custom.content.cloneNode(true) as DocumentFragment;

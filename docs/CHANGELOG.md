@@ -51,8 +51,8 @@ Widget host polish: strict-CSP friendly (stylesheet asset instead of an inline `
 ### Added
 
 - **Stylesheet asset `tiptap-editor.css`** (`nowo_tiptap_editor` asset package): the widget styles move out of the form theme into `src/Resources/public/tiptap-editor.css` (source `src/Resources/assets/src/tiptap-editor.css`, copied by `pnpm run build`). The widget links it with the request attribute `csp_nonce` as `nonce` (new Twig function `nowo_tiptap_editor_csp_nonce()`). New root option **`stylesheet`** (default `true`): `false` when the host layout loads the file (or its own styles).
-- **Toolbar labels:** every toolbar button gets a translated `aria-label` and `title` (tooltip) from the new `tiptap_toolbar.*` keys (7 locales; `tiptap_toolbar.toolbar` names the toolbar), toggle buttons expose `aria-pressed`; the notion menu buttons get an `aria-label`.
-- **Icon buttons:** new profile / field option **`toolbar_display`** (`text` default = the 1.x glyphs, `icon`): built-in inline SVG icons (no icon font, nothing fetched). Hosts can supply their own icons by overriding the form theme block **`tiptap_editor_toolbar_icons`** with `<template data-tiptap-icon="<command>">…</template>` elements (e.g. `ux_icon('tabler:bold')`); command ids in `TiptapEditorType::TOOLBAR_COMMANDS`.
+- **Toolbar labels:** every toolbar button gets a translated `aria-label` and `title` (tooltip) from the new `tiptap_toolbar.*` keys (7 locales; `tiptap_toolbar.toolbar` names the toolbar), toggle buttons expose `aria-pressed`; the Notion bubble / insert menu buttons get the same translated `aria-label` / `title` (they were hard-coded Spanish: "Negrita", "Insertar", …).
+- **Icon buttons:** new profile / field option **`toolbar_display`** (`text` default = the 1.x glyphs, `icon`): built-in inline SVG icons (no icon font, nothing fetched). Hosts can supply their own icons by overriding the form theme block **`tiptap_editor_toolbar_icons`** with `<template data-tiptap-icon="<command>">…</template>` elements (e.g. `ux_icon('tabler:bold')`; an empty template falls back to the built-in icon); command ids in `TiptapEditorType::TOOLBAR_COMMANDS`.
 
 ### Changed
 

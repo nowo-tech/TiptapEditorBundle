@@ -69,12 +69,14 @@ final class TiptapEditorThemeRenderingTest extends TestCase
         self::assertStringContainsString('data-tiptap-toolbar-display-value="text"', $html);
     }
 
-    public function testStylesheetLinkCanBeTurnedOffAndToolbarLabelsAreOnlyRenderedWithAToolbar(): void
+    public function testStylesheetLinkCanBeTurnedOffAndTheDisplayModeNeedsAToolbar(): void
     {
         $html = $this->render(['toolbar' => false], linkStylesheet: false);
 
         self::assertStringNotContainsString('data-tiptap-stylesheet', $html);
-        self::assertStringNotContainsString('data-tiptap-toolbar-labels-value', $html);
+        self::assertStringNotContainsString('data-tiptap-toolbar-display-value', $html);
+        // The labels also name the Notion menu buttons (no toolbar).
+        self::assertSame('[NowoTiptapEditorBundle] tiptap_toolbar.insert', $this->labels($html)['insert']);
         self::assertStringContainsString('data-tiptap-toolbar-value="0"', $html);
     }
 

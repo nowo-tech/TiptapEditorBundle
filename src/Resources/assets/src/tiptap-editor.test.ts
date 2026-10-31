@@ -292,6 +292,17 @@ describe('initTiptapRoot', () => {
     }
   });
 
+  it('names the Notion menu buttons with the translated labels (1.7)', () => {
+    const root = makeRoot({ tiptapVariantValue: 'notion', tiptapToolbarLabelsValue: JSON.stringify({ bold: 'Negrita "N"', insert: 'Insertar' }) });
+    initTiptapRoot(root);
+    const [bubble, floating] = menuElements(editorOf(root));
+    const bold = bubble.querySelector('[data-tiptap-notion-action="bold"]') as HTMLButtonElement;
+    expect([bold.title, bold.getAttribute('aria-label')]).toEqual(['Negrita "N"', 'Negrita "N"']);
+    expect(bubble.querySelector('[data-tiptap-notion-action="link"]')?.getAttribute('aria-label')).toBe('Link (Ctrl+K)');
+    expect(floating.querySelector('.tiptap-notion-floating__hint')?.textContent).toBe('Insertar');
+    expect(floating.querySelector('[data-tiptap-notion-action="embed"]')?.getAttribute('title')).toBe('Embed');
+  });
+
   it('wires the Notion bubble / floating menus', () => {
     for (const withChrome of [true, false]) {
       const root = makeRoot({ tiptapVariantValue: 'notion' }, '<p>Hello world</p>', withChrome);

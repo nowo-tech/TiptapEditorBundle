@@ -7,7 +7,8 @@ tiptap_upload_uploaded: '%name% geüpload.'
 tiptap_upload_failed: '%name% kon niet worden geüpload (%reason%).'
 tiptap_suggestions_label: 'Suggesties'
 tiptap_suggestions_empty: 'Geen resultaten'
-# 1.7: accessible names / tooltips of the toolbar buttons (aria-label, title); `toolbar` names the toolbar itself.
+# 1.7: accessible names / tooltips of the toolbar buttons (aria-label, title); `toolbar` names the toolbar itself,
+# `embed` / `insert` the Notion insert menu.
 tiptap_toolbar:
   toolbar: "Opmaak"
   undo: "Ongedaan maken"
@@ -45,3 +46,5 @@ tiptap_toolbar:
   table_delete: "Tabel verwijderen"
   task_list: "Takenlijst"
   image: "Afbeelding invoegen"
+  embed: "Insluiten"
+  insert: "Invoegen"

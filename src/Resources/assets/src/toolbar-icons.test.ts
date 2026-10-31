@@ -50,6 +50,11 @@ describe('toolbarIcon', () => {
     expect(toolbarIcon(el, 'bold')?.querySelector('b.host')).not.toBeNull();
   });
 
+  it('ignores an empty host template', () => {
+    const el = root({}, '<template data-tiptap-icon="bold"></template>');
+    expect(toolbarIcon(el, 'bold')?.querySelector('svg.tiptap-editor-toolbar__icon')).not.toBeNull();
+  });
+
   it('falls back to the built-in SVG, or null for a command without icon', () => {
     const svg = toolbarIcon(root(), 'undo')?.querySelector('svg');
     expect(svg?.getAttribute('aria-hidden')).toBe('true');
