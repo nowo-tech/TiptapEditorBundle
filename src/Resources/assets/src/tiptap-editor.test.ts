@@ -116,6 +116,38 @@ afterEach(() => {
 });
 
 describe('initTiptapRoot', () => {
+  it('labels the toolbar buttons and draws icons in icon mode (1.7)', () => {
+    const root = makeRoot({
+      tiptapToolbarValue: '1',
+      tiptapToolbarDisplayValue: 'icon',
+      tiptapToolbarLabelsValue: JSON.stringify({ toolbar: 'Formato', bold: 'Negrita' }),
+    });
+    initTiptapRoot(root);
+
+    const bar = root.querySelector('.tiptap-editor-toolbar') as HTMLElement;
+    expect(bar.getAttribute('aria-label')).toBe('Formato');
+    expect(bar.classList.contains('tiptap-editor-toolbar--icon')).toBe(true);
+    const bold = toolbarButtons(root).find((b) => b.dataset.tiptapCommand === 'bold') as HTMLButtonElement;
+    expect([bold.title, bold.getAttribute('aria-label'), bold.getAttribute('aria-pressed')]).toEqual(['Negrita', 'Negrita', 'false']);
+    expect(bold.querySelector('svg')).not.toBeNull();
+    const undo = toolbarButtons(root).find((b) => b.dataset.tiptapCommand === 'undo') as HTMLButtonElement;
+    expect(undo.getAttribute('aria-label')).toBe('Undo');
+    expect(undo.hasAttribute('aria-pressed')).toBe(false);
+
+    editorOf(root).chain().selectAll().toggleBold().run();
+    expect(bold.getAttribute('aria-pressed')).toBe('true');
+  });
+
+  it('keeps the 1.x text glyphs by default (1.7)', () => {
+    const root = makeRoot({ tiptapToolbarValue: '1' });
+    initTiptapRoot(root);
+
+    const bar = root.querySelector('.tiptap-editor-toolbar') as HTMLElement;
+    expect(bar.hasAttribute('aria-label')).toBe(false);
+    const bold = toolbarButtons(root).find((b) => b.dataset.tiptapCommand === 'bold') as HTMLButtonElement;
+    expect([bold.textContent, bold.getAttribute('aria-label')]).toEqual(['B', 'Bold']);
+  });
+
   it('skips roots without textarea or mount and is idempotent', () => {
     const empty = document.createElement('div');
     initTiptapRoot(empty);
@@ -258,6 +290,17 @@ describe('initTiptapRoot', () => {
       editor.commands.setContent('<pre><code>code</code></pre>');
       editor.commands.setTextSelection({ from: 1, to: 3 });
     }
+  });
+
+  it('names the Notion menu buttons with the translated labels (1.7)', () => {
+    const root = makeRoot({ tiptapVariantValue: 'notion', tiptapToolbarLabelsValue: JSON.stringify({ bold: 'Negrita "N"', insert: 'Insertar' }) });
+    initTiptapRoot(root);
+    const [bubble, floating] = menuElements(editorOf(root));
+    const bold = bubble.querySelector('[data-tiptap-notion-action="bold"]') as HTMLButtonElement;
+    expect([bold.title, bold.getAttribute('aria-label')]).toEqual(['Negrita "N"', 'Negrita "N"']);
+    expect(bubble.querySelector('[data-tiptap-notion-action="link"]')?.getAttribute('aria-label')).toBe('Link (Ctrl+K)');
+    expect(floating.querySelector('.tiptap-notion-floating__hint')?.textContent).toBe('Insertar');
+    expect(floating.querySelector('[data-tiptap-notion-action="embed"]')?.getAttribute('title')).toBe('Embed');
   });
 
   it('wires the Notion bubble / floating menus', () => {

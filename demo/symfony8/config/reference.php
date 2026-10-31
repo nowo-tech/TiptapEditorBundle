@@ -751,6 +751,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  * }
  * @psalm-type NowoTiptapEditorConfig = array{
  *     default_profile?: scalar|Param|null, // Profile name used when the form field omits the "config" option (form option key remains "config" for BC). // Default: "default"
+ *     stylesheet?: bool|Param, // 1.7: when true the widget links tiptap-editor.css (asset package nowo_tiptap_editor, with the request attribute csp_nonce as nonce). Set false when your layout loads that file (or your own styles) itself. // Default: true
  *     html_sanitizer?: scalar|Param|null, // Optional service id implementing TiptapHtmlSanitizerInterface, or the special value "allowlist" for the built-in allowlist sanitizer. Null (default) disables server-side sanitization (BC). // Default: null
  *     profiles?: array<string, array{ // Default: []
  *         toolbar?: bool|Param, // When true, the frontend shows a compact formatting toolbar (bold, lists, undo, etc.). // Default: true
@@ -758,6 +759,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         form_theme?: scalar|Param|null, // Base Symfony form layout (must match twig.form_themes in your app). // Default: "form_div_layout.html.twig"
  *         debug?: bool|Param, // When true, the browser console receives detailed logs from the bundle script. // Default: false
  *         variant?: scalar|Param|null, // Editor UX preset: default, simple, notion, agent, headless (see EditorVariant). // Default: "default"
+ *         toolbar_display?: "text"|"icon"|Param, // 1.7: toolbar buttons as text glyphs (text, 1.x look) or icons (icon: built-in SVG or the host <template data-tiptap-icon> markup); both get translated aria-label / title. // Default: "text"
  *         theme?: scalar|Param|null, // Chrome palette: light, dark, or auto (follows prefers-color-scheme). // Default: "light"
  *     }>,
  *     ...<string, mixed>

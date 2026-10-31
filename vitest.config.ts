@@ -3,7 +3,7 @@ import { defineConfig } from 'vitest/config';
 /**
  * Vitest: happy-dom, coverage over every shipped TS module (REQ-TEST-003).
  *
- * - `logger.ts`, `embed-iframe.ts`, `upload.ts`, `suggestion.ts`: 100% gate.
+ * - `logger.ts`, `embed-iframe.ts`, `upload.ts`, `suggestion.ts`, `toolbar-icons.ts`: 100% gate.
  * - `tiptap-editor.ts` (widget bootstrap): per-file gate at its measured floor. The only uncovered lines are
  *   defensive `default:` arms of exhaustive switches (variant / example / static menu actions) and the build-time
  *   constant fallback; see README "Tests and coverage".
@@ -33,7 +33,7 @@ export default defineConfig({
         functions: 100,
         branches: 97,
         statements: 99,
-        'src/Resources/assets/src/{logger,embed-iframe,upload,suggestion}.ts': {
+        'src/Resources/assets/src/{logger,embed-iframe,upload,suggestion,toolbar-icons}.ts': {
           lines: 100,
           functions: 100,
           branches: 100,

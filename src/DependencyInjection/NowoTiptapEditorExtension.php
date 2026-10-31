@@ -65,6 +65,9 @@ final class NowoTiptapEditorExtension extends Extension implements PrependExtens
         $container->setParameter(Configuration::ALIAS . '.variant', $defaultProfile['variant']);
         $container->setParameter(Configuration::ALIAS . '.theme', $defaultProfile['theme'] ?? 'light');
 
+        $container->setParameter(Configuration::ALIAS . '.stylesheet', $config['stylesheet']);
+        $container->getDefinition(TiptapEditorType::class)->setArgument('$linkStylesheet', $config['stylesheet']);
+
         $this->configureHtmlSanitizer($container, $config['html_sanitizer'] ?? null);
     }
 

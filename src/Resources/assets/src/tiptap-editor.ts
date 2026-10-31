@@ -30,6 +30,7 @@ import { common, createLowlight } from 'lowlight';
 import { createBundleLogger } from './logger';
 import { EmbedIframe, safeEmbedSrc } from './embed-iframe';
 import { attachSuggestionHook, readSuggestionConfig } from './suggestion';
+import { decorateToolbarButton, readToolbarDisplay, readToolbarLabels } from './toolbar-icons';
 import { attachUploadHook, readUploadConfig } from './upload';
 import type { UploadAnchor } from './upload';
 
@@ -135,6 +136,8 @@ export function syncTiptapTextareasIn(container: HTMLElement): void {
 }
 
 export type ToolbarBtn = {
+  /** Command id (1.7): key of the translated label and of the icon (see toolbar-icons.ts). */
+  id?: string;
   label: string;
   title: string;
   active?: () => boolean;
@@ -256,6 +259,7 @@ function headingBtn(level: 1 | 2 | 3 | 4 | 5 | 6, editor: Editor): ToolbarBtn {
   return {
     label: `H${level}`,
     title: `Heading ${level}`,
+    id: `heading_${level}`,
     active: () => editor.isActive('heading', { level }),
     run: () => editor.chain().focus().toggleHeading({ level }).run(),
   };
@@ -263,8 +267,8 @@ function headingBtn(level: 1 | 2 | 3 | 4 | 5 | 6, editor: Editor): ToolbarBtn {
 
 function undoRedo(editor: Editor): ToolbarBtn[] {
   return [
-    { label: '↶', title: 'Undo', run: () => editor.chain().focus().undo().run() },
-    { label: '↷', title: 'Redo', run: () => editor.chain().focus().redo().run() },
+    { label: '↶', title: 'Undo', id: 'undo', run: () => editor.chain().focus().undo().run() },
+    { label: '↷', title: 'Redo', id: 'redo', run: () => editor.chain().focus().redo().run() },
   ];
 }
 
@@ -272,30 +276,35 @@ function marks(editor: Editor): ToolbarBtn[] {
   return [
     {
       label: 'B',
+      id: 'bold',
       title: 'Bold',
       active: () => editor.isActive('bold'),
       run: () => editor.chain().focus().toggleBold().run(),
     },
     {
       label: 'I',
+      id: 'italic',
       title: 'Italic',
       active: () => editor.isActive('italic'),
       run: () => editor.chain().focus().toggleItalic().run(),
     },
     {
       label: 'S',
+      id: 'strike',
       title: 'Strike',
       active: () => editor.isActive('strike'),
       run: () => editor.chain().focus().toggleStrike().run(),
     },
     {
       label: '</>',
+      id: 'code',
       title: 'Code',
       active: () => editor.isActive('code'),
       run: () => editor.chain().focus().toggleCode().run(),
     },
     {
       label: 'U',
+      id: 'underline',
       title: 'Underline',
       active: () => editor.isActive('underline'),
       run: () => editor.chain().focus().toggleUnderline().run(),
@@ -307,30 +316,35 @@ function lists(editor: Editor): ToolbarBtn[] {
   return [
     {
       label: '•',
+      id: 'bullet_list',
       title: 'Bullet list',
       active: () => editor.isActive('bulletList'),
       run: () => editor.chain().focus().toggleBulletList().run(),
     },
     {
       label: '1.',
+      id: 'ordered_list',
       title: 'Ordered list',
       active: () => editor.isActive('orderedList'),
       run: () => editor.chain().focus().toggleOrderedList().run(),
     },
     {
       label: '❝',
+      id: 'blockquote',
       title: 'Blockquote',
       active: () => editor.isActive('blockquote'),
       run: () => editor.chain().focus().toggleBlockquote().run(),
     },
     {
       label: '{}',
+      id: 'code_block',
       title: 'Code block',
       active: () => editor.isActive('codeBlock'),
       run: () => editor.chain().focus().toggleCodeBlock().run(),
     },
     {
       label: '—',
+      id: 'horizontal_rule',
       title: 'Horizontal rule',
       run: () => editor.chain().focus().setHorizontalRule().run(),
     },
@@ -341,24 +355,28 @@ function align(editor: Editor): ToolbarBtn[] {
   return [
     {
       label: '⬅',
+      id: 'align_left',
       title: 'Align left',
       active: () => editor.isActive({ textAlign: 'left' }),
       run: () => editor.chain().focus().setTextAlign('left').run(),
     },
     {
       label: '⬛',
+      id: 'align_center',
       title: 'Align center',
       active: () => editor.isActive({ textAlign: 'center' }),
       run: () => editor.chain().focus().setTextAlign('center').run(),
     },
     {
       label: '➡',
+      id: 'align_right',
       title: 'Align right',
       active: () => editor.isActive({ textAlign: 'right' }),
       run: () => editor.chain().focus().setTextAlign('right').run(),
     },
     {
       label: '⬌',
+      id: 'align_justify',
       title: 'Justify',
       active: () => editor.isActive({ textAlign: 'justify' }),
       run: () => editor.chain().focus().setTextAlign('justify').run(),
@@ -368,6 +386,7 @@ function align(editor: Editor): ToolbarBtn[] {
 
 const paragraph = (editor: Editor): ToolbarBtn => ({
   label: '¶',
+  id: 'paragraph',
   title: 'Paragraph',
   active: () => editor.isActive('paragraph') && !editor.isActive('heading'),
   run: () => editor.chain().focus().setParagraph().run(),
@@ -375,6 +394,7 @@ const paragraph = (editor: Editor): ToolbarBtn => ({
 
 const linkBtn = (editor: Editor): ToolbarBtn => ({
   label: '🔗',
+  id: 'link',
   title: 'Link',
   active: () => editor.isActive('link'),
   run: () => runLinkPrompt(editor),
@@ -420,25 +440,28 @@ function variantPresetToolbarRows(editor: Editor, variant: EditorVariant): Toolb
 }
 
 function minimalToolbarRows(editor: Editor): ToolbarBtn[][] {
-  return [[...undoRedo(editor), ...marks(editor).slice(0, 3), { label: '↵', title: 'Hard break', run: () => editor.chain().focus().setHardBreak().run() }]];
+  return [[...undoRedo(editor), ...marks(editor).slice(0, 3), { label: '↵', title: 'Hard break', id: 'hard_break', run: () => editor.chain().focus().setHardBreak().run() }]];
 }
 
 function formattingExtras(editor: Editor): ToolbarBtn[] {
   return [
     {
       label: '✎',
+      id: 'highlight',
       title: 'Highlight',
       active: () => editor.isActive('highlight'),
       run: () => editor.chain().focus().toggleHighlight().run(),
     },
     {
       label: 'x₂',
+      id: 'subscript',
       title: 'Subscript',
       active: () => editor.isActive('subscript'),
       run: () => editor.chain().focus().toggleSubscript().run(),
     },
     {
       label: 'x²',
+      id: 'superscript',
       title: 'Superscript',
       active: () => editor.isActive('superscript'),
       run: () => editor.chain().focus().toggleSuperscript().run(),
@@ -450,26 +473,31 @@ function tableToolbarRow(editor: Editor): ToolbarBtn[] {
   return [
     {
       label: '▦',
+      id: 'table_insert',
       title: 'Insert table',
       run: () => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run(),
     },
     {
       label: '+⌇',
+      id: 'table_add_column',
       title: 'Add column before',
       run: () => editor.chain().focus().addColumnBefore().run(),
     },
     {
       label: '+═',
+      id: 'table_add_row',
       title: 'Add row before',
       run: () => editor.chain().focus().addRowBefore().run(),
     },
     {
       label: '▥',
+      id: 'table_header_row',
       title: 'Toggle header row',
       run: () => editor.chain().focus().toggleHeaderRow().run(),
     },
     {
       label: '✕',
+      id: 'table_delete',
       title: 'Delete table',
       run: () => editor.chain().focus().deleteTable().run(),
     },
@@ -480,6 +508,7 @@ function taskToolbarRow(editor: Editor): ToolbarBtn[] {
   return [
     {
       label: '☑',
+      id: 'task_list',
       title: 'Task list',
       active: () => editor.isActive('taskList'),
       run: () => editor.chain().focus().toggleTaskList().run(),
@@ -488,7 +517,7 @@ function taskToolbarRow(editor: Editor): ToolbarBtn[] {
 }
 
 function imageToolbarRow(editor: Editor): ToolbarBtn[] {
-  return [{ label: '🖼', title: 'Insert image', run: () => runImagePrompt(editor) }];
+  return [{ label: '🖼', title: 'Insert image', id: 'image', run: () => runImagePrompt(editor) }];
 }
 
 function toolbarRows(editor: Editor, variant: EditorVariant, example: ExampleId | null): ToolbarBtn[][] {
@@ -521,7 +550,13 @@ function toolbarRows(editor: Editor, variant: EditorVariant, example: ExampleId 
 /**
  * One continuous horizontal strip (scroll) — all actions in a single row.
  */
-function attachToolbar(host: HTMLElement, editor: Editor, variant: EditorVariant, example: ExampleId | null): void {
+function attachToolbar(
+  root: HTMLElement,
+  host: HTMLElement,
+  editor: Editor,
+  variant: EditorVariant,
+  example: ExampleId | null,
+): void {
   const bar = document.createElement('div');
   bar.className = 'tiptap-editor-toolbar';
   bar.setAttribute('role', 'toolbar');
@@ -540,12 +575,18 @@ function attachToolbar(host: HTMLElement, editor: Editor, variant: EditorVariant
     rowEl.appendChild(badge);
   }
 
+  const display = readToolbarDisplay(root);
+  const labels = readToolbarLabels(root);
+  bar.classList.add(`tiptap-editor-toolbar--${display}`);
+  if (labels.toolbar !== undefined) {
+    bar.setAttribute('aria-label', labels.toolbar);
+  }
+
   for (const spec of specsFlat) {
     const btn = document.createElement('button');
     btn.type = 'button';
-    btn.textContent = spec.label;
-    btn.title = spec.title;
     btn.className = 'tiptap-editor-toolbar__btn';
+    decorateToolbarButton(root, btn, spec, display, labels);
     btn.addEventListener('click', (ev) => {
       ev.preventDefault();
       spec.run();
@@ -567,7 +608,9 @@ function attachToolbar(host: HTMLElement, editor: Editor, variant: EditorVariant
     specsFlat.forEach((spec, i) => {
       const el = buttonsFlat[i];
       if (!el || !spec.active) return;
-      el.classList.toggle('tiptap-editor-toolbar__btn--active', spec.active());
+      const active = spec.active();
+      el.classList.toggle('tiptap-editor-toolbar__btn--active', active);
+      el.setAttribute('aria-pressed', active ? 'true' : 'false');
     });
   };
 
@@ -646,8 +689,15 @@ function wireMenuDom(editor: Editor, menu: MenuMount): void {
   wire(menu.floating);
 }
 
+/** Escapes a translated label for an HTML attribute / text node of the static menu markup. */
+function escapeHtml(value: string): string {
+  return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
 function notionMenuButton(label: string, title: string, action: string): string {
-  return `<button type="button" class="tiptap-editor-toolbar__btn" data-tiptap-notion-action="${action}" title="${title}">${label}</button>`;
+  const name = escapeHtml(title);
+
+  return `<button type="button" class="tiptap-editor-toolbar__btn" data-tiptap-notion-action="${action}" title="${name}" aria-label="${name}">${escapeHtml(label)}</button>`;
 }
 
 function wireNotionMenus(editor: Editor, menu: MenuMount): void {
@@ -732,6 +782,7 @@ function buildExtensions(
   example: ExampleId | null,
   menuMount: MenuMount | null,
   notionMenus: MenuMount | null,
+  labels: Record<string, string> = {},
 ): Extension[] {
   const headingLevels =
     variant === 'headless' && !example ? ([1, 2, 3, 4, 5, 6] as const) : ([1, 2, 3] as const);
@@ -847,21 +898,23 @@ function buildExtensions(
 
   if (notionMenus) {
     notionMenus.bubble.className = 'tiptap-notion-bubble';
+    // 1.7: translated names (tiptap_toolbar.*, data-tiptap-toolbar-labels-value), English fallbacks.
+    const name = (id: string, fallback: string): string => labels[id] ?? fallback;
     notionMenus.bubble.innerHTML =
-      notionMenuButton('B', 'Negrita', 'bold') +
-      notionMenuButton('I', 'Cursiva', 'italic') +
-      notionMenuButton('U', 'Subrayado', 'underline') +
-      notionMenuButton('S', 'Tachado', 'strike') +
-      notionMenuButton('</>', 'Código', 'code') +
-      notionMenuButton('🔗', 'Enlace (Ctrl+K)', 'link');
+      notionMenuButton('B', name('bold', 'Bold'), 'bold') +
+      notionMenuButton('I', name('italic', 'Italic'), 'italic') +
+      notionMenuButton('U', name('underline', 'Underline'), 'underline') +
+      notionMenuButton('S', name('strike', 'Strikethrough'), 'strike') +
+      notionMenuButton('</>', name('code', 'Inline code'), 'code') +
+      notionMenuButton('🔗', `${name('link', 'Link')} (Ctrl+K)`, 'link');
 
     notionMenus.floating.className = 'tiptap-notion-floating';
     notionMenus.floating.innerHTML =
-      '<span class="tiptap-notion-floating__hint">Insertar</span>' +
-      notionMenuButton('🔗', 'Enlace', 'link') +
-      notionMenuButton('🖼', 'Imagen', 'image') +
-      notionMenuButton('▶', 'Embed', 'embed') +
-      notionMenuButton('•', 'Lista', 'bullet');
+      `<span class="tiptap-notion-floating__hint">${escapeHtml(name('insert', 'Insert'))}</span>` +
+      notionMenuButton('🔗', name('link', 'Link'), 'link') +
+      notionMenuButton('🖼', name('image', 'Insert image'), 'image') +
+      notionMenuButton('▶', name('embed', 'Embed'), 'embed') +
+      notionMenuButton('•', name('bullet_list', 'Bulleted list'), 'bullet');
 
     exts.push(
       BubbleMenu.configure({
@@ -1087,7 +1140,7 @@ export function initTiptapRoot(root: HTMLElement): void {
 
   editor = new Editor({
     element: mount,
-    extensions: buildExtensions(placeholder, variant, example, menuMount, notionMenus),
+    extensions: buildExtensions(placeholder, variant, example, menuMount, notionMenus, readToolbarLabels(root)),
     content: textarea.value || '<p></p>',
     editorProps,
     onUpdate: () => {
@@ -1109,7 +1162,7 @@ export function initTiptapRoot(root: HTMLElement): void {
   syncTextarea(textarea, editor.getHTML());
 
   if (toolbar && chrome) {
-    attachToolbar(chrome, editor, variant, example);
+    attachToolbar(root, chrome, editor, variant, example);
   }
 
   if (example === 'long_text') {

@@ -28,6 +28,7 @@ nowo_tiptap_editor:
 |-------------------|--------|-----------|-------------|
 | `default_profile` | string | `default` | Profile name used when a form field omits the `config` option. **Must** exist as a key under `profiles`. |
 | `html_sanitizer`  | string\|null | `null` | Server-side HTML sanitization on submit. `null` / empty (default, BC) stores the editor HTML as submitted. `allowlist` uses the built-in `Nowo\TiptapEditorBundle\Security\AllowlistTiptapHtmlSanitizer` (built on `symfony/html-sanitizer`). Any other value is a **service id** implementing `Nowo\TiptapEditorBundle\Security\TiptapHtmlSanitizerInterface`. When set, `TiptapEditorType` adds a model transformer that sanitizes on `reverseTransform` (submit). The Flex recipe enables `allowlist` under `when@prod`. Applies to every profile. See [SECURITY.md](SECURITY.md). |
+| `stylesheet`      | bool   | `true`    | 1.7: the widget links `tiptap-editor.css` (asset package `nowo_tiptap_editor`, `nonce` = request attribute `csp_nonce` when set). `false` when your layout loads that file (or your own styles) itself. Stays at the root in the flat layout. |
 | `profiles`        | map    | —         | Named profiles. At least one profile is required (or use [legacy flat](#legacy-keys-and-flat-yaml) input, which creates `profiles.default`). |
 
 ## Per profile (`profiles.<name>`)
@@ -40,15 +41,16 @@ nowo_tiptap_editor:
 | `debug`       | bool   | `false`                    | Verbose `console` logging from the bundle JavaScript. |
 | `variant`     | string | `default`                  | UX preset: `default`, `simple`, `notion`, `agent`, `headless` (see `Nowo\TiptapEditorBundle\EditorVariant`). |
 | `theme`       | string | `light`                    | Chrome palette: `light`, `dark`, or `auto` (follows `prefers-color-scheme`). |
+| `toolbar_display` | string | `text`                 | 1.7: toolbar buttons as the text glyphs (`text`) or icons (`icon`: built-in SVG, or the `<template data-tiptap-icon>` markup of the form theme block `tiptap_editor_toolbar_icons`). Both modes set a translated `aria-label` / `title` (`tiptap_toolbar.*`). |
 
 ## Legacy keys and flat YAML
 
 - **Renamed keys:** `default_config` / `configs` were renamed to `default_profile` / `profiles`. Legacy keys are still accepted via normalization (mapped when the new keys are absent).
 - **Flat layout:** If the root has no `profiles` (nor legacy `configs`) key, the extension treats these keys (when present) as a single profile and maps them to `profiles` under the name given by `default_profile` (default `default`):
 
-- `toolbar`, `min_height`, `form_theme`, `debug`, `variant`, `theme`
+- `toolbar`, `min_height`, `form_theme`, `debug`, `variant`, `theme`, `toolbar_display`
 
-`html_sanitizer` is not a profile key: it stays at the root in both layouts.
+`html_sanitizer` and `stylesheet` are not profile keys: they stay at the root in both layouts.
 
 ## Form type `TiptapEditorType` options
 
@@ -59,7 +61,8 @@ nowo_tiptap_editor:
 | `toolbar`       | bool | Overrides the profile default for this field. |
 | `min_height`    | string | Overrides the profile default for this field. |
 | `theme`         | string | Field-level palette (`light` / `dark` / `auto`), normalized like YAML `theme`. |
-| `placeholder`   | `string\|bool\|null` | Translation key in the bundle domain (or `false` to disable). |
+| `toolbar_display` | string | `text` or `icon`; overrides the profile default for this field (1.7). |
+| `placeholder`   | `string\|bool\|null` | Translation key (or `false` to disable). The default `tiptap_placeholder` is translated in `NowoTiptapEditorBundle`; a custom key in the field's `translation_domain` (1.7). |
 
 Standard Symfony options (`label`, `required`, `translation_domain`, `attr`, …) work as usual.
 
@@ -69,7 +72,7 @@ Standard Symfony options (`label`, `required`, `translation_domain`, `attr`, …
 
 ## Translation overrides
 
-Translations use the domain **`NowoTiptapEditorBundle`** (files under `src/Resources/translations/`). Bundled locales for **`tiptap_placeholder`**: **de**, **en**, **es**, **fr**, **it**, **nl**, **pt**. To override strings from your app, add YAML/XLF files in **`translations/`** with the same domain name, for example `translations/NowoTiptapEditorBundle.en.yaml`. Symfony merges app translations over bundle defaults.
+Translations use the domain **`NowoTiptapEditorBundle`** (files under `src/Resources/translations/`). Bundled locales for **`tiptap_placeholder`**, the prompts, upload / suggestion messages and the toolbar labels (**`tiptap_toolbar.*`**, 1.7): **de**, **en**, **es**, **fr**, **it**, **nl**, **pt**. To override strings from your app, add YAML/XLF files in **`translations/`** with the same domain name, for example `translations/NowoTiptapEditorBundle.en.yaml`. Symfony merges app translations over bundle defaults.
 
 ## Parameters exposed to the container
 

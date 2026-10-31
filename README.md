@@ -97,7 +97,7 @@ make -C demo up-symfony8
 | Layer | Coverage | Notes |
 | ----- | -------- | ----- |
 | **PHP** | **100%** lines | PHPUnit over bundle `src/`; `make test-coverage` fails under 100% (`scripts/verify-clover-100.php`). |
-| **TypeScript** | **99.13%** lines (99.16% statements, 100% functions, 97.69% branches) | Vitest + happy-dom over every module in `src/Resources/assets/src/`; `make test-ts` / `pnpm run test:coverage`. Gates in `vitest.config.ts`: 100% for `logger`, `embed-iframe`, `upload`, `suggestion`; global floor 99% lines / statements, 100% functions, 97% branches. The uncovered lines of `tiptap-editor.ts` are defensive `default:` arms of exhaustive switches. |
+| **TypeScript** | **99.19%** lines (99.21% statements, 100% functions, 97.91% branches) | Vitest + happy-dom over every module in `src/Resources/assets/src/`; `make test-ts` / `pnpm run test:coverage`. Gates in `vitest.config.ts`: 100% for `logger`, `embed-iframe`, `upload`, `suggestion`, `toolbar-icons`; global floor 99% lines / statements, 100% functions, 97% branches. The uncovered lines of `tiptap-editor.ts` are defensive `default:` arms of exhaustive switches. |
 | **Python** | N/A | No Python code. |
 
 CI runs PHPUnit (matrix), PHPStan, PHP-CS-Fixer, and Vitest coverage on pushes and pull requests.

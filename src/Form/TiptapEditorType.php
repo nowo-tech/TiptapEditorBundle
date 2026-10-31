@@ -34,13 +34,36 @@ use function sprintf;
  */
 final class TiptapEditorType extends AbstractType
 {
+    /** Default `placeholder` option: a key of the NowoTiptapEditorBundle catalogue (translated in that domain). */
+    public const DEFAULT_PLACEHOLDER = 'tiptap_placeholder';
+
+    /** Translation domain of the bundle catalogue. */
+    public const TRANSLATION_DOMAIN = 'NowoTiptapEditorBundle';
+
+    /** Toolbar display modes (1.7): `text` = the 1.x glyphs, `icon` = SVG icons (or the host icon templates). */
+    public const TOOLBAR_DISPLAYS = ['text', 'icon'];
+
     /**
-     * @param array<string, array{toolbar: bool, min_height: string, form_theme: string, debug: bool, variant: string, theme?: string}> $profiles
+     * Toolbar command ids (1.7): `tiptap_toolbar.<id>` labels the button (aria-label / title) and `<id>` names its icon;
+     * `toolbar` labels the toolbar itself; `embed` and `insert` name the Notion insert menu.
+     */
+    public const TOOLBAR_COMMANDS = [
+        'toolbar', 'undo', 'redo', 'paragraph', 'heading_1', 'heading_2', 'heading_3', 'heading_4', 'heading_5', 'heading_6',
+        'bold', 'italic', 'strike', 'code', 'underline', 'link', 'bullet_list', 'ordered_list', 'blockquote', 'code_block',
+        'horizontal_rule', 'align_left', 'align_center', 'align_right', 'align_justify', 'hard_break', 'highlight',
+        'subscript', 'superscript', 'table_insert', 'table_add_column', 'table_add_row', 'table_header_row', 'table_delete',
+        'task_list', 'image', 'embed', 'insert',
+    ];
+
+    /**
+     * @param array<string, array{toolbar: bool, min_height: string, form_theme: string, debug: bool, variant: string, theme?: string, toolbar_display?: string}> $profiles
+     * @param bool $linkStylesheet whether the widget links tiptap-editor.css (1.7; nowo_tiptap_editor.stylesheet)
      */
     public function __construct(
         private readonly array $profiles,
         private readonly string $defaultProfileName,
         private readonly ?TiptapHtmlSanitizerInterface $htmlSanitizer = null,
+        private readonly bool $linkStylesheet = true,
     ) {
     }
 
@@ -70,10 +93,16 @@ final class TiptapEditorType extends AbstractType
         $view->vars['tiptap_toolbar']         = $options['toolbar'];
         $view->vars['tiptap_min_height']      = $options['min_height'];
         $view->vars['tiptap_placeholder_key'] = $options['placeholder'];
-        $view->vars['tiptap_debug']           = $this->profiles[$name]['debug'];
-        $view->vars['tiptap_variant']         = EditorVariant::fromString($this->profiles[$name]['variant'])->value;
-        $view->vars['tiptap_example']         = $options['example'] instanceof TiptapExample ? $options['example']->value : null;
-        $view->vars['tiptap_theme']           = $options['theme'];
+        // 1.7: the bundle's default key lives in the bundle catalogue, whatever the field's translation_domain (a
+        // parent form or a FormKit profile may set another one); a custom key is translated in the field's domain.
+        $view->vars['tiptap_placeholder_domain'] = $options['placeholder'] === self::DEFAULT_PLACEHOLDER ? self::TRANSLATION_DOMAIN : null;
+        $view->vars['tiptap_toolbar_display']    = $options['toolbar_display'] ?? 'text';
+        $view->vars['tiptap_toolbar_commands']   = self::TOOLBAR_COMMANDS;
+        $view->vars['tiptap_stylesheet']         = $this->linkStylesheet;
+        $view->vars['tiptap_debug']              = $this->profiles[$name]['debug'];
+        $view->vars['tiptap_variant']            = EditorVariant::fromString($this->profiles[$name]['variant'])->value;
+        $view->vars['tiptap_example']            = $options['example'] instanceof TiptapExample ? $options['example']->value : null;
+        $view->vars['tiptap_theme']              = $options['theme'];
         // 1.6: upload and suggestion hooks (rendered as data attributes; off when empty).
         $view->vars['tiptap_upload_url']        = $options['upload_url'];
         $view->vars['tiptap_upload_csrf_token'] = $options['upload_csrf_token'];
@@ -81,7 +110,8 @@ final class TiptapEditorType extends AbstractType
     }
 
     /**
-     * Declares the editor options (profile, variant, toolbar, theme, placeholder, upload and suggestion hooks).
+     * Declares the editor options (profile, variant, toolbar, toolbar display, theme, placeholder, upload and suggestion
+     * hooks).
      *
      * @param OptionsResolver $resolver the options resolver
      */
@@ -90,9 +120,9 @@ final class TiptapEditorType extends AbstractType
         $resolver->setDefaults([
             'config'             => null,
             'example'            => null,
-            'placeholder'        => 'tiptap_placeholder',
+            'placeholder'        => self::DEFAULT_PLACEHOLDER,
             'attr'               => ['rows' => 10, 'cols' => 80],
-            'translation_domain' => 'NowoTiptapEditorBundle',
+            'translation_domain' => self::TRANSLATION_DOMAIN,
             'required'           => false,
             'empty_data'         => '',
             // 1.6: POST target of dropped / pasted files (JSON answer {url, name, image}); null = no upload hook.
@@ -121,6 +151,9 @@ final class TiptapEditorType extends AbstractType
         $resolver->setDefault('toolbar', fn (Options $options): bool => $this->profileFor($options)['toolbar']);
         $resolver->setDefault('min_height', fn (Options $options): string => $this->profileFor($options)['min_height']);
         $resolver->setDefault('theme', fn (Options $options): string => $this->normalizeTheme($this->profileFor($options)['theme'] ?? 'light'));
+        // 1.7: text (1.x glyphs) or icon toolbar buttons; default from the profile.
+        $resolver->setDefault('toolbar_display', fn (Options $options): string => $this->profileFor($options)['toolbar_display'] ?? 'text');
+        $resolver->setAllowedValues('toolbar_display', self::TOOLBAR_DISPLAYS);
 
         $resolver->setAllowedTypes('config', ['null', 'string']);
         $resolver->setAllowedTypes('toolbar', ['bool']);
@@ -169,7 +202,7 @@ final class TiptapEditorType extends AbstractType
     /**
      * @param Options<array<string, mixed>> $options
      *
-     * @return array{toolbar: bool, min_height: string, form_theme: string, debug: bool, variant: string, theme?: string}
+     * @return array{toolbar: bool, min_height: string, form_theme: string, debug: bool, variant: string, theme?: string, toolbar_display?: string}
      */
     private function profileFor(Options $options): array
     {

@@ -59,7 +59,7 @@ final class Configuration implements ConfigurationInterface
 
                 $defaultProfile = $v['default_profile'] ?? 'default';
                 $profile        = [];
-                foreach (['toolbar', 'min_height', 'form_theme', 'debug', 'variant', 'theme'] as $key) {
+                foreach (['toolbar', 'min_height', 'form_theme', 'debug', 'variant', 'theme', 'toolbar_display'] as $key) {
                     if (array_key_exists($key, $v)) {
                         $profile[$key] = $v[$key];
                     }
@@ -71,8 +71,10 @@ final class Configuration implements ConfigurationInterface
                         'default' => $profile,
                     ],
                 ];
-                if (array_key_exists('html_sanitizer', $v)) {
-                    $normalized['html_sanitizer'] = $v['html_sanitizer'];
+                foreach (['html_sanitizer', 'stylesheet'] as $key) {
+                    if (array_key_exists($key, $v)) {
+                        $normalized[$key] = $v[$key];
+                    }
                 }
 
                 return $normalized;
@@ -82,6 +84,10 @@ final class Configuration implements ConfigurationInterface
                 ->scalarNode('default_profile')
                     ->defaultValue('default')
                     ->info('Profile name used when the form field omits the "config" option (form option key remains "config" for BC).')
+                ->end()
+                ->booleanNode('stylesheet')
+                    ->defaultTrue()
+                    ->info('1.7: when true the widget links tiptap-editor.css (asset package nowo_tiptap_editor, with the request attribute csp_nonce as nonce). Set false when your layout loads that file (or your own styles) itself.')
                 ->end()
                 ->scalarNode('html_sanitizer')
                     ->defaultNull()
@@ -116,6 +122,11 @@ final class Configuration implements ConfigurationInterface
                                     ->ifNotInArray(EditorVariant::values())
                                     ->thenInvalid('Invalid nowo_tiptap_editor variant %s.')
                                 ->end()
+                            ->end()
+                            ->enumNode('toolbar_display')
+                                ->info('1.7: toolbar buttons as text glyphs (text, 1.x look) or icons (icon: built-in SVG or the host <template data-tiptap-icon> markup); both get translated aria-label / title.')
+                                ->values(['text', 'icon'])
+                                ->defaultValue('text')
                             ->end()
                             ->scalarNode('theme')
                                 ->info('Chrome palette: light, dark, or auto (follows prefers-color-scheme).')
