@@ -44,6 +44,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Documentation
+
+- USAGE: new section "Using it from a DDD / hexagonal application" (where the bundle sits in a hexagonal host, the ports, events and DTOs to build an anti-corruption layer on, and the known limitations).
+
 ## [1.7.0] - 2026-10-31
 
 Widget host polish: strict-CSP friendly (stylesheet asset instead of an inline `<style>`), the default placeholder translated in the bundle domain, translated toolbar labels and optional icon buttons with a host icon hook. See [UPGRADING](UPGRADING.md#to-170).
