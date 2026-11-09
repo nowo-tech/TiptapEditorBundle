@@ -7,6 +7,7 @@
 - [Toolbar and variants](#toolbar-and-variants)
 - [Examples hub parity](#examples-hub-parity)
 - [Overriding templates (REQ-TWIG-001)](#overriding-templates-req-twig-001)
+- [Using it from a DDD / hexagonal application](#using-it-from-a-ddd--hexagonal-application)
 
 ## Form type
 
@@ -133,3 +134,38 @@ Shipped form themes wrap the widget in a **`<nowo-tiptap-editor>`** custom eleme
 | `Form/tiptap_editor_theme_tailwind2.html.twig` | Tailwind 2 |
 
 Pick the row that matches the profile `form_theme` (or your app `twig.form_themes`). See also Symfony’s [How to Override Templates](https://symfony.com/doc/current/bundles/override.html).
+
+## Using it from a DDD / hexagonal application
+
+TiptapEditorBundle is a **presentation-layer** component: a form type (`TiptapEditorType`), its assets and an optional
+HTML sanitizer. It has no entities, no persistence, no events and no Doctrine dependency.
+
+- **Model value:** an HTML `string`. Bind the field to a command / DTO property (`public string $body = ''`) and let your
+  application service build the domain object from it.
+- **Uploads and mentions:** `upload_url` and `suggestions` point at your own controllers. Those controllers are adapters:
+  authorise, call your application service, and answer the JSON contract described in
+  [Upload and suggestion hooks](#upload-and-suggestion-hooks-16).
+- **Sanitizing:** `TiptapHtmlSanitizerInterface::sanitize(string $html): string` is the port. Set
+  `nowo_tiptap_editor.html_sanitizer: allowlist` (or your own service id) to sanitize on form submit. To cover every entry
+  point (forms, API, imports), call the sanitizer in your application service as well:
+
+```php
+use Nowo\TiptapEditorBundle\Security\AllowlistTiptapHtmlSanitizer;
+
+final readonly class PublishArticleHandler
+{
+    public function __construct(private AllowlistTiptapHtmlSanitizer $sanitizer, private ArticleRepository $articles) {}
+
+    public function __invoke(PublishArticle $command): void
+    {
+        $this->articles->save(Article::publish($command->title, $this->sanitizer->sanitize($command->body)));
+    }
+}
+```
+
+Known limitations:
+
+- `TiptapHtmlSanitizerInterface` is only aliased when `html_sanitizer` is configured. With the default (off), inject
+  `AllowlistTiptapHtmlSanitizer` by class, as above, or set `html_sanitizer`.
+- The form transformer only sanitizes form submissions. Content from other entry points is your application's
+  responsibility.
