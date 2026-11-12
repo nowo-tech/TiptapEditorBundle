@@ -3,8 +3,8 @@
 | Field | Value |
 |-------|-------|
 | Package | `nowo-tech/tiptap-editor-bundle` (`symfony-bundle`) |
-| Audited revision | `v1.3.8` (release of this document) |
-| Audit date | 2026-09-25 |
+| Audited revision | `v1.7.0` (kept-alive test and rule-7 note added 2026-11-12; earlier manual review kept below) |
+| Audit date | 2026-11-12 (first audit 2026-09) |
 | Method | Manual review of every file under `src/` (form type, data transformer, sanitizer, Twig extension, enums, DI extension, compiler pass, `Resources/config/services.yaml`) plus PHPUnit `FrankenPhpWorkerSafetyTest` |
 | **Verdict** | ✅ **Compatible (100%)** — safe under FrankenPHP worker mode **with or without** kernel reset; shared services only hold compiled / readonly configuration |
 
@@ -14,6 +14,7 @@
 - [Summary](#summary)
 - [Services reviewed](#services-reviewed)
 - [Findings](#findings)
+- [Kept-alive test (REQ-RUNTIME-002)](#kept-alive-test-req-runtime-002)
 - [Usage recommendations in worker mode](#usage-recommendations-in-worker-mode)
 - [Re-audit triggers](#re-audit-triggers)
 
@@ -63,6 +64,20 @@ No findings. Nothing in the bundle keeps PHP state between requests:
 - `TiptapEditorType::buildView()` writes only into the current `FormView`.
 - Option closures in `configureOptions()` read the immutable `$profiles` array; they do not store resolved options on the type.
 - `AllowlistTiptapHtmlSanitizer::sanitize()` works only on its argument.
+
+## Kept-alive test (REQ-RUNTIME-002)
+
+Test: `Nowo\TiptapEditorBundle\Tests\Integration\Worker\WorkerKeptAliveKernelTest` (`tests/Integration/Worker/WorkerKeptAliveKernelTest.php`). It uses one booted production-like kernel (`WorkerKeptAliveKernel`, debug off: with debug on Symfony itself retains about 25 KB per rendered form, also for core fields, a development-only cost with a host route that builds, submits and renders a form with the Tiptap field), driven through `http_kernel` `handle()` + `terminate()` for two users that each have their own locale, upload URL and CSRF token option, and body (a host-like `trans` filter stands in for the translator, because the dev lock has no `symfony/translation`). `services_resetter` / `kernel.reset` is **never** called. It runs 1,200 iterations alternating the two inputs, asserts every response carries its own upload URL, upload token, translated labels and body (nothing of the other user appears, the translated label never changes for a given locale), and that memory growth after a 100-iteration warm-up stays below 4 MiB.
+
+| Service | State kept between requests | Reset mechanism |
+|---------|-----------------------------|-----------------|
+| `Form\TiptapEditorType` | none (`readonly` profiles and flags; upload hooks are per-field options) | none needed |
+| `Security\AllowlistTiptapHtmlSanitizer` | none | none needed |
+| `Twig\NowoTiptapEditorTwigExtension` | none | none needed |
+
+Result: no request data is carried between requests, so the bundle is **safe with kernel reset false**.
+
+Rule 7: the bundle never clears or resets the host's default EntityManager (it uses no persistence).
 
 ## Usage recommendations in worker mode
 
