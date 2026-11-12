@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use Nowo\TiptapEditorBundle\Form\TiptapEditorType;
+use App\Form\EditorDemoType;
 use Nowo\TiptapEditorBundle\TiptapExample;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -84,12 +84,9 @@ class TiptapDemoController extends AbstractController
         $html  = $request->query->get('html', '<p>Hello Tiptap</p>');
         $data  = [$field => is_string($html) ? $html : '<p>Hello Tiptap</p>'];
 
-        $form = $this->createFormBuilder($data, ['translation_domain' => 'messages'])
-            ->add($field, TiptapEditorType::class, [
-                'label'              => 'demo.body_label',
-                'translation_domain' => 'messages',
-            ])
-            ->getForm();
+        $form = $this->createForm(EditorDemoType::class, $data, [
+            'editors' => [$field => ['label' => 'demo.body_label']],
+        ]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -118,38 +115,16 @@ class TiptapDemoController extends AbstractController
             'content_headless' => '<p>' . $this->translator->trans('demo.sample_headless', [], 'messages') . '</p>',
         ];
 
-        $form = $this->createFormBuilder($data, ['translation_domain' => 'messages'])
-            ->add('content_full', TiptapEditorType::class, [
-                'config'             => 'full',
-                'label'              => 'demo.profile_full_label',
-                'help'               => 'demo.profile_full_help',
-                'translation_domain' => 'messages',
-            ])
-            ->add('content_simple', TiptapEditorType::class, [
-                'config'             => 'simple',
-                'label'              => 'demo.profile_simple_label',
-                'help'               => 'demo.profile_simple_help',
-                'translation_domain' => 'messages',
-            ])
-            ->add('content_notion', TiptapEditorType::class, [
-                'config'             => 'notion',
-                'label'              => 'demo.profile_notion_label',
-                'help'               => 'demo.profile_notion_help',
-                'translation_domain' => 'messages',
-            ])
-            ->add('content_agent', TiptapEditorType::class, [
-                'config'             => 'agent',
-                'label'              => 'demo.profile_agent_label',
-                'help'               => 'demo.profile_agent_help',
-                'translation_domain' => 'messages',
-            ])
-            ->add('content_headless', TiptapEditorType::class, [
-                'config'             => 'headless',
-                'label'              => 'demo.profile_headless_label',
-                'help'               => 'demo.profile_headless_help',
-                'translation_domain' => 'messages',
-            ])
-            ->getForm();
+        $form = $this->createForm(EditorDemoType::class, $data, [
+            'submit_label' => 'demo.submit_all',
+            'editors'      => [
+                'content_full'     => ['config' => 'full', 'label' => 'demo.profile_full_label', 'help' => 'demo.profile_full_help'],
+                'content_simple'   => ['config' => 'simple', 'label' => 'demo.profile_simple_label', 'help' => 'demo.profile_simple_help'],
+                'content_notion'   => ['config' => 'notion', 'label' => 'demo.profile_notion_label', 'help' => 'demo.profile_notion_help'],
+                'content_agent'    => ['config' => 'agent', 'label' => 'demo.profile_agent_label', 'help' => 'demo.profile_agent_help'],
+                'content_headless' => ['config' => 'headless', 'label' => 'demo.profile_headless_label', 'help' => 'demo.profile_headless_help'],
+            ],
+        ]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -181,33 +156,15 @@ class TiptapDemoController extends AbstractController
             'showcase_headless' => $this->translator->trans('demo.showcase_headless_initial_html', [], 'messages'),
         ];
 
-        $form = $this->createFormBuilder($data, ['translation_domain' => 'messages'])
-            ->add('showcase_agent', TiptapEditorType::class, [
-                'config'             => 'agent',
-                'label'              => 'demo.showcase_field_agent',
-                'help'               => 'demo.showcase_help_agent',
-                'translation_domain' => 'messages',
-            ])
-            ->add('showcase_notion', TiptapEditorType::class, [
-                'config'             => 'notion',
-                'label'              => 'demo.showcase_field_notion',
-                'help'               => 'demo.showcase_help_notion',
-                'placeholder'        => 'demo.showcase_notion_placeholder',
-                'translation_domain' => 'messages',
-            ])
-            ->add('showcase_simple', TiptapEditorType::class, [
-                'config'             => 'simple',
-                'label'              => 'demo.showcase_field_simple',
-                'help'               => 'demo.showcase_help_simple',
-                'translation_domain' => 'messages',
-            ])
-            ->add('showcase_headless', TiptapEditorType::class, [
-                'config'             => 'headless',
-                'label'              => 'demo.showcase_field_headless',
-                'help'               => 'demo.showcase_help_headless',
-                'translation_domain' => 'messages',
-            ])
-            ->getForm();
+        $form = $this->createForm(EditorDemoType::class, $data, [
+            'submit_label' => 'demo.submit_showcase',
+            'editors'      => [
+                'showcase_agent'    => ['config' => 'agent', 'label' => 'demo.showcase_field_agent', 'help' => 'demo.showcase_help_agent'],
+                'showcase_notion'   => ['config' => 'notion', 'label' => 'demo.showcase_field_notion', 'help' => 'demo.showcase_help_notion', 'placeholder' => 'demo.showcase_notion_placeholder'],
+                'showcase_simple'   => ['config' => 'simple', 'label' => 'demo.showcase_field_simple', 'help' => 'demo.showcase_help_simple'],
+                'showcase_headless' => ['config' => 'headless', 'label' => 'demo.showcase_field_headless', 'help' => 'demo.showcase_help_headless'],
+            ],
+        ]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -304,16 +261,17 @@ class TiptapDemoController extends AbstractController
             default               => null,
         };
 
-        $builder = $this->createFormBuilder($data, ['translation_domain' => 'messages'])
-            ->add($field, TiptapEditorType::class, array_filter([
-                'config'             => 'simple',
-                'example'            => $example,
-                'label'              => false,
-                'translation_domain' => 'messages',
-                'min_height'         => $minHeight,
-            ], static fn ($v) => $v !== null));
-
-        $form = $builder->getForm();
+        $form = $this->createForm(EditorDemoType::class, $data, [
+            'submit_label' => 'examples.submit',
+            'editors'      => [
+                $field => array_filter([
+                    'config'     => 'simple',
+                    'example'    => $example,
+                    'label'      => false,
+                    'min_height' => $minHeight,
+                ], static fn ($v) => $v !== null),
+            ],
+        ]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $this->addFlash('success', $this->translator->trans('examples.saved', [], 'messages'));
