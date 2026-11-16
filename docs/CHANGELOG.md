@@ -48,6 +48,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Demo uses the UiKit base style and FormKit forms (REQ-DEMO-014/015).
+- Demo `.gitignore` ignores `/.pnpm-store` (REQ-GITIGNORE-003)
+- Canonical `.scrutinizer.yml` (PHP coverage + Vitest) (REQ-CI-002)
+- Dependabot watches the root pnpm manifest and the demo Playwright `e2e/` npm manifest (REQ-GH-002)
 
 ## [1.7.1] - 2026-11-12
 
