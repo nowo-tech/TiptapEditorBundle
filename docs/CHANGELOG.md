@@ -45,6 +45,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Security
+
+- `AllowlistTiptapHtmlSanitizer` no longer keeps an arbitrary `rel` on links: only known link types are kept (`opener` and unknown tokens are dropped), and every `<a>` with a `target` gets `noopener noreferrer`, so stored content cannot give an opened page access to `window.opener` (reverse tabnabbing, audit RG2-L1). The editor applies the same rule when it renders links (`link-rel.ts`). Links that already had `noopener noreferrer` are unchanged.
+
 ### Changed
 
 - Demo uses the UiKit base style and FormKit forms (REQ-DEMO-014/015).

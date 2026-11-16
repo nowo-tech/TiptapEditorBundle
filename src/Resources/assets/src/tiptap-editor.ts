@@ -11,7 +11,6 @@ import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import FloatingMenu from '@tiptap/extension-floating-menu';
 import Highlight from '@tiptap/extension-highlight';
 import Image from '@tiptap/extension-image';
-import Link from '@tiptap/extension-link';
 import Placeholder from '@tiptap/extension-placeholder';
 import Subscript from '@tiptap/extension-subscript';
 import Superscript from '@tiptap/extension-superscript';
@@ -29,6 +28,7 @@ import { common, createLowlight } from 'lowlight';
 
 import { createBundleLogger } from './logger';
 import { EmbedIframe, safeEmbedSrc } from './embed-iframe';
+import { SafeLink } from './link-rel';
 import { attachSuggestionHook, readSuggestionConfig } from './suggestion';
 import { decorateToolbarButton, readToolbarDisplay, readToolbarLabels } from './toolbar-icons';
 import { attachUploadHook, readUploadConfig } from './upload';
@@ -807,7 +807,7 @@ function buildExtensions(
   const exts: Extension[] = [
     StarterKit.configure(starterOpts),
     Underline,
-    Link.configure({
+    SafeLink.configure({
       openOnClick: false,
       HTMLAttributes: {
         class: 'tiptap-editor-link',

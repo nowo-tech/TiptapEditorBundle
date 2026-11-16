@@ -62,6 +62,11 @@ composer update nowo-tech/tiptap-editor-bundle
 
 ## Unreleased
 
+From **1.7.1**: no change needed. The sanitizer (and the editor) now rewrite link `rel` values: known link types
+(`nofollow`, `ugc`, `sponsored`, `noopener`, `noreferrer`, …) are kept, `opener` and unknown tokens are dropped, and
+every link with a `target` gets `noopener noreferrer`. Stored HTML is rewritten the next time it goes through the
+sanitizer (form submit or your own `sanitize()` call); sanitize stored values again if you render old HTML without it.
+
 ## To 1.7.1
 
 From **1.7.0**:
