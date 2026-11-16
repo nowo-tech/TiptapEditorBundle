@@ -38,7 +38,7 @@
     "@tiptap/extension-text-align": "^2.27.3",
     "@tiptap/extension-typography": "^2.27.3",
     "@tiptap/extension-underline": "^2.27.3",
-    "@tiptap/starter-kit": "^2.27.3",
+    "@tiptap/starter-kit": "^3.34.0",
     "lowlight": "^3.3.0"
   },
   "devDependencies": {
