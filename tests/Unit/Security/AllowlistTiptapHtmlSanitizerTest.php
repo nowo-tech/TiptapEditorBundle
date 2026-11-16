@@ -146,6 +146,31 @@ final class AllowlistTiptapHtmlSanitizerTest extends TestCase
         self::assertStringContainsString('src="https://example.com/i.png"', $result);
     }
 
+    /**
+     * RG2-L1: `rel="opener"` is dropped and every link with a target gets `noopener noreferrer` (reverse tabnabbing),
+     * other known link types are kept.
+     *
+     * @return iterable<string, array{string, string}>
+     */
+    public static function linkRelCases(): iterable
+    {
+        yield 'opener with target' => ['<a href="https://evil.example" target="_blank" rel="opener">x</a>', '<a href="https://evil.example" target="_blank" rel="noopener noreferrer">x</a>'];
+        yield 'target without rel' => ['<a href="https://example.com" target="_blank">x</a>', '<a href="https://example.com" target="_blank" rel="noopener noreferrer">x</a>'];
+        yield 'safe tokens kept, opener and unknown dropped' => ['<a href="https://example.com" target="_blank" rel="NoFollow opener ugc bogus">x</a>', '<a href="https://example.com" target="_blank" rel="nofollow ugc noopener noreferrer">x</a>'];
+        yield 'target before rel, any target value' => ['<a target="evil" rel="opener noopener" href="/a">x</a>', '<a target="evil" href="/a" rel="noopener noreferrer">x</a>'];
+        yield 'already safe: unchanged' => ['<a href="https://example.com" target="_blank" rel="noopener noreferrer nofollow">x</a>', '<a href="https://example.com" target="_blank" rel="noopener noreferrer nofollow">x</a>'];
+        yield 'opener without target is dropped' => ['<a href="https://example.com" rel="opener">x</a>', '<a href="https://example.com">x</a>'];
+        yield 'safe rel without target is kept' => ['<a href="https://example.com" rel="nofollow">x</a>', '<a href="https://example.com" rel="nofollow">x</a>'];
+        yield 'no target, no rel: unchanged' => ['<a href="https://example.com">x</a>', '<a href="https://example.com">x</a>'];
+        yield 'rel-like text in another attribute is not touched' => ['<a href="/a" title=\'x" rel="opener\' target="_blank">x</a>', '<a href="/a" title="x&#34; rel&#61;&#34;opener" target="_blank" rel="noopener noreferrer">x</a>'];
+    }
+
+    #[DataProvider('linkRelCases')]
+    public function testLinkRelNeverGrantsTheOpener(string $input, string $expected): void
+    {
+        self::assertSame('<p>' . $expected . '</p>', (new AllowlistTiptapHtmlSanitizer())->sanitize('<p>' . $input . '</p>'));
+    }
+
     public function testKeepsOnlyTextAlignStyle(): void
     {
         $sanitizer = new AllowlistTiptapHtmlSanitizer();
