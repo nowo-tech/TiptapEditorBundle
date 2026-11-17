@@ -48,3 +48,4 @@ tiptap_toolbar:
   image: "Insertar imagen"
   embed: "Incrustar"
   insert: "Insertar"
+  task_checkbox: "Tarea: %task%"

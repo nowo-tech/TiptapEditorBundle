@@ -45,14 +45,15 @@ final class TiptapEditorType extends AbstractType
 
     /**
      * Toolbar command ids (1.7): `tiptap_toolbar.<id>` labels the button (aria-label / title) and `<id>` names its icon;
-     * `toolbar` labels the toolbar itself; `embed` and `insert` name the Notion insert menu.
+     * `toolbar` labels the toolbar itself; `embed` and `insert` name the Notion insert menu; `task_checkbox` (1.8) is the
+     * accessible name of a task-list checkbox, with `%task%` standing for the task text.
      */
     public const TOOLBAR_COMMANDS = [
         'toolbar', 'undo', 'redo', 'paragraph', 'heading_1', 'heading_2', 'heading_3', 'heading_4', 'heading_5', 'heading_6',
         'bold', 'italic', 'strike', 'code', 'underline', 'link', 'bullet_list', 'ordered_list', 'blockquote', 'code_block',
         'horizontal_rule', 'align_left', 'align_center', 'align_right', 'align_justify', 'hard_break', 'highlight',
         'subscript', 'superscript', 'table_insert', 'table_add_column', 'table_add_row', 'table_header_row', 'table_delete',
-        'task_list', 'image', 'embed', 'insert',
+        'task_list', 'image', 'embed', 'insert', 'task_checkbox',
     ];
 
     /**

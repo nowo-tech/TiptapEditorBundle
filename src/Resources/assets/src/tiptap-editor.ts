@@ -3,31 +3,26 @@
  * Variants mirror UX presets; optional `data-tiptap-example-value` loads extension recipes like https://tiptap.dev/docs/examples
  */
 
-import type { Extension } from '@tiptap/core';
+import type { AnyExtension } from '@tiptap/core';
 import { Editor } from '@tiptap/core';
-import BubbleMenu from '@tiptap/extension-bubble-menu';
-import CharacterCount from '@tiptap/extension-character-count';
-import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
-import FloatingMenu from '@tiptap/extension-floating-menu';
-import Highlight from '@tiptap/extension-highlight';
-import Image from '@tiptap/extension-image';
-import Placeholder from '@tiptap/extension-placeholder';
-import Subscript from '@tiptap/extension-subscript';
-import Superscript from '@tiptap/extension-superscript';
-import Table from '@tiptap/extension-table';
-import TableCell from '@tiptap/extension-table-cell';
-import TableHeader from '@tiptap/extension-table-header';
-import TableRow from '@tiptap/extension-table-row';
-import TaskItem from '@tiptap/extension-task-item';
-import TaskList from '@tiptap/extension-task-list';
-import TextAlign from '@tiptap/extension-text-align';
-import Typography from '@tiptap/extension-typography';
-import Underline from '@tiptap/extension-underline';
-import StarterKit from '@tiptap/starter-kit';
+import { BubbleMenu } from '@tiptap/extension-bubble-menu';
+import { CodeBlockLowlight } from '@tiptap/extension-code-block-lowlight';
+import { FloatingMenu } from '@tiptap/extension-floating-menu';
+import { Highlight } from '@tiptap/extension-highlight';
+import { OrderedList, TaskItem, TaskList } from '@tiptap/extension-list';
+import { Subscript } from '@tiptap/extension-subscript';
+import { Superscript } from '@tiptap/extension-superscript';
+import { Table, TableCell, TableHeader, TableRow } from '@tiptap/extension-table';
+import { TextAlign } from '@tiptap/extension-text-align';
+import { Typography } from '@tiptap/extension-typography';
+import { Underline } from '@tiptap/extension-underline';
+import { CharacterCount, Placeholder } from '@tiptap/extensions';
+import { StarterKit } from '@tiptap/starter-kit';
 import { common, createLowlight } from 'lowlight';
 
 import { createBundleLogger } from './logger';
 import { EmbedIframe, safeEmbedSrc } from './embed-iframe';
+import { SafeImage, safeImageSrc } from './image-src';
 import { SafeLink } from './link-rel';
 import { attachSuggestionHook, readSuggestionConfig } from './suggestion';
 import { decorateToolbarButton, readToolbarDisplay, readToolbarLabels } from './toolbar-icons';
@@ -193,11 +188,16 @@ function runImagePrompt(editor: Editor, existingSrc?: string): void {
   if (url === null || url.trim() === '') {
     return;
   }
-  if (editor.isActive('image')) {
-    editor.chain().focus().updateAttributes('image', { src: url.trim() }).run();
+  const src = safeImageSrc(url);
+  if (src === null) {
+    log.warn('image URL rejected (http(s) or relative only)');
     return;
   }
-  editor.chain().focus().setImage({ src: url.trim() }).run();
+  if (editor.isActive('image')) {
+    editor.chain().focus().updateAttributes('image', { src }).run();
+    return;
+  }
+  editor.chain().focus().setImage({ src }).run();
 }
 
 /**
@@ -662,6 +662,34 @@ function attachAgentFab(root: HTMLElement): void {
 
 export type MenuMount = { bubble: HTMLElement; floating: HTMLElement };
 
+/**
+ * Tiptap 3 hides a menu on editor blur only: when focus moves from the editor into the menu (Tab) and then on to
+ * another field, the menu would stay open. Hide it once focus leaves both the menu and the editor.
+ */
+function hideMenusOnFocusLeave(editor: Editor, menu: MenuMount): void {
+  const watch = (element: HTMLElement, pluginKey: string): void => {
+    element.addEventListener('focusout', (event: FocusEvent) => {
+      const next = event.relatedTarget;
+      if (next instanceof Node && (element.contains(next) || editor.view.dom.contains(next))) {
+        return;
+      }
+      editor.view.dispatch(editor.state.tr.setMeta(pluginKey, 'hide'));
+    });
+  };
+  watch(menu.bubble, 'bubbleMenu');
+  watch(menu.floating, 'floatingMenu');
+}
+
+/**
+ * StarterKit 3's OrderedList turns pasted plain text such as "1. a / 2. b" into a list, even inside a code block.
+ * 1.x pasted it as text; this copy keeps the list node, commands, shortcut and input rule without that paste plugin.
+ */
+const PlainPasteOrderedList = OrderedList.extend({
+  addProseMirrorPlugins() {
+    return [];
+  },
+});
+
 function wireMenuDom(editor: Editor, menu: MenuMount): void {
   const wire = (root: HTMLElement): void => {
     root.querySelectorAll<HTMLButtonElement>('[data-tiptap-menu-action]').forEach((btn) => {
@@ -687,6 +715,7 @@ function wireMenuDom(editor: Editor, menu: MenuMount): void {
   };
   wire(menu.bubble);
   wire(menu.floating);
+  hideMenusOnFocusLeave(editor, menu);
 }
 
 /** Escapes a translated label for an HTML attribute / text node of the static menu markup. */
@@ -753,6 +782,15 @@ function wireNotionMenus(editor: Editor, menu: MenuMount): void {
 
   wire(menu.bubble);
   wire(menu.floating);
+  hideMenusOnFocusLeave(editor, menu);
+}
+
+/**
+ * Tiptap 3 evaluates `shouldShow` when the menu plugin starts, before any focus; tippy.js-based 1.x only showed a menu
+ * after an interaction. Requiring focus on the editor (or on the menu itself) keeps menus hidden on page load.
+ */
+function menuFocused(view: { hasFocus(): boolean }, menu: HTMLElement): boolean {
+  return view.hasFocus() || menu.contains(document.activeElement);
 }
 
 function shouldEnableNotionMenus(variant: EditorVariant, toolbar: boolean, example: ExampleId | null): boolean {
@@ -760,9 +798,9 @@ function shouldEnableNotionMenus(variant: EditorVariant, toolbar: boolean, examp
 }
 
 /** Images, tables, and embed iframes for wiki / Notion-like profiles. */
-function addRichContentExtensions(exts: Extension[]): void {
+function addRichContentExtensions(exts: AnyExtension[]): void {
   exts.push(
-    Image.configure({
+    SafeImage.configure({
       inline: true,
       allowBase64: false,
     }),
@@ -783,19 +821,27 @@ function buildExtensions(
   menuMount: MenuMount | null,
   notionMenus: MenuMount | null,
   labels: Record<string, string> = {},
-): Extension[] {
+): AnyExtension[] {
   const headingLevels =
     variant === 'headless' && !example ? ([1, 2, 3, 4, 5, 6] as const) : ([1, 2, 3] as const);
 
+  // Tiptap 3: StarterKit also bundles Link, Underline, ListKeymap and TrailingNode. Link and Underline are added below
+  // (SafeLink keeps the rel hardening), so the StarterKit copies are off; ListKeymap and TrailingNode stay off so the
+  // editing behaviour and the saved HTML match 1.x (TrailingNode would append an empty <p> after tables / code blocks).
+  // OrderedList is replaced by PlainPasteOrderedList (no plain-text list paste).
   const starterOpts: Record<string, unknown> = {
     heading: { levels: [...headingLevels] },
+    link: false,
+    underline: false,
+    orderedList: false,
+    listKeymap: false,
+    trailingNode: false,
   };
 
   if (example === 'minimal') {
     starterOpts.heading = false;
     starterOpts.blockquote = false;
     starterOpts.bulletList = false;
-    starterOpts.orderedList = false;
     starterOpts.horizontalRule = false;
     starterOpts.codeBlock = false;
   }
@@ -804,8 +850,9 @@ function buildExtensions(
     starterOpts.codeBlock = false;
   }
 
-  const exts: Extension[] = [
+  const exts: AnyExtension[] = [
     StarterKit.configure(starterOpts),
+    ...(example === 'minimal' ? [] : [PlainPasteOrderedList]),
     Underline,
     SafeLink.configure({
       openOnClick: false,
@@ -838,13 +885,14 @@ function buildExtensions(
       TaskList,
       TaskItem.configure({
         nested: true,
+        a11y: { checkboxLabel: (node) => taskCheckboxLabel(labels, node.textContent) },
       }),
     );
   }
 
   if (example === 'images') {
     exts.push(
-      Image.configure({
+      SafeImage.configure({
         inline: false,
         allowBase64: false,
       }),
@@ -881,7 +929,7 @@ function buildExtensions(
     exts.push(
       BubbleMenu.configure({
         element: menuMount.bubble,
-        shouldShow: ({ editor: ed }) => !ed.isActive('codeBlock'),
+        shouldShow: ({ editor: ed, view }) => menuFocused(view, menuMount.bubble) && !ed.isActive('codeBlock'),
       }),
       FloatingMenu.configure({
         element: menuMount.floating,
@@ -893,7 +941,7 @@ function buildExtensions(
     example === null &&
     (variant === 'notion' || variant === 'default' || variant === 'agent')
   ) {
-    addRichContentExtensions(exts    );
+    addRichContentExtensions(exts);
   }
 
   if (notionMenus) {
@@ -919,13 +967,14 @@ function buildExtensions(
     exts.push(
       BubbleMenu.configure({
         element: notionMenus.bubble,
-        shouldShow: ({ editor: ed }) => !ed.isActive('codeBlock') && !ed.state.selection.empty,
+        shouldShow: ({ editor: ed, view }) =>
+          menuFocused(view, notionMenus.bubble) && !ed.isActive('codeBlock') && !ed.state.selection.empty,
       }),
       FloatingMenu.configure({
         element: notionMenus.floating,
-        shouldShow: ({ editor: ed }) => {
+        shouldShow: ({ editor: ed, view }) => {
           const { $from } = ed.state.selection;
-          return $from.parent.type.name === 'paragraph' && $from.parent.content.size === 0;
+          return menuFocused(view, notionMenus.floating) && $from.parent.type.name === 'paragraph' && $from.parent.content.size === 0;
         },
       }),
     );
@@ -940,6 +989,17 @@ function buildExtensions(
   }
 
   return exts;
+}
+
+/**
+ * Accessible name of a task checkbox (1.8, audit SN-I1): the translated `tiptap_toolbar.task_checkbox` label from
+ * `data-tiptap-toolbar-labels-value`, where `%task%` stands for the task text (English fallback).
+ */
+export function taskCheckboxLabel(labels: Record<string, string>, task: string): string {
+  const template = labels.task_checkbox ?? 'Task: %task%';
+  const text = task.trim();
+
+  return text === '' ? template.replace(/[\s:：]*%task%/, '').trim() : template.replace('%task%', text);
 }
 
 function attachCharacterCountFooter(chrome: HTMLElement, editor: Editor): void {
@@ -1088,15 +1148,14 @@ export function initTiptapRoot(root: HTMLElement): void {
   const chrome =
     root.querySelector<HTMLElement>('.tiptap-editor-chrome') ?? (variant === 'headless' ? root : null);
 
+  // Menu elements stay detached: Tiptap 3 (Floating UI) appends them next to the editor surface when shown and removes
+  // them when hidden, as tippy.js did in 1.x. Appending them up front would leave them visible until the first update.
   let menuMount: MenuMount | null = null;
   if (example === 'menus') {
     menuMount = {
       bubble: document.createElement('div'),
       floating: document.createElement('div'),
     };
-    const menuHost = chrome ?? root;
-    menuHost.appendChild(menuMount.bubble);
-    menuHost.appendChild(menuMount.floating);
   }
 
   let notionMenus: MenuMount | null = null;
@@ -1105,9 +1164,6 @@ export function initTiptapRoot(root: HTMLElement): void {
       bubble: document.createElement('div'),
       floating: document.createElement('div'),
     };
-    const menuHost = chrome ?? root;
-    menuHost.appendChild(notionMenus.bubble);
-    menuHost.appendChild(notionMenus.floating);
   }
 
   let editor!: Editor;
@@ -1142,6 +1198,9 @@ export function initTiptapRoot(root: HTMLElement): void {
     element: mount,
     extensions: buildExtensions(placeholder, variant, example, menuMount, notionMenus, readToolbarLabels(root)),
     content: textarea.value || '<p></p>',
+    // 1.8 (audit SN-I3): no injected <style> (blocked by a strict style-src) when the form theme links
+    // tiptap-editor.css, which carries Tiptap's base rules; with the stylesheet off, Tiptap injects them as in 1.7.
+    injectCSS: root.dataset.tiptapStylesheetValue !== '1',
     editorProps,
     onUpdate: () => {
       syncTextarea(textarea, editor.getHTML());

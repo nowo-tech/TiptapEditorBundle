@@ -63,6 +63,33 @@ composer update nowo-tech/tiptap-editor-bundle
 
 ## Unreleased
 
+Tiptap 3 inside the built `tiptap-editor.js`. No PHP, Twig, form option or data attribute changes:
+
+```bash
+composer update nowo-tech/tiptap-editor-bundle
+php bin/console assets:install
+```
+
+Act only if one of these applies:
+
+- **Custom menu CSS:** the bubble / floating menus are no longer wrapped in tippy.js markup. Rules that target
+  `.tippy-box`, `.tippy-content` or `[data-tippy-root]` no longer match; style `.tiptap-notion-bubble`,
+  `.tiptap-notion-floating`, `.tiptap-example-bubble` or `.tiptap-example-floating` instead.
+- **Stored HTML compared byte for byte:** table cells are saved without the default `colspan="1" rowspan="1"`, so a
+  re-saved document can differ from the stored one while meaning the same.
+- **Overridden translations:** the new key `tiptap_toolbar.task_checkbox` (for example `"Task: %task%"`, where
+  `%task%` is the task text) names task-list checkboxes; add it to your own `NowoTiptapEditorBundle.*` files if you
+  replace the bundle's.
+- **Stylesheet turned off** (`nowo_tiptap_editor.stylesheet: false`): nothing changes, Tiptap still injects its base
+  `<style>`. With the stylesheet linked (the default), that `<style>` is gone and its rules ship in
+  `tiptap-editor.css`; a strict `style-src` policy no longer needs an exception for it.
+- **Code that reaches the Tiptap instance** (for example `element.querySelector('.ProseMirror').editor`, which is not a
+  bundle API): it is now a Tiptap 3 `Editor`; see Tiptap's v2 to v3 upgrade guide (for example
+  `setContent(html, { emitUpdate })`).
+
+Content Security Policy: the bubble and floating menus need no new allowance. Floating UI positions them through the
+CSSOM (`element.style`), which `style-src` does not restrict, and tippy.js is gone.
+
 ## To 1.7.2
 
 From **1.7.1**:

@@ -45,6 +45,7 @@ const {
   runInit,
   runInitAndObserve,
   syncTiptapTextareasIn,
+  taskCheckboxLabel,
 } = await import('./tiptap-editor');
 
 type RootOptions = Record<string, string>;
@@ -178,7 +179,7 @@ describe('initTiptapRoot', () => {
     const editor = editorOf(root);
     const textarea = root.querySelector('textarea') as HTMLTextAreaElement;
 
-    editor.commands.setContent('<p>Changed</p>', true);
+    editor.commands.setContent('<p>Changed</p>', { emitUpdate: true });
     expect(textarea.value).toBe('<p>Changed</p>');
 
     textarea.value = 'stale';
@@ -622,3 +623,263 @@ describe('discovery and custom element', () => {
     );
   });
 });
+
+/** 1.8: Tiptap 3 keeps the 1.x editor behaviour (extension set, links, tables, tasks, code blocks, menus, paste). */
+describe('tiptap 3 parity', () => {
+  const PROFILES: RootOptions[] = [
+    ...['default', 'simple', 'notion', 'agent', 'headless'].map((variant) => ({ tiptapVariantValue: variant })),
+    ...['formatting', 'images', 'long_text', 'markdown_shortcuts', 'minimal', 'tables', 'tasks', 'text_direction_rtl', 'menus', 'syntax_highlighting'].map(
+      (example) => ({ tiptapExampleValue: example }),
+    ),
+  ];
+
+  it('registers every extension once, without the StarterKit 3 additions', () => {
+    const warn = vi.spyOn(console, 'warn');
+    for (const profile of PROFILES) {
+      const root = makeRoot({ ...profile, tiptapToolbarValue: '1' });
+      initTiptapRoot(root);
+      const names = editorOf(root).extensionManager.extensions.map((ext) => ext.name);
+      expect(new Set(names).size, JSON.stringify(profile)).toBe(names.length);
+      expect(names).toContain('link');
+      expect(names).toContain('underline');
+      expect(names).not.toContain('trailingNode');
+      expect(names).not.toContain('listKeymap');
+    }
+    expect(warn.mock.calls.flat().join(' ')).not.toContain('Duplicate extension');
+  });
+
+  it('keeps the link rel and refuses javascript: URLs from the prompt', () => {
+    const root = makeRoot({ tiptapToolbarValue: '1' }, '<p>Hello world</p>');
+    initTiptapRoot(root);
+    const editor = editorOf(root);
+    const prompt = vi.mocked(window.prompt);
+
+    editor.commands.setTextSelection({ from: 1, to: 6 });
+    prompt.mockReturnValueOnce('javascript:alert(1)');
+    runLinkThroughToolbar(root);
+    expect(editor.getHTML()).not.toContain('javascript');
+    expect(editor.getHTML()).not.toContain('<a');
+
+    prompt.mockReturnValueOnce('https://example.com');
+    runLinkThroughToolbar(root);
+    const a = editor.view.dom.ownerDocument.createElement('div');
+    a.innerHTML = editor.getHTML();
+    const anchor = a.querySelector('a') as HTMLAnchorElement;
+    expect(anchor.getAttribute('href')).toBe('https://example.com');
+    expect(anchor.getAttribute('rel')).toBe('noopener noreferrer nofollow');
+    expect(anchor.getAttribute('target')).toBe('_blank');
+    expect(anchor.className).toBe('tiptap-editor-link');
+    expect(anchor.textContent).toBe('Hello');
+
+    // extendMarkRange: a caret inside the link removes the whole link.
+    editor.commands.setTextSelection(3);
+    prompt.mockReturnValueOnce('');
+    runLinkThroughToolbar(root);
+    expect(editor.getHTML()).toBe('<p>Hello world</p>');
+  });
+
+  it('sanitises pasted HTML (event handlers, javascript: links and iframes)', () => {
+    const root = makeRoot({ tiptapVariantValue: 'notion' }, '<p></p>');
+    initTiptapRoot(root);
+    const editor = editorOf(root);
+    editor.view.pasteHTML(
+      '<p onclick="alert(1)">a <a href="javascript:alert(2)" onmouseover="alert(3)" rel="opener" target="_blank">x</a>' +
+        ' <img src="https://example.com/a.png" onerror="alert(4)"></p>' +
+        '<iframe src="javascript:alert(5)"></iframe><iframe src="https://www.youtube.com/embed/x" onload="alert(6)"></iframe>' +
+        '<script>alert(7)</script>',
+    );
+    const html = editor.getHTML();
+    expect(html).not.toMatch(/\son[a-z]+=/i);
+    expect(html).not.toContain('javascript');
+    expect(html).not.toContain('<script');
+    expect(html).not.toContain('opener"');
+    expect(html).toContain('src="https://example.com/a.png"');
+    expect(html).toContain('src="https://www.youtube.com/embed/x"');
+  });
+
+  it('inserts tables without a trailing paragraph', () => {
+    const root = makeRoot({ tiptapToolbarValue: '1', tiptapExampleValue: 'tables' }, '<p>x</p>');
+    initTiptapRoot(root);
+    const editor = editorOf(root);
+    editor.commands.setTextSelection(2);
+    (toolbarButtons(root).find((b) => b.title === 'Insert table') as HTMLButtonElement).click();
+    const html = editor.getHTML();
+    expect(html.match(/<th/g)).toHaveLength(3);
+    expect(html.match(/<tr/g)).toHaveLength(3);
+    expect(html.endsWith('</table>')).toBe(true);
+  });
+
+  it('renders task lists and lowlight code blocks like 1.x', () => {
+    const tasks = makeRoot({ tiptapToolbarValue: '1', tiptapExampleValue: 'tasks' }, '<p>todo</p>');
+    initTiptapRoot(tasks);
+    (toolbarButtons(tasks).find((b) => b.title === 'Task list') as HTMLButtonElement).click();
+    expect(editorOf(tasks).getHTML()).toMatch(/^<ul data-type="taskList"><li data-checked="false" data-type="taskItem">/);
+    expect(tasks.querySelector('.ProseMirror li input[type="checkbox"]')).not.toBeNull();
+
+    const code = makeRoot({ tiptapExampleValue: 'syntax_highlighting' }, '<pre><code class="language-javascript">const a = 1;</code></pre>');
+    initTiptapRoot(code);
+    expect(editorOf(code).getHTML()).toBe('<pre><code class="language-javascript">const a = 1;</code></pre>');
+    expect(code.querySelector('.ProseMirror pre .hljs-keyword')?.textContent).toBe('const');
+  });
+
+  it('keeps the menus detached until Tiptap shows them next to the editor', () => {
+    const root = makeRoot({ tiptapVariantValue: 'notion' }, '<p>Hello world</p>');
+    initTiptapRoot(root);
+    const editor = editorOf(root);
+    const [bubble] = menuElements(editor);
+    expect(root.querySelector('.tiptap-notion-bubble')).toBeNull();
+    expect(root.querySelector('.tiptap-notion-floating')).toBeNull();
+
+    editor.view.dispatch(editor.state.tr.setMeta('bubbleMenu', 'show'));
+    expect(bubble.parentElement).toBe(root.querySelector('[data-tiptap-mount]'));
+    editor.view.dispatch(editor.state.tr.setMeta('bubbleMenu', 'hide'));
+    expect(bubble.isConnected).toBe(false);
+
+    // An empty first paragraph matches the floating menu, but nothing shows before the editor gets focus.
+    const profiles: RootOptions[] = [{ tiptapVariantValue: 'notion' }, { tiptapExampleValue: 'menus' }];
+    for (const profile of profiles) {
+      const empty = makeRoot(profile, '<p></p>');
+      initTiptapRoot(empty);
+      expect(empty.querySelector('[data-tiptap-mount] > div:not(.ProseMirror)'), JSON.stringify(profile)).toBeNull();
+    }
+  });
+
+  it('shows the menus only while the editor or the menu has focus', () => {
+    type MenuOptions = { element: HTMLElement; shouldShow: ((props: Record<string, unknown>) => boolean) | null };
+    const profiles: RootOptions[] = [{ tiptapVariantValue: 'notion' }, { tiptapExampleValue: 'menus' }];
+    for (const profile of profiles) {
+      const root = makeRoot(profile, '<p></p><p>Hello</p>');
+      initTiptapRoot(root);
+      const editor = editorOf(root);
+      for (const name of ['bubbleMenu', 'floatingMenu']) {
+        const options = editor.extensionManager.extensions.find((ext) => ext.name === name)?.options as MenuOptions;
+        if (options.shouldShow === null) {
+          continue; // the example floating menu keeps Tiptap's default (focus required too)
+        }
+        const shouldShow = options.shouldShow;
+        const call = (focused: boolean): boolean =>
+          shouldShow({ editor, view: { hasFocus: () => focused }, state: editor.state, element: options.element, from: 0, to: 0 });
+        if (name === 'bubbleMenu') {
+          editor.commands.setTextSelection({ from: 3, to: 6 });
+        } else {
+          editor.commands.setTextSelection(1);
+        }
+        expect(call(true), `${name} ${JSON.stringify(profile)}`).toBe(true);
+        expect(call(false)).toBe(false);
+
+        // Focus inside the menu (a click on one of its buttons) keeps it open.
+        document.body.appendChild(options.element);
+        const inside = options.element.appendChild(document.createElement('button'));
+        inside.focus();
+        expect(call(false)).toBe(true);
+        inside.remove();
+        options.element.remove();
+
+        // Code blocks (bubble) and non-empty lines (floating) never show the menu.
+        if (name === 'bubbleMenu') {
+          editor.commands.setContent('<pre><code>code</code></pre>');
+          editor.commands.setTextSelection({ from: 1, to: 3 });
+        } else {
+          editor.commands.setTextSelection(4);
+        }
+        expect(call(true)).toBe(false);
+        editor.commands.setContent('<p></p><p>Hello</p>');
+      }
+    }
+  });
+
+  it('pastes numbered plain text as text, inside and outside code blocks', () => {
+    const root = makeRoot({}, '<pre><code>x</code></pre><p>y</p>');
+    initTiptapRoot(root);
+    const editor = editorOf(root);
+    const paste = (): void => {
+      const data = new DataTransfer();
+      data.setData('text/plain', '1. first\n2. second');
+      editor.view.dom.dispatchEvent(new ClipboardEvent('paste', { clipboardData: data, bubbles: true, cancelable: true }));
+    };
+    editor.commands.setTextSelection(2);
+    paste();
+    expect(editor.getHTML()).toContain('<pre><code>x1. first\n2. second</code></pre>');
+    editor.commands.setTextSelection(editor.state.doc.content.size - 1);
+    paste();
+    expect(editor.getHTML()).not.toContain('<ol');
+    expect(editor.getHTML()).toContain('1. first');
+    // The ordered list itself still works.
+    editor.commands.toggleOrderedList();
+    expect(editor.getHTML()).toContain('<ol>');
+  });
+
+  it('hides a menu once focus leaves both the menu and the editor', () => {
+    const root = makeRoot({ tiptapVariantValue: 'notion' }, '<p>Hello world</p>');
+    const field = document.body.appendChild(document.createElement('input'));
+    initTiptapRoot(root);
+    const editor = editorOf(root);
+    const [bubble, floating] = menuElements(editor);
+    const leave = (menu: HTMLElement, to: EventTarget | null): void => {
+      menu.dispatchEvent(new FocusEvent('focusout', { relatedTarget: to as Node | null, bubbles: true }));
+    };
+
+    editor.view.dispatch(editor.state.tr.setMeta('bubbleMenu', 'show'));
+    leave(bubble, bubble.querySelector('button'));
+    leave(bubble, editor.view.dom);
+    expect(bubble.isConnected).toBe(true);
+    leave(bubble, field);
+    expect(bubble.isConnected).toBe(false);
+
+    editor.view.dispatch(editor.state.tr.setMeta('floatingMenu', 'show'));
+    leave(floating, null);
+    expect(floating.isConnected).toBe(false);
+
+    const example = makeRoot({ tiptapExampleValue: 'menus' }, '<p>Hello world</p>');
+    initTiptapRoot(example);
+    const exampleEditor = editorOf(example);
+    const [exampleBubble] = menuElements(exampleEditor);
+    exampleEditor.view.dispatch(exampleEditor.state.tr.setMeta('bubbleMenu', 'show'));
+    leave(exampleBubble, field);
+    expect(exampleBubble.isConnected).toBe(false);
+  });
+
+  it('names task checkboxes with the translated label (SN-I1)', () => {
+    expect(taskCheckboxLabel({ task_checkbox: 'Tarea: %task%' }, ' comprar pan ')).toBe('Tarea: comprar pan');
+    expect(taskCheckboxLabel({ task_checkbox: 'Tarea: %task%' }, '')).toBe('Tarea');
+    expect(taskCheckboxLabel({ task_checkbox: 'Tâche : %task%' }, '')).toBe('Tâche');
+    expect(taskCheckboxLabel({}, 'buy milk')).toBe('Task: buy milk');
+
+    const root = makeRoot(
+      { tiptapExampleValue: 'tasks', tiptapToolbarLabelsValue: JSON.stringify({ task_checkbox: 'Tarea: %task%' }) },
+      '<ul data-type="taskList"><li data-type="taskItem" data-checked="true"><p>pan</p></li></ul>',
+    );
+    initTiptapRoot(root);
+    const checkbox = root.querySelector('.ProseMirror input[type="checkbox"]') as HTMLInputElement;
+    expect(checkbox.getAttribute('aria-label')).toBe('Tarea: pan');
+    expect(editorOf(root).getHTML()).not.toContain('Tarea');
+  });
+
+  it('skips the injected <style> when the widget links the bundle stylesheet (SN-I3)', () => {
+    const styles = (): number => document.querySelectorAll('style[data-tiptap-style]').length;
+    document.querySelectorAll('style[data-tiptap-style]').forEach((el) => el.remove());
+
+    initTiptapRoot(makeRoot({ tiptapStylesheetValue: '1' }));
+    expect(styles()).toBe(0);
+
+    initTiptapRoot(makeRoot({ tiptapStylesheetValue: '0' }));
+    expect(styles()).toBe(1);
+  });
+
+  it('refuses unsafe image URLs from the prompt (SN-I2)', () => {
+    const root = makeRoot({ tiptapToolbarValue: '1', tiptapExampleValue: 'images' }, '<p>x</p>');
+    initTiptapRoot(root);
+    const editor = editorOf(root);
+    vi.mocked(window.prompt).mockReturnValueOnce('javascript:alert(1)');
+    (toolbarButtons(root).find((b) => b.title === 'Insert image') as HTMLButtonElement).click();
+    expect(editor.getHTML()).toBe('<p>x</p>');
+
+    vi.mocked(window.prompt).mockReturnValueOnce('/media/a.png');
+    (toolbarButtons(root).find((b) => b.title === 'Insert image') as HTMLButtonElement).click();
+    expect(editor.getHTML()).toContain('<img src="/media/a.png">');
+  });
+});
+
+function runLinkThroughToolbar(root: HTMLElement): void {
+  (toolbarButtons(root).find((b) => b.title === 'Link') as HTMLButtonElement).click();
+}

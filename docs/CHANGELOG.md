@@ -46,8 +46,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Security
+
+- 1.8 no longer keeps CSS injected through a highlight colour (`mark[data-color]`, `formatting` profile with `multicolor: true`), which in ≤1.7.2 let stored or pasted content make the browser fetch attacker URLs; no script execution.
+
 ### Changed
 
+- Editor: **Tiptap 3** (`@tiptap/*` 3.34) replaces Tiptap 2.27 in the built `tiptap-editor.js`; supersedes the Dependabot
+  PRs #64, #65 and #66. No PHP, Twig, form option or data attribute changes: hosts only run `assets:install` (or copy
+  the new built asset). Behaviour is kept: the StarterKit 3 copies of Link and Underline are disabled (the bundle's
+  `SafeLink`, with its `rel` hardening and `javascript:` refusal, stays), and the new StarterKit `ListKeymap` and
+  `TrailingNode` are off, so lists edit as before and no empty `<p>` is appended after tables or code blocks.
+  Packages: tables come from `@tiptap/extension-table` (named exports), task lists from `@tiptap/extension-list`,
+  `CharacterCount` / `Placeholder` from `@tiptap/extensions`; `@tiptap/pm`, `@tiptap/extension-code-block`,
+  `@floating-ui/dom` and `highlight.js` are explicit dependencies.
+- Editor: bubble and floating menus are positioned by Floating UI instead of tippy.js (tippy.js is no longer bundled).
+  Tiptap now inserts the menu element itself next to the editor surface when it is shown and removes it when hidden;
+  there is no `.tippy-box` / `[data-tippy-root]` wrapper any more, and the example menus get a `z-index` like the
+  Notion menus. The bundle's own `shouldShow` rules now also require focus on the editor (or the menu), because
+  Tiptap 3 evaluates them on page load: menus stay hidden until the user interacts, as in 1.7. A menu also hides
+  when keyboard focus leaves both the menu and the editor (Tab from the menu to another field).
+- Editor: StarterKit 3's ordered list turns pasted plain text such as `1. a` / `2. b` into a list, even inside a code
+  block. The bundle keeps the 1.7 behaviour (the text is pasted as text) with an ordered list without that paste rule;
+  the list button, `Mod-Shift-7` and the `1. ` input rule are unchanged.
+- Editor output (host-visible, same meaning): table cells no longer carry the default `colspan="1" rowspan="1"`
+  attributes in the saved HTML (non-default spans are kept). Task-list checkboxes get an accessible label
+  (`aria-label` in the editor only, not in the saved HTML; see below). The built `tiptap-editor.js` grows from about
+  627 kB to 677 kB.
+- Editor: task-list checkboxes get a translated accessible name, the new `tiptap_toolbar.task_checkbox` key (all seven
+  bundle locales, `%task%` stands for the task text), passed through `data-tiptap-toolbar-labels-value`;
+  `TiptapEditorType::TOOLBAR_COMMANDS` gains `task_checkbox`.
+- Editor: images keep only http(s) and relative `src` values when HTML is parsed or rendered and from the image prompt;
+  `javascript:`, `data:` in any case (`DATA:` bypassed `allowBase64: false`) and other schemes are dropped. Same rule as
+  the server sanitizer; both were inert in `<img>`.
+- Editor: no injected `<style data-tiptap-style>` when the widget links `tiptap-editor.css` (the default): the form
+  theme renders `data-tiptap-stylesheet-value="1"`, the script runs Tiptap with `injectCSS: false`, and Tiptap's base
+  rules now ship in `tiptap-editor.css`. A strict `style-src` no longer reports it. With
+  `nowo_tiptap_editor.stylesheet: false`, Tiptap injects its rules as in 1.7.
+- Demo: new Playwright spec `e2e/tests/editor.spec.ts` (menus, link `rel` and `javascript:` refusal, paste
+  sanitising, tables, task lists, syntax highlighting); the e2e image is aligned with `@playwright/test` 1.65.0.
 - Demo: the syntax-highlighting example loads a vendored copy of the highlight.js GitHub Dark theme from the demo's own `public/css/` instead of cdnjs (REQ-DEMO-014).
 
 ## [1.7.2] - 2026-11-16

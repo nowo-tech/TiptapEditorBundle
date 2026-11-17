@@ -13,7 +13,7 @@ const editors: Editor[] = [];
 function html(content: string, options: Record<string, unknown> = {}): string {
   const editor = new Editor({
     element: document.createElement('div'),
-    extensions: [StarterKit, SafeLink.configure({ openOnClick: false, ...options })],
+    extensions: [StarterKit.configure({ link: false }), SafeLink.configure({ openOnClick: false, ...options })],
     content,
   });
   editors.push(editor);
