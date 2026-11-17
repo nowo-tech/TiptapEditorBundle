@@ -63,6 +63,24 @@ composer update nowo-tech/tiptap-editor-bundle
 
 ## Unreleased
 
+Tiptap 3 inside the built `tiptap-editor.js`. No PHP, Twig, form option or data attribute changes:
+
+```bash
+composer update nowo-tech/tiptap-editor-bundle
+php bin/console assets:install
+```
+
+Act only if one of these applies:
+
+- **Custom menu CSS:** the bubble / floating menus are no longer wrapped in tippy.js markup. Rules that target
+  `.tippy-box`, `.tippy-content` or `[data-tippy-root]` no longer match; style `.tiptap-notion-bubble`,
+  `.tiptap-notion-floating`, `.tiptap-example-bubble` or `.tiptap-example-floating` instead.
+- **Stored HTML compared byte for byte:** table cells are saved without the default `colspan="1" rowspan="1"`, so a
+  re-saved document can differ from the stored one while meaning the same.
+- **Code that reaches the Tiptap instance** (for example `element.querySelector('.ProseMirror').editor`, which is not a
+  bundle API): it is now a Tiptap 3 `Editor`; see Tiptap's v2 to v3 upgrade guide (for example
+  `setContent(html, { emitUpdate })`).
+
 ## To 1.7.2
 
 From **1.7.1**:

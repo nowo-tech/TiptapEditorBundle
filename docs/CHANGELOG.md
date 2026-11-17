@@ -48,6 +48,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Editor: **Tiptap 3** (`@tiptap/*` 3.34) replaces Tiptap 2.27 in the built `tiptap-editor.js`; supersedes the Dependabot
+  PRs #64, #65 and #66. No PHP, Twig, form option or data attribute changes: hosts only run `assets:install` (or copy
+  the new built asset). Behaviour is kept: the StarterKit 3 copies of Link and Underline are disabled (the bundle's
+  `SafeLink`, with its `rel` hardening and `javascript:` refusal, stays), and the new StarterKit `ListKeymap` and
+  `TrailingNode` are off, so lists edit as before and no empty `<p>` is appended after tables or code blocks.
+  Packages: tables come from `@tiptap/extension-table` (named exports), task lists from `@tiptap/extension-list`,
+  `CharacterCount` / `Placeholder` from `@tiptap/extensions`; `@tiptap/pm`, `@tiptap/extension-code-block`,
+  `@floating-ui/dom` and `highlight.js` are explicit dependencies.
+- Editor: bubble and floating menus are positioned by Floating UI instead of tippy.js (tippy.js is no longer bundled).
+  Tiptap now inserts the menu element itself next to the editor surface when it is shown and removes it when hidden;
+  there is no `.tippy-box` / `[data-tippy-root]` wrapper any more, and the example menus get a `z-index` like the
+  Notion menus. The bundle's own `shouldShow` rules now also require focus on the editor (or the menu), because
+  Tiptap 3 evaluates them on page load: menus stay hidden until the user interacts, as in 1.7.
+- Editor output (host-visible, same meaning): table cells no longer carry the default `colspan="1" rowspan="1"`
+  attributes in the saved HTML (non-default spans are kept). Task-list checkboxes get Tiptap 3's accessible label
+  (`aria-label` in the editor only, not in the saved HTML). The built `tiptap-editor.js` grows from about 627 kB to
+  676 kB.
+- Demo: new Playwright spec `e2e/tests/editor.spec.ts` (menus, link `rel` and `javascript:` refusal, paste
+  sanitising, tables, task lists, syntax highlighting); the e2e image is aligned with `@playwright/test` 1.65.0.
 - Demo: the syntax-highlighting example loads a vendored copy of the highlight.js GitHub Dark theme from the demo's own `public/css/` instead of cdnjs (REQ-DEMO-014).
 
 ## [1.7.2] - 2026-11-16
