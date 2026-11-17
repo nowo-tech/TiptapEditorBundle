@@ -46,6 +46,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Demo: the syntax-highlighting example loads a vendored copy of the highlight.js GitHub Dark theme from the demo's own `public/css/` instead of cdnjs (REQ-DEMO-014).
+
 ## [1.7.2] - 2026-11-16
 
 ### Security
