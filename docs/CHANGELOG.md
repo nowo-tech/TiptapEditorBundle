@@ -60,7 +60,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Tiptap now inserts the menu element itself next to the editor surface when it is shown and removes it when hidden;
   there is no `.tippy-box` / `[data-tippy-root]` wrapper any more, and the example menus get a `z-index` like the
   Notion menus. The bundle's own `shouldShow` rules now also require focus on the editor (or the menu), because
-  Tiptap 3 evaluates them on page load: menus stay hidden until the user interacts, as in 1.7.
+  Tiptap 3 evaluates them on page load: menus stay hidden until the user interacts, as in 1.7. A menu also hides
+  when keyboard focus leaves both the menu and the editor (Tab from the menu to another field).
+- Editor: StarterKit 3's ordered list turns pasted plain text such as `1. a` / `2. b` into a list, even inside a code
+  block. The bundle keeps the 1.7 behaviour (the text is pasted as text) with an ordered list without that paste rule;
+  the list button, `Mod-Shift-7` and the `1. ` input rule are unchanged.
 - Editor output (host-visible, same meaning): table cells no longer carry the default `colspan="1" rowspan="1"`
   attributes in the saved HTML (non-default spans are kept). Task-list checkboxes get Tiptap 3's accessible label
   (`aria-label` in the editor only, not in the saved HTML). The built `tiptap-editor.js` grows from about 627 kB to
