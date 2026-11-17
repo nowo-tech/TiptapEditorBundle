@@ -46,6 +46,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Security
+
+- 1.8 no longer keeps CSS injected through a highlight colour (`mark[data-color]`, `formatting` profile with `multicolor: true`), which in ≤1.7.2 let stored or pasted content make the browser fetch attacker URLs; no script execution.
+
 ### Changed
 
 - Editor: **Tiptap 3** (`@tiptap/*` 3.34) replaces Tiptap 2.27 in the built `tiptap-editor.js`; supersedes the Dependabot
@@ -66,9 +70,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   block. The bundle keeps the 1.7 behaviour (the text is pasted as text) with an ordered list without that paste rule;
   the list button, `Mod-Shift-7` and the `1. ` input rule are unchanged.
 - Editor output (host-visible, same meaning): table cells no longer carry the default `colspan="1" rowspan="1"`
-  attributes in the saved HTML (non-default spans are kept). Task-list checkboxes get Tiptap 3's accessible label
-  (`aria-label` in the editor only, not in the saved HTML). The built `tiptap-editor.js` grows from about 627 kB to
-  676 kB.
+  attributes in the saved HTML (non-default spans are kept). Task-list checkboxes get an accessible label
+  (`aria-label` in the editor only, not in the saved HTML; see below). The built `tiptap-editor.js` grows from about
+  627 kB to 677 kB.
+- Editor: task-list checkboxes get a translated accessible name, the new `tiptap_toolbar.task_checkbox` key (all seven
+  bundle locales, `%task%` stands for the task text), passed through `data-tiptap-toolbar-labels-value`;
+  `TiptapEditorType::TOOLBAR_COMMANDS` gains `task_checkbox`.
+- Editor: images keep only http(s) and relative `src` values when HTML is parsed or rendered and from the image prompt;
+  `javascript:`, `data:` in any case (`DATA:` bypassed `allowBase64: false`) and other schemes are dropped. Same rule as
+  the server sanitizer; both were inert in `<img>`.
+- Editor: no injected `<style data-tiptap-style>` when the widget links `tiptap-editor.css` (the default): the form
+  theme renders `data-tiptap-stylesheet-value="1"`, the script runs Tiptap with `injectCSS: false`, and Tiptap's base
+  rules now ship in `tiptap-editor.css`. A strict `style-src` no longer reports it. With
+  `nowo_tiptap_editor.stylesheet: false`, Tiptap injects its rules as in 1.7.
 - Demo: new Playwright spec `e2e/tests/editor.spec.ts` (menus, link `rel` and `javascript:` refusal, paste
   sanitising, tables, task lists, syntax highlighting); the e2e image is aligned with `@playwright/test` 1.65.0.
 - Demo: the syntax-highlighting example loads a vendored copy of the highlight.js GitHub Dark theme from the demo's own `public/css/` instead of cdnjs (REQ-DEMO-014).

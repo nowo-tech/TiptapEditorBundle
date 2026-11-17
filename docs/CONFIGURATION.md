@@ -72,7 +72,7 @@ Standard Symfony options (`label`, `required`, `translation_domain`, `attr`, …
 
 ## Translation overrides
 
-Translations use the domain **`NowoTiptapEditorBundle`** (files under `src/Resources/translations/`). Bundled locales for **`tiptap_placeholder`**, the prompts, upload / suggestion messages and the toolbar labels (**`tiptap_toolbar.*`**, 1.7): **de**, **en**, **es**, **fr**, **it**, **nl**, **pt**. To override strings from your app, add YAML/XLF files in **`translations/`** with the same domain name, for example `translations/NowoTiptapEditorBundle.en.yaml`. Symfony merges app translations over bundle defaults.
+Translations use the domain **`NowoTiptapEditorBundle`** (files under `src/Resources/translations/`). Bundled locales for **`tiptap_placeholder`**, the prompts, upload / suggestion messages and the toolbar labels (**`tiptap_toolbar.*`**, 1.7; `tiptap_toolbar.task_checkbox`, 1.8, names task-list checkboxes with `%task%` as the task text): **de**, **en**, **es**, **fr**, **it**, **nl**, **pt**. To override strings from your app, add YAML/XLF files in **`translations/`** with the same domain name, for example `translations/NowoTiptapEditorBundle.en.yaml`. Symfony merges app translations over bundle defaults.
 
 ## Parameters exposed to the container
 
