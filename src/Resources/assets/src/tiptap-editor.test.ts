@@ -45,6 +45,7 @@ const {
   runInit,
   runInitAndObserve,
   syncTiptapTextareasIn,
+  taskCheckboxLabel,
 } = await import('./tiptap-editor');
 
 type RootOptions = Record<string, string>;
@@ -836,6 +837,46 @@ describe('tiptap 3 parity', () => {
     exampleEditor.view.dispatch(exampleEditor.state.tr.setMeta('bubbleMenu', 'show'));
     leave(exampleBubble, field);
     expect(exampleBubble.isConnected).toBe(false);
+  });
+
+  it('names task checkboxes with the translated label (SN-I1)', () => {
+    expect(taskCheckboxLabel({ task_checkbox: 'Tarea: %task%' }, ' comprar pan ')).toBe('Tarea: comprar pan');
+    expect(taskCheckboxLabel({ task_checkbox: 'Tarea: %task%' }, '')).toBe('Tarea');
+    expect(taskCheckboxLabel({ task_checkbox: 'Tâche : %task%' }, '')).toBe('Tâche');
+    expect(taskCheckboxLabel({}, 'buy milk')).toBe('Task: buy milk');
+
+    const root = makeRoot(
+      { tiptapExampleValue: 'tasks', tiptapToolbarLabelsValue: JSON.stringify({ task_checkbox: 'Tarea: %task%' }) },
+      '<ul data-type="taskList"><li data-type="taskItem" data-checked="true"><p>pan</p></li></ul>',
+    );
+    initTiptapRoot(root);
+    const checkbox = root.querySelector('.ProseMirror input[type="checkbox"]') as HTMLInputElement;
+    expect(checkbox.getAttribute('aria-label')).toBe('Tarea: pan');
+    expect(editorOf(root).getHTML()).not.toContain('Tarea');
+  });
+
+  it('skips the injected <style> when the widget links the bundle stylesheet (SN-I3)', () => {
+    const styles = (): number => document.querySelectorAll('style[data-tiptap-style]').length;
+    document.querySelectorAll('style[data-tiptap-style]').forEach((el) => el.remove());
+
+    initTiptapRoot(makeRoot({ tiptapStylesheetValue: '1' }));
+    expect(styles()).toBe(0);
+
+    initTiptapRoot(makeRoot({ tiptapStylesheetValue: '0' }));
+    expect(styles()).toBe(1);
+  });
+
+  it('refuses unsafe image URLs from the prompt (SN-I2)', () => {
+    const root = makeRoot({ tiptapToolbarValue: '1', tiptapExampleValue: 'images' }, '<p>x</p>');
+    initTiptapRoot(root);
+    const editor = editorOf(root);
+    vi.mocked(window.prompt).mockReturnValueOnce('javascript:alert(1)');
+    (toolbarButtons(root).find((b) => b.title === 'Insert image') as HTMLButtonElement).click();
+    expect(editor.getHTML()).toBe('<p>x</p>');
+
+    vi.mocked(window.prompt).mockReturnValueOnce('/media/a.png');
+    (toolbarButtons(root).find((b) => b.title === 'Insert image') as HTMLButtonElement).click();
+    expect(editor.getHTML()).toContain('<img src="/media/a.png">');
   });
 });
 

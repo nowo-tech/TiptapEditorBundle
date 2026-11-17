@@ -9,7 +9,6 @@ import { BubbleMenu } from '@tiptap/extension-bubble-menu';
 import { CodeBlockLowlight } from '@tiptap/extension-code-block-lowlight';
 import { FloatingMenu } from '@tiptap/extension-floating-menu';
 import { Highlight } from '@tiptap/extension-highlight';
-import { Image } from '@tiptap/extension-image';
 import { OrderedList, TaskItem, TaskList } from '@tiptap/extension-list';
 import { Subscript } from '@tiptap/extension-subscript';
 import { Superscript } from '@tiptap/extension-superscript';
@@ -23,6 +22,7 @@ import { common, createLowlight } from 'lowlight';
 
 import { createBundleLogger } from './logger';
 import { EmbedIframe, safeEmbedSrc } from './embed-iframe';
+import { SafeImage, safeImageSrc } from './image-src';
 import { SafeLink } from './link-rel';
 import { attachSuggestionHook, readSuggestionConfig } from './suggestion';
 import { decorateToolbarButton, readToolbarDisplay, readToolbarLabels } from './toolbar-icons';
@@ -188,11 +188,16 @@ function runImagePrompt(editor: Editor, existingSrc?: string): void {
   if (url === null || url.trim() === '') {
     return;
   }
-  if (editor.isActive('image')) {
-    editor.chain().focus().updateAttributes('image', { src: url.trim() }).run();
+  const src = safeImageSrc(url);
+  if (src === null) {
+    log.warn('image URL rejected (http(s) or relative only)');
     return;
   }
-  editor.chain().focus().setImage({ src: url.trim() }).run();
+  if (editor.isActive('image')) {
+    editor.chain().focus().updateAttributes('image', { src }).run();
+    return;
+  }
+  editor.chain().focus().setImage({ src }).run();
 }
 
 /**
@@ -795,7 +800,7 @@ function shouldEnableNotionMenus(variant: EditorVariant, toolbar: boolean, examp
 /** Images, tables, and embed iframes for wiki / Notion-like profiles. */
 function addRichContentExtensions(exts: AnyExtension[]): void {
   exts.push(
-    Image.configure({
+    SafeImage.configure({
       inline: true,
       allowBase64: false,
     }),
@@ -880,13 +885,14 @@ function buildExtensions(
       TaskList,
       TaskItem.configure({
         nested: true,
+        a11y: { checkboxLabel: (node) => taskCheckboxLabel(labels, node.textContent) },
       }),
     );
   }
 
   if (example === 'images') {
     exts.push(
-      Image.configure({
+      SafeImage.configure({
         inline: false,
         allowBase64: false,
       }),
@@ -983,6 +989,17 @@ function buildExtensions(
   }
 
   return exts;
+}
+
+/**
+ * Accessible name of a task checkbox (1.8, audit SN-I1): the translated `tiptap_toolbar.task_checkbox` label from
+ * `data-tiptap-toolbar-labels-value`, where `%task%` stands for the task text (English fallback).
+ */
+export function taskCheckboxLabel(labels: Record<string, string>, task: string): string {
+  const template = labels.task_checkbox ?? 'Task: %task%';
+  const text = task.trim();
+
+  return text === '' ? template.replace(/[\s:：]*%task%/, '').trim() : template.replace('%task%', text);
 }
 
 function attachCharacterCountFooter(chrome: HTMLElement, editor: Editor): void {
@@ -1181,6 +1198,9 @@ export function initTiptapRoot(root: HTMLElement): void {
     element: mount,
     extensions: buildExtensions(placeholder, variant, example, menuMount, notionMenus, readToolbarLabels(root)),
     content: textarea.value || '<p></p>',
+    // 1.8 (audit SN-I3): no injected <style> (blocked by a strict style-src) when the form theme links
+    // tiptap-editor.css, which carries Tiptap's base rules; with the stylesheet off, Tiptap injects them as in 1.7.
+    injectCSS: root.dataset.tiptapStylesheetValue !== '1',
     editorProps,
     onUpdate: () => {
       syncTextarea(textarea, editor.getHTML());

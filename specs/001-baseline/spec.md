@@ -89,6 +89,7 @@ As a template author, I render read-only HTML or iframe embeds via Twig function
 - **FR-UI-005**: `toolbar-icons.ts` MUST provide accessible toolbar labels (`aria-label`, `title`), the `text` / `icon` display mode and built-in inline SVG icons with a host override hook.
 - **FR-UI-006**: `upload.ts` MUST post dropped or pasted files to the host URL and insert the returned link, only when the form theme rendered the upload URL.
 - **FR-UI-007**: `suggestion.ts` MUST offer trigger-based suggestions fetched from a host URL following the combobox pattern.
+- **FR-UI-008**: `image-src.ts` MUST keep only http(s) and relative image `src` values when HTML is parsed and when an image is rendered (no `javascript:`, no `data:` in any case), mirroring the server allowlist sanitizer.
 
 ### Supporting types & legacy
 

@@ -48,3 +48,4 @@ tiptap_toolbar:
   image: "Afbeelding invoegen"
   embed: "Insluiten"
   insert: "Invoegen"
+  task_checkbox: "Taak: %task%"

@@ -4,6 +4,8 @@
   Optional examples (tiptap_example): extension recipes — see TiptapExample PHP enum / bundle docs.
   1.7: no inline <style> / style attributes (strict CSP): the widget links `tiptap-editor.css` (asset package
   nowo_tiptap_editor, with the request attribute `csp_nonce` as nonce) unless nowo_tiptap_editor.stylesheet is false;
+  1.8: data-tiptap-stylesheet-value="1" tells the script that this stylesheet carries Tiptap's base rules, so Tiptap
+  does not inject its own <style> (with the stylesheet off, Tiptap injects it as in 1.7);
   the default placeholder key is translated in the NowoTiptapEditorBundle domain (a custom key in the field's domain);
   the toolbar buttons get translated aria-label / title (tiptap_toolbar.*) and, with toolbar_display: icon, icons —
   override the block `tiptap_editor_toolbar_icons` in your form theme to supply your own
@@ -30,6 +32,7 @@
      data-tiptap-toolbar-value="{{ tiptap_toolbar ? '1' : '0' }}"
      {% if tiptap_toolbar %}data-tiptap-toolbar-display-value="{{ tiptap_toolbar_display|default('text')|e('html_attr') }}"{% endif %}
      data-tiptap-toolbar-labels-value="{{ toolbar_labels|json_encode|e('html_attr') }}"
+     data-tiptap-stylesheet-value="{{ (tiptap_stylesheet ?? true) ? '1' : '0' }}"
      data-tiptap-min-height-value="{{ tiptap_min_height|e('html_attr') }}"
      data-tiptap-debug-value="{{ tiptap_debug ? '1' : '0' }}"
      data-tiptap-theme-value="{{ theme|e('html_attr') }}"

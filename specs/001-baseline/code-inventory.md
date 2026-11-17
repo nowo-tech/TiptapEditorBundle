@@ -35,6 +35,7 @@ Production scope excludes Vitest sources (`*.test.ts`).
 | `toolbar-icons.ts` | Toolbar labels and icons | FR-UI-005 |
 | `upload.ts` | Upload hook | FR-UI-006 |
 | `suggestion.ts` | Suggestion hook | FR-UI-007 |
+| `image-src.ts` | Image `src` allow-list | FR-UI-008 |
 | `tiptap-editor.css` | Editor styles (source) | FR-UI-001 |
 
 ## Legacy JavaScript (`src/Resources/public/`)
@@ -83,13 +84,13 @@ Production scope excludes Vitest sources (`*.test.ts`).
 | Category | Files | Mapped |
 | --- | ---: | ---: |
 | PHP classes | 13 | 13 |
-| TS production and CSS source | 8 | 8 |
+| TS production and CSS source | 9 | 9 |
 | Legacy JS and CSS | 2 | 2 |
 | YAML config | 1 | 1 |
 | Twig themes | 11 | 11 |
 | Translations | 7 | 7 |
-| **Total production sources** | **42** | **42** |
+| **Total production sources** | **43** | **43** |
 
-Excluded: `embed-iframe.test.ts`, `logger.test.ts`, `suggestion.test.ts`, `tiptap-editor.lifecycle.test.ts`, `tiptap-editor.test.ts`, `upload.test.ts` (co-located Vitest files).
+Excluded: `embed-iframe.test.ts`, `image-src.test.ts`, `logger.test.ts`, `suggestion.test.ts`, `tiptap-editor.lifecycle.test.ts`, `tiptap-editor.test.ts`, `upload.test.ts` (co-located Vitest files).
 
-Audit command (production count): `git ls-files src | grep -v '\.test\.ts$' | wc -l` → **42** (2026-11-18).
+Audit command (production count): `git ls-files src | grep -v '\.test\.ts$' | wc -l` → **43** (1.8, Tiptap 3).

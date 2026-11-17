@@ -58,6 +58,9 @@ final class TiptapEditorThemeRenderingTest extends TestCase
         $labels = $this->labels($html);
         self::assertSame('[NowoTiptapEditorBundle] tiptap_toolbar.bold', $labels['bold']);
         self::assertSame(TiptapEditorType::TOOLBAR_COMMANDS, array_keys($labels));
+        // 1.8: task checkbox name, and the flag that lets the script skip Tiptap's injected <style>.
+        self::assertSame('[NowoTiptapEditorBundle] tiptap_toolbar.task_checkbox', $labels['task_checkbox']);
+        self::assertStringContainsString('data-tiptap-stylesheet-value="1"', $html);
     }
 
     public function testCustomPlaceholderUsesTheFieldDomainAndNoNonceWithoutOne(): void
@@ -73,7 +76,9 @@ final class TiptapEditorThemeRenderingTest extends TestCase
     {
         $html = $this->render(['toolbar' => false], linkStylesheet: false);
 
-        self::assertStringNotContainsString('data-tiptap-stylesheet', $html);
+        self::assertStringNotContainsString('data-tiptap-stylesheet ', $html);
+        self::assertStringNotContainsString('data-tiptap-stylesheet>', $html);
+        self::assertStringContainsString('data-tiptap-stylesheet-value="0"', $html);
         self::assertStringNotContainsString('data-tiptap-toolbar-display-value', $html);
         // The labels also name the Notion menu buttons (no toolbar).
         self::assertSame('[NowoTiptapEditorBundle] tiptap_toolbar.insert', $this->labels($html)['insert']);
