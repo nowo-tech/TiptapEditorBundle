@@ -85,6 +85,10 @@ As a template author, I render read-only HTML or iframe embeds via Twig function
 - **FR-UI-001**: `tiptap-editor.ts` MUST mount Tiptap on `[data-controller~="nowo-tiptap-editor"]`, honor profile JSON (toolbar, variant, theme, min_height), sync HTML to underlying textarea, and destroy on disconnect.
 - **FR-UI-002**: `embed-iframe.ts` MUST initialize read-only embed surfaces in iframes when requested by markup.
 - **FR-UI-003**: `logger.ts` MUST provide namespaced logging with test hooks.
+- **FR-UI-004**: `link-rel.ts` MUST drop `rel="opener"` and add `noopener noreferrer` to every link with a `target`, mirroring the server allowlist sanitizer.
+- **FR-UI-005**: `toolbar-icons.ts` MUST provide accessible toolbar labels (`aria-label`, `title`), the `text` / `icon` display mode and built-in inline SVG icons with a host override hook.
+- **FR-UI-006**: `upload.ts` MUST post dropped or pasted files to the host URL and insert the returned link, only when the form theme rendered the upload URL.
+- **FR-UI-007**: `suggestion.ts` MUST offer trigger-based suggestions fetched from a host URL following the combobox pattern.
 
 ### Supporting types & legacy
 
