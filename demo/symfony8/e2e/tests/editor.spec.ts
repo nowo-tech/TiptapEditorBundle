@@ -101,6 +101,10 @@ test.describe('editor behaviour', () => {
     await page.locator('.ProseMirror').first().click();
     await page.locator('[data-tiptap-command="task_list"]').first().click();
     expect(await savedHtml(page)).toContain('<ul data-type="taskList">');
+    // 1.8: translated checkbox name (SN-I1), and no injected <style> when the bundle stylesheet is linked (SN-I3).
+    await expect(page.locator('.ProseMirror ul[data-type="taskList"] input[type="checkbox"]').first()).toHaveAttribute('aria-label', /^Task: /);
+    await expect(page.locator('style[data-tiptap-style]')).toHaveCount(0);
+    await expect(page.locator('.ProseMirror').first()).toHaveCSS('white-space', 'break-spaces');
     await expect(page.locator('.ProseMirror ul[data-type="taskList"] input[type="checkbox"]').first()).toBeVisible();
 
     await page.goto('/en/demo/examples/syntax-highlighting');
