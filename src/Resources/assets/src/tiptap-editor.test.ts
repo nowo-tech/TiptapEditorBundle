@@ -786,6 +786,57 @@ describe('tiptap 3 parity', () => {
       }
     }
   });
+
+  it('pastes numbered plain text as text, inside and outside code blocks', () => {
+    const root = makeRoot({}, '<pre><code>x</code></pre><p>y</p>');
+    initTiptapRoot(root);
+    const editor = editorOf(root);
+    const paste = (): void => {
+      const data = new DataTransfer();
+      data.setData('text/plain', '1. first\n2. second');
+      editor.view.dom.dispatchEvent(new ClipboardEvent('paste', { clipboardData: data, bubbles: true, cancelable: true }));
+    };
+    editor.commands.setTextSelection(2);
+    paste();
+    expect(editor.getHTML()).toContain('<pre><code>x1. first\n2. second</code></pre>');
+    editor.commands.setTextSelection(editor.state.doc.content.size - 1);
+    paste();
+    expect(editor.getHTML()).not.toContain('<ol');
+    expect(editor.getHTML()).toContain('1. first');
+    // The ordered list itself still works.
+    editor.commands.toggleOrderedList();
+    expect(editor.getHTML()).toContain('<ol>');
+  });
+
+  it('hides a menu once focus leaves both the menu and the editor', () => {
+    const root = makeRoot({ tiptapVariantValue: 'notion' }, '<p>Hello world</p>');
+    const field = document.body.appendChild(document.createElement('input'));
+    initTiptapRoot(root);
+    const editor = editorOf(root);
+    const [bubble, floating] = menuElements(editor);
+    const leave = (menu: HTMLElement, to: EventTarget | null): void => {
+      menu.dispatchEvent(new FocusEvent('focusout', { relatedTarget: to as Node | null, bubbles: true }));
+    };
+
+    editor.view.dispatch(editor.state.tr.setMeta('bubbleMenu', 'show'));
+    leave(bubble, bubble.querySelector('button'));
+    leave(bubble, editor.view.dom);
+    expect(bubble.isConnected).toBe(true);
+    leave(bubble, field);
+    expect(bubble.isConnected).toBe(false);
+
+    editor.view.dispatch(editor.state.tr.setMeta('floatingMenu', 'show'));
+    leave(floating, null);
+    expect(floating.isConnected).toBe(false);
+
+    const example = makeRoot({ tiptapExampleValue: 'menus' }, '<p>Hello world</p>');
+    initTiptapRoot(example);
+    const exampleEditor = editorOf(example);
+    const [exampleBubble] = menuElements(exampleEditor);
+    exampleEditor.view.dispatch(exampleEditor.state.tr.setMeta('bubbleMenu', 'show'));
+    leave(exampleBubble, field);
+    expect(exampleBubble.isConnected).toBe(false);
+  });
 });
 
 function runLinkThroughToolbar(root: HTMLElement): void {

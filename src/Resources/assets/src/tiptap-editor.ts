@@ -10,7 +10,7 @@ import { CodeBlockLowlight } from '@tiptap/extension-code-block-lowlight';
 import { FloatingMenu } from '@tiptap/extension-floating-menu';
 import { Highlight } from '@tiptap/extension-highlight';
 import { Image } from '@tiptap/extension-image';
-import { TaskItem, TaskList } from '@tiptap/extension-list';
+import { OrderedList, TaskItem, TaskList } from '@tiptap/extension-list';
 import { Subscript } from '@tiptap/extension-subscript';
 import { Superscript } from '@tiptap/extension-superscript';
 import { Table, TableCell, TableHeader, TableRow } from '@tiptap/extension-table';
@@ -657,6 +657,34 @@ function attachAgentFab(root: HTMLElement): void {
 
 export type MenuMount = { bubble: HTMLElement; floating: HTMLElement };
 
+/**
+ * Tiptap 3 hides a menu on editor blur only: when focus moves from the editor into the menu (Tab) and then on to
+ * another field, the menu would stay open. Hide it once focus leaves both the menu and the editor.
+ */
+function hideMenusOnFocusLeave(editor: Editor, menu: MenuMount): void {
+  const watch = (element: HTMLElement, pluginKey: string): void => {
+    element.addEventListener('focusout', (event: FocusEvent) => {
+      const next = event.relatedTarget;
+      if (next instanceof Node && (element.contains(next) || editor.view.dom.contains(next))) {
+        return;
+      }
+      editor.view.dispatch(editor.state.tr.setMeta(pluginKey, 'hide'));
+    });
+  };
+  watch(menu.bubble, 'bubbleMenu');
+  watch(menu.floating, 'floatingMenu');
+}
+
+/**
+ * StarterKit 3's OrderedList turns pasted plain text such as "1. a / 2. b" into a list, even inside a code block.
+ * 1.x pasted it as text; this copy keeps the list node, commands, shortcut and input rule without that paste plugin.
+ */
+const PlainPasteOrderedList = OrderedList.extend({
+  addProseMirrorPlugins() {
+    return [];
+  },
+});
+
 function wireMenuDom(editor: Editor, menu: MenuMount): void {
   const wire = (root: HTMLElement): void => {
     root.querySelectorAll<HTMLButtonElement>('[data-tiptap-menu-action]').forEach((btn) => {
@@ -682,6 +710,7 @@ function wireMenuDom(editor: Editor, menu: MenuMount): void {
   };
   wire(menu.bubble);
   wire(menu.floating);
+  hideMenusOnFocusLeave(editor, menu);
 }
 
 /** Escapes a translated label for an HTML attribute / text node of the static menu markup. */
@@ -748,6 +777,7 @@ function wireNotionMenus(editor: Editor, menu: MenuMount): void {
 
   wire(menu.bubble);
   wire(menu.floating);
+  hideMenusOnFocusLeave(editor, menu);
 }
 
 /**
@@ -793,10 +823,12 @@ function buildExtensions(
   // Tiptap 3: StarterKit also bundles Link, Underline, ListKeymap and TrailingNode. Link and Underline are added below
   // (SafeLink keeps the rel hardening), so the StarterKit copies are off; ListKeymap and TrailingNode stay off so the
   // editing behaviour and the saved HTML match 1.x (TrailingNode would append an empty <p> after tables / code blocks).
+  // OrderedList is replaced by PlainPasteOrderedList (no plain-text list paste).
   const starterOpts: Record<string, unknown> = {
     heading: { levels: [...headingLevels] },
     link: false,
     underline: false,
+    orderedList: false,
     listKeymap: false,
     trailingNode: false,
   };
@@ -805,7 +837,6 @@ function buildExtensions(
     starterOpts.heading = false;
     starterOpts.blockquote = false;
     starterOpts.bulletList = false;
-    starterOpts.orderedList = false;
     starterOpts.horizontalRule = false;
     starterOpts.codeBlock = false;
   }
@@ -816,6 +847,7 @@ function buildExtensions(
 
   const exts: AnyExtension[] = [
     StarterKit.configure(starterOpts),
+    ...(example === 'minimal' ? [] : [PlainPasteOrderedList]),
     Underline,
     SafeLink.configure({
       openOnClick: false,
