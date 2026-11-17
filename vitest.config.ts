@@ -15,12 +15,6 @@ export default defineConfig({
     environmentOptions: { happyDOM: { settings: { disableIframePageLoading: true, handleDisabledFileLoadingAsSuccess: true } } },
     globals: true,
     include: ['src/Resources/assets/**/*.test.ts'],
-    server: {
-      deps: {
-        // tippy.js ships CJS as `main`; inline the menu extensions so their default import resolves like in the Vite build.
-        inline: [/@tiptap\/extension-(bubble|floating)-menu/, /tippy\.js/],
-      },
-    },
     coverage: {
       provider: 'v8',
       reporter: ['text', 'text-summary', 'html'],

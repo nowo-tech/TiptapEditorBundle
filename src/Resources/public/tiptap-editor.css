@@ -287,6 +287,7 @@ body.tiptap-demo-dark .tiptap-editor-widget .tiptap-editor-mount .ProseMirror ta
     background: #1e293b;
     border-radius: .35rem;
     box-shadow: 0 4px 14px rgba(15, 23, 42, .35);
+    z-index: 30;
 }
 .tiptap-editor-widget .tiptap-notion-bubble {
     display: flex;
@@ -333,6 +334,7 @@ body.tiptap-demo-dark .tiptap-editor-widget .tiptap-editor-mount .ProseMirror ta
     border-radius: .35rem;
     font-size: .75rem;
     color: #065f46;
+    z-index: 25;
 }
 .tiptap-editor-widget .tiptap-example-floating__hint {
     font-weight: 500;

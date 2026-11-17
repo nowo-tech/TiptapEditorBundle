@@ -4,7 +4,7 @@
  * Mirrors `AllowlistTiptapHtmlSanitizer` on the server, which stays the authoritative check.
  */
 
-import Link from '@tiptap/extension-link';
+import { Link } from '@tiptap/extension-link';
 
 /** `rel` link types kept on `<a>`; anything else (`opener` first of all) is dropped. Same list as the server. */
 export const SAFE_LINK_REL_TOKENS: readonly string[] = [
