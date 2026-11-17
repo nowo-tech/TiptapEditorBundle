@@ -16,7 +16,7 @@
 
     {% if slug == 'syntax-highlighting' %}
         {# The code-block theme of the editor's syntax highlighting feature (the bundle's own markup), not the demo's base style. #}
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+        <link rel="stylesheet" href="{{ asset('css/hljs-github-dark.css') }}">
     {% endif %}
 
     {{ form_start(form) }}
