@@ -47,6 +47,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Scrollbars: the toolbar strip and the suggestion list now use the UiKit thin scrollbar (6px, `::-webkit-scrollbar` rules with the `--nowo-ui-scrollbar-size`, `-thumb`, `-thumb-hover` and `-track` tokens and fallbacks, standard `scrollbar-width`/`scrollbar-color` only where `::-webkit-scrollbar` is unsupported). Behaviour of the content is unchanged; see the "Scrollbars" section of the docs.
+
 ## [1.8.0] - 2026-11-17
 
 ### Security

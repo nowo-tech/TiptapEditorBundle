@@ -8,6 +8,7 @@
 - [Examples hub parity](#examples-hub-parity)
 - [Overriding templates (REQ-TWIG-001)](#overriding-templates-req-twig-001)
 - [Using it from a DDD / hexagonal application](#using-it-from-a-ddd--hexagonal-application)
+- [Scrollbars](#scrollbars)
 
 ## Form type
 
@@ -169,3 +170,12 @@ Known limitations:
   `AllowlistTiptapHtmlSanitizer` by class, as above, or set `html_sanitizer`.
 - The form transformer only sanitizes form submissions. Content from other entry points is your application's
   responsibility.
+
+## Scrollbars
+
+Scrollable areas of this bundle (the toolbar strip and the suggestion list) use the same thin scrollbar as UiKit: 6px wide, thumb in the text colour at
+28 % (45 % on hover), transparent track, no arrow buttons. Hosts restyle them **only** through the shared tokens
+`--nowo-ui-scrollbar-size`, `--nowo-ui-scrollbar-thumb`, `--nowo-ui-scrollbar-thumb-hover` and
+`--nowo-ui-scrollbar-track`; each has a fallback, so nothing is needed without UiKit. Do not set `scrollbar-width` or
+`scrollbar-color` on these elements: on Chromium 121+ they disable the `::-webkit-scrollbar` rules (the standard
+properties are only applied by the bundle where `::-webkit-scrollbar` is unsupported).
