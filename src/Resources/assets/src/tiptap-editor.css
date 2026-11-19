@@ -82,7 +82,6 @@ nowo-tiptap-editor.tiptap-editor-widget {
     overflow-x: auto;
     overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
     background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
     border: 1px solid #e2e8f0;
     border-radius: .5rem;
@@ -494,4 +493,43 @@ body.tiptap-demo-dark .tiptap-editor-widget .tiptap-editor-mount .ProseMirror ta
 }
 .tiptap-editor-widget .ProseMirror-focused .ProseMirror-gapcursor {
     display: block;
+}
+
+/*
+ * Scrollbars: thin 6px bar matching UiKit. Hosts restyle only through the --nowo-ui-scrollbar-* tokens.
+ * The ::-webkit-scrollbar rules apply when the engine supports them; otherwise the standard properties are used.
+ */
+.tiptap-editor-widget .tiptap-editor-toolbar::-webkit-scrollbar,
+.tiptap-editor-widget .tiptap-editor-suggestions::-webkit-scrollbar {
+  width: var(--nowo-ui-scrollbar-size, 6px);
+  height: var(--nowo-ui-scrollbar-size, 6px);
+}
+
+.tiptap-editor-widget .tiptap-editor-toolbar::-webkit-scrollbar-track,
+.tiptap-editor-widget .tiptap-editor-suggestions::-webkit-scrollbar-track {
+  background: var(--nowo-ui-scrollbar-track, transparent);
+}
+
+.tiptap-editor-widget .tiptap-editor-toolbar::-webkit-scrollbar-thumb,
+.tiptap-editor-widget .tiptap-editor-suggestions::-webkit-scrollbar-thumb {
+  background: var(--nowo-ui-scrollbar-thumb, color-mix(in srgb, currentColor 28%, transparent));
+  border-radius: 999px;
+}
+
+.tiptap-editor-widget .tiptap-editor-toolbar::-webkit-scrollbar-thumb:hover,
+.tiptap-editor-widget .tiptap-editor-suggestions::-webkit-scrollbar-thumb:hover {
+  background: var(--nowo-ui-scrollbar-thumb-hover, color-mix(in srgb, currentColor 45%, transparent));
+}
+
+.tiptap-editor-widget .tiptap-editor-toolbar::-webkit-scrollbar-button,
+.tiptap-editor-widget .tiptap-editor-suggestions::-webkit-scrollbar-button {
+  display: none;
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  .tiptap-editor-widget .tiptap-editor-toolbar,
+  .tiptap-editor-widget .tiptap-editor-suggestions {
+    scrollbar-width: thin;
+    scrollbar-color: var(--nowo-ui-scrollbar-thumb, color-mix(in srgb, currentColor 28%, transparent)) var(--nowo-ui-scrollbar-track, transparent);
+  }
 }
