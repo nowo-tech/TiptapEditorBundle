@@ -10,28 +10,34 @@
 {% endblock %}
 
 {% block body %}
-    {{ form_start(form) }}
-        {{ form_errors(form) }}
-        {% for name in ['full', 'simple', 'notion', 'agent', 'headless'] %}
-            <section class="nowo-ui-card">
-                <div class="nowo-ui-card__body">
-                    <h2 class="nowo-ui-card__title">{{ ('demo.section_' ~ name)|trans({}, 'messages') }}</h2>
+    {# One form card; each editor keeps its own heading and hint (REQ-TWIG-003 rule 3). #}
+    {% embed '@NowoUiKit/demo_platform/_section.html.twig' with {title: 'demo.menu_configs'|trans({}, 'messages'), kind: 'form', form: form} %}
+        {% block section_body %}
+            {{ form_start(form, {attr: {id: 'tiptap-configs-form'}}) }}
+                {{ form_errors(form) }}
+                {% for name in ['full', 'simple', 'notion', 'agent', 'headless'] %}
+                    <h3>{{ ('demo.section_' ~ name)|trans({}, 'messages') }}</h3>
                     <p class="nowo-ui-muted">{{ ('demo.section_' ~ name ~ '_hint')|trans({}, 'messages') }}</p>
                     {{ form_row(form['content_' ~ name]) }}
-                </div>
-            </section>
-        {% endfor %}
-
-        {# Each editor above has its own heading and hint (REQ-TWIG-003 rule 3); form_rest renders the submit and the CSRF token. #}
-        {{ form_rest(form) }}
-    {{ form_end(form, {render_rest: false}) }}
+                {% endfor %}
+                {% do form.submit.setRendered %}
+                {{ form_rest(form) }}
+            {{ form_end(form, {render_rest: false}) }}
+        {% endblock %}
+        {% block section_footer %}
+            <button type="submit" form="tiptap-configs-form" class="nowo-ui-btn nowo-ui-btn--primary">{{ form.submit.vars.label|trans({}, 'messages') }}</button>
+        {% endblock %}
+    {% endembed %}
 
     {% if form.vars.submitted and form.vars.valid %}
-        <p class="nowo-ui-muted">{{ 'demo.saved_preview'|trans({}, 'messages') }}</p>
-        {% for name in ['content_full', 'content_simple', 'content_notion', 'content_agent', 'content_headless'] %}
-            <h3>{{ form[name].vars.label|trans({}, 'messages') }}</h3>
-            <pre class="nowo-ui-code-block nowo-ui-code-block--wrap">{{ form[name].vars.data|default('')|e }}</pre>
-        {% endfor %}
+        {% embed '@NowoUiKit/demo_platform/_section.html.twig' with {title: 'demo.saved_preview'|trans({}, 'messages'), kind: 'detail', form: form} %}
+            {% block section_body %}
+                {% for name in ['content_full', 'content_simple', 'content_notion', 'content_agent', 'content_headless'] %}
+                    <h3>{{ form[name].vars.label|trans({}, 'messages') }}</h3>
+                    <pre class="nowo-ui-code-block nowo-ui-code-block--wrap">{{ form[name].vars.data|default('')|e }}</pre>
+                {% endfor %}
+            {% endblock %}
+        {% endembed %}
     {% endif %}
 
     <script src="{{ asset(nowo_tiptap_editor_asset_path('tiptap-editor.js'), nowo_tiptap_editor_asset_package()) }}"></script>

@@ -3,17 +3,26 @@
 {% block title %}{{ 'demo.page_home_title'|trans({}, 'messages') }} – {{ 'demo.title'|trans({}, 'messages') }}{% endblock %}
 
 {% block nowo_ui_page_header %}
+    {% set _toolbar %}<a class="nowo-ui-btn nowo-ui-btn--primary" href="{{ path('app_demo', { _locale: app.request.locale }) }}">{{ 'demo.menu_demo'|trans({}, 'messages') }}</a>{% endset %}
     {{ include(nowo_ui_partial('page_header'), {
         title: 'demo.page_home_title'|trans({}, 'messages'),
+        intro: 'demo.page_home_lead'|trans({}, 'messages')|striptags,
+        toolbar: _toolbar,
     }) }}
 {% endblock %}
 
 {% block body %}
-    <p>{{ 'demo.page_home_lead'|trans({}, 'messages')|raw }}</p>
-    <p>
-        <a class="nowo-ui-btn nowo-ui-btn--primary" href="{{ path('app_demo', { _locale: app.request.locale }) }}">{{ 'demo.menu_demo'|trans({}, 'messages') }}</a>
-        <a class="nowo-ui-btn nowo-ui-btn--outline" href="{{ path('app_demo_configs', { _locale: app.request.locale }) }}">{{ 'demo.menu_configs'|trans({}, 'messages') }}</a>
-        <a class="nowo-ui-btn nowo-ui-btn--outline" href="{{ path('app_showcase', { _locale: app.request.locale }) }}">{{ 'demo.menu_showcase'|trans({}, 'messages') }}</a>
-        <a class="nowo-ui-btn nowo-ui-btn--outline" href="{{ path('app_examples_index', { _locale: app.request.locale }) }}">{{ 'demo.menu_examples'|trans({}, 'messages') }}</a>
-    </p>
+    <div class="nowo-ui-cards">
+        {% for item in [
+            {route: 'app_demo_configs', label: 'demo.menu_configs', desc: 'demo.configs_page_lead'},
+            {route: 'app_showcase', label: 'demo.menu_showcase', desc: 'demo.showcase_page_lead'},
+            {route: 'app_examples_index', label: 'demo.menu_examples', desc: 'examples.page_lead'},
+        ] %}
+            {% embed '@NowoUiKit/demo_platform/_section.html.twig' with {title: item.label|trans({}, 'messages'), intro: item.desc|trans({}, 'messages'), item: item} %}
+                {% block section_footer %}
+                    <a class="nowo-ui-btn nowo-ui-btn--outline" href="{{ path(item.route, { _locale: app.request.locale }) }}">{{ item.label|trans({}, 'messages') }}</a>
+                {% endblock %}
+            {% endembed %}
+        {% endfor %}
+    </div>
 {% endblock %}
