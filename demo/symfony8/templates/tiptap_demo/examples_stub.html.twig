@@ -3,21 +3,19 @@
 {% block title %}{{ ('examples.card.' ~ slug ~ '.title')|trans({}, 'messages') }} – {{ 'examples.page_title'|trans({}, 'messages') }}{% endblock %}
 
 {% block nowo_ui_page_header %}
+    {% set _toolbar %}
+        <a class="nowo-ui-btn nowo-ui-btn--outline" href="{{ path('app_examples_index', { _locale: app.request.locale }) }}">{{ 'examples.back_index'|trans({}, 'messages') }}</a>
+        <a class="nowo-ui-btn nowo-ui-btn--primary" href="{{ 'examples.docs_url'|trans({}, 'messages') }}" rel="noopener noreferrer" target="_blank">{{ 'examples.doc_hub_link'|trans({}, 'messages') }}</a>
+    {% endset %}
     {{ include(nowo_ui_partial('page_header'), {
         title: ('examples.card.' ~ slug ~ '.title')|trans({}, 'messages'),
         intro: ('examples.card.' ~ slug ~ '.desc')|trans({}, 'messages'),
+        toolbar: _toolbar,
     }) }}
 {% endblock %}
 
 {% block body %}
-    <nav class="nowo-ui-breadcrumbs" aria-label="breadcrumb">
-        <a href="{{ path('app_examples_index', { _locale: app.request.locale }) }}">{{ 'demo.menu_examples'|trans({}, 'messages') }}</a>
-    </nav>
-
-    <div class="nowo-ui-flash nowo-ui-flash--info" role="note">{{ 'examples.stub_lead'|trans({}, 'messages') }}</div>
-
-    <p>
-        <a class="nowo-ui-btn nowo-ui-btn--primary" href="{{ 'examples.docs_url'|trans({}, 'messages') }}" rel="noopener noreferrer" target="_blank">{{ 'examples.doc_hub_link'|trans({}, 'messages') }}</a>
-        <a class="nowo-ui-btn nowo-ui-btn--outline" href="{{ path('app_examples_index', { _locale: app.request.locale }) }}">{{ 'examples.back_index'|trans({}, 'messages') }}</a>
-    </p>
+    {% embed '@NowoUiKit/demo_platform/_section.html.twig' with {title: ('examples.card.' ~ slug ~ '.title')|trans({}, 'messages'), kind: 'detail'} %}
+        {% block section_body %}<p>{{ 'examples.stub_lead'|trans({}, 'messages') }}</p>{% endblock %}
+    {% endembed %}
 {% endblock %}

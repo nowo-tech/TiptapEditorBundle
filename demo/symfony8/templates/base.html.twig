@@ -1,32 +1,22 @@
-{#- REQ-DEMO-014: the demo shell is UiKit's admin layout with UiKit's default theme (nowo-ui.css from the bundle's own
-    asset package, no CSS framework, no CDN, no inline styles). The light/dark toggle is UiKit's. -#}
-{% extends '@NowoUiKit/layout/admin.html.twig' %}
+{#- REQ-DEMO-014: the demo runs inside UiKit's shared demo platform shell (@NowoUiKit/demo_platform/layout.html.twig):
+    the same top bar, aside, content width, theme and footer as every other nowo-tech bundle demo. This file only
+    declares the demo (nowo_ui_demo_platform). -#}
+{% extends '@NowoUiKit/demo_platform/layout.html.twig' %}
+{% set _locale = app.request.locale %}
+{% set nowo_ui_demo_platform = {
+    bundle: 'Tiptap Editor',
+    home_route: 'app_home',
+    home_params: {_locale: _locale},
+    repository: 'https://github.com/nowo-tech/TiptapEditorBundle',
+    translation_domain: 'messages',
+    locales: ['en', 'es'],
+    nav: [
+        {label: 'demo.menu_home', route: 'app_home', params: {_locale: _locale}},
+        {label: 'demo.menu_demo', route: 'app_demo', params: {_locale: _locale}, section: 'demo.nav_editors'},
+        {label: 'demo.menu_configs', route: 'app_demo_configs', params: {_locale: _locale}, section: 'demo.nav_editors'},
+        {label: 'demo.menu_showcase', route: 'app_showcase', params: {_locale: _locale}, section: 'demo.nav_editors'},
+        {label: 'demo.menu_examples', route: 'app_examples_index', params: {_locale: _locale}, active: ['app_examples_index', 'app_examples_show'], section: 'demo.nav_docs'},
+    ],
+} %}
 
-{% block nowo_ui_document_title %}{% block title %}{{ 'demo.title'|trans({}, 'messages') }}{% endblock %}{% endblock %}
-
-{% block nowo_ui_navigation %}
-    {% set _locale = app.request.locale %}
-    {% set _route = app.request.attributes.get('_route') %}
-    <header class="nowo-ui-header" data-testid="demo-masthead">
-        <a class="nowo-ui-brand" href="{{ path('app_home', { _locale: _locale }) }}">{{ 'demo.title'|trans({}, 'messages') }}</a>
-        <nav class="nowo-ui-menu" aria-label="{{ 'demo.title'|trans({}, 'messages') }}">
-            {% for item in [
-                {routes: ['app_home'], route: 'app_home', label: 'demo.menu_home'},
-                {routes: ['app_demo'], route: 'app_demo', label: 'demo.menu_demo'},
-                {routes: ['app_demo_configs'], route: 'app_demo_configs', label: 'demo.menu_configs'},
-                {routes: ['app_showcase'], route: 'app_showcase', label: 'demo.menu_showcase'},
-                {routes: ['app_examples_index', 'app_examples_show'], route: 'app_examples_index', label: 'demo.menu_examples'},
-            ] %}
-                <a class="nowo-ui-link" href="{{ path(item.route, { _locale: _locale }) }}"{% if _route in item.routes %} aria-current="page"{% endif %}>{{ item.label|trans({}, 'messages') }}</a>
-            {% endfor %}
-        </nav>
-        <div class="nowo-ui-header__end">
-            <a class="nowo-ui-link" href="{{ path('app_home', { _locale: 'en' }) }}"{% if _locale == 'en' %} aria-current="true"{% endif %}>English</a>
-            <a class="nowo-ui-link" href="{{ path('app_home', { _locale: 'es' }) }}"{% if _locale == 'es' %} aria-current="true"{% endif %}>Español</a>
-            {{ include('@NowoUiKitBundle/partials/_theme_toggle.html.twig', { compact: true }, false) }}
-        </div>
-    </header>
-{% endblock %}
-
-{% block nowo_ui_content %}{% block body %}{% endblock %}{% endblock %}
-
+{% block nowo_ui_document_title %}{% block title %}{{ 'demo.title'|trans({}, 'messages') }}{% endblock %} — Symfony 8{% endblock %}

@@ -3,33 +3,31 @@
 {% block title %}{{ 'examples.page_title'|trans({}, 'messages') }} – {{ 'demo.title'|trans({}, 'messages') }}{% endblock %}
 
 {% block nowo_ui_page_header %}
+    {% set _toolbar %}<a class="nowo-ui-btn nowo-ui-btn--outline" href="{{ 'examples.docs_url'|trans({}, 'messages') }}" rel="noopener noreferrer" target="_blank">{{ 'examples.doc_hub_link'|trans({}, 'messages') }}</a>{% endset %}
     {{ include(nowo_ui_partial('page_header'), {
         title: 'examples.page_title'|trans({}, 'messages'),
         intro: 'examples.page_lead'|trans({}, 'messages'),
+        toolbar: _toolbar,
     }) }}
 {% endblock %}
 
 {% block body %}
-    <p>
-        <a href="{{ 'examples.docs_url'|trans({}, 'messages') }}" rel="noopener noreferrer" target="_blank">{{ 'examples.doc_hub_link'|trans({}, 'messages') }}</a>
-    </p>
-
     {% for section in sections %}
         <h2>{{ section.title|trans({}, 'messages') }}</h2>
         <div class="nowo-ui-cards">
             {% for slug in section.slugs %}
-                <section class="nowo-ui-card">
-                    <div class="nowo-ui-card__body">
-                        {% if slug in liveExampleSlugs %}
+                {% embed '@NowoUiKit/demo_platform/_section.html.twig' with {title: ('examples.card.' ~ slug ~ '.title')|trans({}, 'messages'), intro: ('examples.card.' ~ slug ~ '.desc')|trans({}, 'messages'), kind: 'list', slug: slug, live: slug in liveExampleSlugs} %}
+                    {% block section_actions %}
+                        {% if live %}
                             <span class="nowo-ui-badge nowo-ui-badge--success">{{ 'examples.badge_live'|trans({}, 'messages') }}</span>
                         {% else %}
                             <span class="nowo-ui-badge nowo-ui-badge--neutral">{{ 'examples.badge_stub'|trans({}, 'messages') }}</span>
                         {% endif %}
-                        <h3 class="nowo-ui-card__title">{{ ('examples.card.' ~ slug ~ '.title')|trans({}, 'messages') }}</h3>
-                        <p class="nowo-ui-muted">{{ ('examples.card.' ~ slug ~ '.desc')|trans({}, 'messages') }}</p>
+                    {% endblock %}
+                    {% block section_footer %}
                         <a class="nowo-ui-btn nowo-ui-btn--outline nowo-ui-btn--sm" href="{{ path('app_examples_show', { _locale: app.request.locale, slug: slug }) }}">{{ 'examples.open'|trans({}, 'messages') }}</a>
-                    </div>
-                </section>
+                    {% endblock %}
+                {% endembed %}
             {% endfor %}
         </div>
     {% endfor %}

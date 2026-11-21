@@ -48,6 +48,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Demo: runs in UiKit's demo platform shell (`nowo-tech/ui-kit-bundle` ^2.60); its own masthead, theme toggle and vendored highlight.js stylesheet are gone. Demo only, no bundle change.
+
 ## [1.9.0] - 2026-11-19
 
 ### Changed

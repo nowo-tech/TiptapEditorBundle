@@ -3,37 +3,36 @@
 {% block title %}{{ ('examples.card.' ~ slug ~ '.title')|trans({}, 'messages') }} – {{ 'examples.page_title'|trans({}, 'messages') }}{% endblock %}
 
 {% block nowo_ui_page_header %}
+    {% set _toolbar %}
+        <a class="nowo-ui-btn nowo-ui-btn--outline" href="{{ path('app_examples_index', { _locale: app.request.locale }) }}">{{ 'examples.back_index'|trans({}, 'messages') }}</a>
+        <a class="nowo-ui-btn nowo-ui-btn--outline" href="{{ 'examples.docs_url'|trans({}, 'messages') }}" rel="noopener noreferrer" target="_blank">{{ 'examples.doc_hub_link'|trans({}, 'messages') }}</a>
+    {% endset %}
     {{ include(nowo_ui_partial('page_header'), {
         title: ('examples.card.' ~ slug ~ '.title')|trans({}, 'messages'),
         intro: ('examples.card.' ~ slug ~ '.desc')|trans({}, 'messages'),
+        toolbar: _toolbar,
     }) }}
 {% endblock %}
 
 {% block body %}
-    <nav class="nowo-ui-breadcrumbs" aria-label="breadcrumb">
-        <a href="{{ path('app_examples_index', { _locale: app.request.locale }) }}">{{ 'demo.menu_examples'|trans({}, 'messages') }}</a>
-    </nav>
-
-    {% if slug == 'syntax-highlighting' %}
-        {# The code-block theme of the editor's syntax highlighting feature (the bundle's own markup), not the demo's base style. #}
-        <link rel="stylesheet" href="{{ asset('css/hljs-github-dark.css') }}">
-    {% endif %}
-
-    {{ form_start(form) }}
-        {{ form_errors(form) }}
-        {{ form_rest(form) }}
-    {{ form_end(form, {render_rest: false}) }}
+    {% embed '@NowoUiKit/demo_platform/_section.html.twig' with {title: ('examples.card.' ~ slug ~ '.title')|trans({}, 'messages'), kind: 'form', form: form} %}
+        {% block section_body %}
+            {{ form_start(form, {attr: {id: 'tiptap-example-form'}}) }}
+                {{ form_errors(form) }}
+                {% do form.submit.setRendered %}
+                {{ form_rest(form) }}
+            {{ form_end(form, {render_rest: false}) }}
+        {% endblock %}
+        {% block section_footer %}
+            <button type="submit" form="tiptap-example-form" class="nowo-ui-btn nowo-ui-btn--primary">{{ form.submit.vars.label|trans({}, 'messages') }}</button>
+        {% endblock %}
+    {% endembed %}
 
     {% if form.vars.submitted and form.vars.valid %}
-        <p class="nowo-ui-muted">{{ 'demo.saved_preview'|trans({}, 'messages') }}</p>
-        <pre class="nowo-ui-code-block nowo-ui-code-block--wrap">{{ saved_value|default('')|e }}</pre>
+        {% embed '@NowoUiKit/demo_platform/_section.html.twig' with {title: 'demo.saved_preview'|trans({}, 'messages'), kind: 'detail', saved_value: saved_value} %}
+            {% block section_body %}<pre class="nowo-ui-code-block nowo-ui-code-block--wrap">{{ saved_value|default('')|e }}</pre>{% endblock %}
+        {% endembed %}
     {% endif %}
-
-    <p>
-        <a href="{{ 'examples.docs_url'|trans({}, 'messages') }}" rel="noopener noreferrer" target="_blank">{{ 'examples.doc_hub_link'|trans({}, 'messages') }}</a>
-        ·
-        <a href="{{ path('app_examples_index', { _locale: app.request.locale }) }}">{{ 'examples.back_index'|trans({}, 'messages') }}</a>
-    </p>
 
     <script src="{{ asset(nowo_tiptap_editor_asset_path('tiptap-editor.js'), nowo_tiptap_editor_asset_package()) }}"></script>
 {% endblock %}
