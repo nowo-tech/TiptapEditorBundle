@@ -50,6 +50,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Rector (`make rector-dry` passes again): `AllowlistTiptapHtmlSanitizer::secureLinkRel()` (private) is a regular method; the kept-alive test controller is `readonly` and drops a string autocast. No behaviour change.
+- CI: new `release-gates` job runs the four release gates (`make rector-dry`, `validate-phpdoc`, `validate-translations`, `check-twig-extra`) in full mode, so a gate failure shows on the PR instead of at release time (CI only, no change to shipped code).
 - Demo: runs in UiKit's demo platform shell (`nowo-tech/ui-kit-bundle` ^2.60); its own masthead, theme toggle and vendored highlight.js stylesheet are gone. Demo only, no bundle change.
 
 ## [1.9.0] - 2026-11-19

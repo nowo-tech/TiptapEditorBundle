@@ -14,11 +14,11 @@ use Twig\Environment;
 /**
  * Host controller of the kept-alive test: the upload hook (`u`, `t` query) is per user, the body is submitted by POST.
  */
-final class HostEditController
+final readonly class HostEditController
 {
     public function __construct(
-        private readonly FormFactoryInterface $formFactory,
-        private readonly Environment $twig,
+        private FormFactoryInterface $formFactory,
+        private Environment $twig,
     ) {
     }
 
@@ -34,6 +34,6 @@ final class HostEditController
 
         $html = $this->twig->createTemplate('{{ form_widget(form) }}')->render(['form' => $form->createView()]);
 
-        return new Response($form->isSubmitted() && $form->isValid() ? 'saved:' . (string) $form->get('body')->getData() . "\n" . $html : $html);
+        return new Response($form->isSubmitted() && $form->isValid() ? 'saved:' . $form->get('body')->getData() . "\n" . $html : $html);
     }
 }

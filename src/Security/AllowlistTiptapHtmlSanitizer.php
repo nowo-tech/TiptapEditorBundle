@@ -137,7 +137,7 @@ final readonly class AllowlistTiptapHtmlSanitizer implements TiptapHtmlSanitizer
         // Output is canonical here (double-quoted, entity-encoded attributes), so this match is reliable.
         $html = preg_replace('#<iframe\b(?![^>]*\ssrc=")[^>]*>.*?</iframe>#is', '', $html) ?? $html;
 
-        return self::secureLinkRel($html);
+        return $this->secureLinkRel($html);
     }
 
     /**
@@ -145,7 +145,7 @@ final readonly class AllowlistTiptapHtmlSanitizer implements TiptapHtmlSanitizer
      * to every link with a `target`, so the opened page never gets `window.opener` (reverse tabnabbing).
      * Runs on the sanitizer's canonical output: double-quoted attributes whose values have `"` and `>` encoded.
      */
-    private static function secureLinkRel(string $html): string
+    private function secureLinkRel(string $html): string
     {
         return preg_replace_callback('#<a\b[^>]*>#i', static function (array $match): string {
             $tag       = $match[0];
