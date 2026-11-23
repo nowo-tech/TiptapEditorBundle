@@ -53,6 +53,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Rector (`make rector-dry` passes again): `AllowlistTiptapHtmlSanitizer::secureLinkRel()` (private) is a regular method; the kept-alive test controller is `readonly` and drops a string autocast. No behaviour change.
 - CI: new `release-gates` job runs the four release gates (`make rector-dry`, `validate-phpdoc`, `validate-translations`, `check-twig-extra`) in full mode, so a gate failure shows on the PR instead of at release time (CI only, no change to shipped code).
 - Demo: runs in UiKit's demo platform shell (`nowo-tech/ui-kit-bundle` ^2.60); its own masthead, theme toggle and vendored highlight.js stylesheet are gone. Demo only, no bundle change.
+- **Console**: the script-loaded line of `tiptap-editor.js` now reads `📦 [tiptap-editor] script loaded, build: 2026-11-23 14:05 UTC`: a readable UTC build time instead of the opaque source hash. The time comes from the committed `build-info.json` (`{sourceHash, builtAt}`): the source hash stays the change detector, `builtAt` is reused while the sources are unchanged and renewed only when they change, so rebuilding unchanged sources never rewrites the committed assets (no wall-clock stamp, no git date).
+
+### Added
+
+- **Console**: quiet switch for the script-loaded line: `<html data-nowo-console="quiet">` or `globalThis.NOWO_CONSOLE = 'quiet'` prints nothing. The default is unchanged.
 
 ## [1.9.0] - 2026-11-19
 
