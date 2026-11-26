@@ -90,6 +90,9 @@ final readonly class AllowlistTiptapHtmlSanitizer implements TiptapHtmlSanitizer
         'noreferrer', 'prev', 'privacy-policy', 'search', 'sponsored', 'tag', 'terms-of-service', 'ugc',
     ];
 
+    /** `target` values kept on `<a>`; any other (named) target becomes `_blank`. */
+    private const SAFE_LINK_TARGETS = ['', '_blank', '_self', '_parent', '_top'];
+
     /** Harmless wrappers that are removed while their text content is kept (like strip_tags did). */
     private const BLOCKED_ELEMENTS = [
         'abbr', 'address', 'article', 'aside', 'big', 'center', 'cite', 'dd', 'dfn', 'dl', 'dt', 'font',
@@ -150,7 +153,19 @@ final readonly class AllowlistTiptapHtmlSanitizer implements TiptapHtmlSanitizer
         return preg_replace_callback('#<a\b[^>]*>#i', static function (array $match): string {
             $tag       = $match[0];
             $hasTarget = preg_match('#\starget="#i', $tag) === 1;
-            $rel       = preg_match('#\srel="([^"]*)"#i', $tag, $relMatch) === 1 ? $relMatch[1] : null;
+            if ($hasTarget) {
+                // Named targets expose window.opener and can navigate other frames: browsing contexts keywords only,
+                // anything else becomes `_blank`. symfony/html-sanitizer >= 7.4.23 does this too; kept here so older
+                // patch versions behave the same.
+                $tag = preg_replace_callback('#(\starget=")([^"]*)(")#i', static function (array $t): string {
+                    if (in_array(strtolower(trim($t[2])), self::SAFE_LINK_TARGETS, true)) {
+                        return $t[0];
+                    }
+
+                    return $t[1] . '_blank' . $t[3];
+                }, $tag, 1) ?? $tag;
+            }
+            $rel = preg_match('#\srel="([^"]*)"#i', $tag, $relMatch) === 1 ? $relMatch[1] : null;
             if (!$hasTarget && $rel === null) {
                 return $tag;
             }
