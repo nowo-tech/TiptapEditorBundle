@@ -173,6 +173,20 @@ final class AllowlistTiptapHtmlSanitizerTest extends TestCase
         self::assertSame('<p>' . $expected . '</p>', (new AllowlistTiptapHtmlSanitizer())->sanitize('<p>' . $input . '</p>'));
     }
 
+    /**
+     * Newer symfony/html-sanitizer patch versions already rewrite named targets; the bundle must give the same
+     * result on older ones, so the second pass is exercised directly on raw (un-rewritten) markup.
+     */
+    public function testNamedTargetIsRewrittenEvenWhenTheSanitizerLeftItAlone(): void
+    {
+        $method = new \ReflectionMethod(AllowlistTiptapHtmlSanitizer::class, 'secureLinkRel');
+
+        self::assertSame(
+            '<p><a target="_blank" href="/a" rel="noopener noreferrer">x</a></p>',
+            $method->invoke(new AllowlistTiptapHtmlSanitizer(), '<p><a target="evil" href="/a">x</a></p>'),
+        );
+    }
+
     public function testKeepsOnlyTextAlignStyle(): void
     {
         $sanitizer = new AllowlistTiptapHtmlSanitizer();

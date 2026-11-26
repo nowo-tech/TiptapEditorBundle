@@ -151,15 +151,21 @@ final readonly class AllowlistTiptapHtmlSanitizer implements TiptapHtmlSanitizer
     private function secureLinkRel(string $html): string
     {
         return preg_replace_callback('#<a\b[^>]*>#i', static function (array $match): string {
-            $tag       = $match[0];
+            $tag = $match[0];
             $hasTarget = preg_match('#\starget="#i', $tag) === 1;
             if ($hasTarget) {
                 // Named targets expose window.opener and can navigate other frames: browsing contexts keywords only,
                 // anything else becomes `_blank`. symfony/html-sanitizer >= 7.4.23 does this too; kept here so older
                 // patch versions behave the same.
-                $tag = preg_replace_callback('#(\starget=")([^"]*)(")#i', static fn (array $t): string => in_array(strtolower(trim($t[2])), self::SAFE_LINK_TARGETS, true) ? $t[0] : $t[1] . '_blank' . $t[3], $tag, 1) ?? $tag;
+                $tag = preg_replace_callback('#(\starget=")([^"]*)(")#i', static function (array $t): string {
+                    if (in_array(strtolower(trim($t[2])), self::SAFE_LINK_TARGETS, true)) {
+                        return $t[0];
+                    }
+
+                    return $t[1] . '_blank' . $t[3];
+                }, $tag, 1) ?? $tag;
             }
-            $rel       = preg_match('#\srel="([^"]*)"#i', $tag, $relMatch) === 1 ? $relMatch[1] : null;
+            $rel = preg_match('#\srel="([^"]*)"#i', $tag, $relMatch) === 1 ? $relMatch[1] : null;
             if (!$hasTarget && $rel === null) {
                 return $tag;
             }
