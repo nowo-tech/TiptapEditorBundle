@@ -5,6 +5,7 @@
 - [From 1.3.7 to 1.3.8](#from-137-to-138)
 - [From 1.3.6 to 1.3.7](#from-136-to-137)
 - [Unreleased](#unreleased)
+- [To 1.10.1](#to-1101)
 - [To 1.10.0](#to-1100)
 - [To 1.9.0](#to-190)
 - [To 1.8.0](#to-180)
@@ -65,6 +66,14 @@ composer update nowo-tech/tiptap-editor-bundle
 ```
 
 ## Unreleased
+
+## To 1.10.1
+
+From **1.10.0**:
+
+```bash
+composer update nowo-tech/tiptap-editor-bundle
+```
 
 ## To 1.10.0
 

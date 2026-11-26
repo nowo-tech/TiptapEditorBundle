@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Table of contents
 
 - [[Unreleased]](#unreleased)
+- [[1.10.1] - 2026-11-26](#1101---2026-11-26)
 - [[1.10.0] - 2026-11-23](#1100---2026-11-23)
 - [[1.9.0] - 2026-11-19](#190---2026-11-19)
 - [[1.8.0] - 2026-11-17](#180---2026-11-17)
@@ -48,6 +49,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [[1.0.0] - 2026-05-06](#100---2026-05-06)
 
 ## [Unreleased]
+
+## [1.10.1] - 2026-11-26
 
 ### Fixed
 
@@ -616,7 +619,7 @@ First stable release published on GitHub.
 - Development workflow: Docker, Makefile, PHPUnit, PHPStan, PHP-CS-Fixer, Vitest on shared TS utilities.
 - Demos: Symfony 7 and 8 sample apps under `demo/` (FrankenPHP).
 
-[Unreleased]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.10.0...HEAD
+[Unreleased]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.10.1...HEAD
 [1.3.8]: https://github.com/nowo-tech/TiptapEditorBundle/releases/tag/v1.3.8
 [1.2.3]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.2.2...v1.2.3
 [1.2.2]: https://github.com/nowo-tech/TiptapEditorBundle/compare/v1.2.1...v1.2.2
