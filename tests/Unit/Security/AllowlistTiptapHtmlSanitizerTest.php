@@ -7,6 +7,7 @@ namespace Nowo\TiptapEditorBundle\Tests\Unit\Security;
 use Nowo\TiptapEditorBundle\Security\AllowlistTiptapHtmlSanitizer;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
 
 /**
  * @covers \Nowo\TiptapEditorBundle\Security\AllowlistTiptapHtmlSanitizer
@@ -162,6 +163,7 @@ final class AllowlistTiptapHtmlSanitizerTest extends TestCase
         yield 'browsing context keywords kept' => ['<a href="/a" target="_TOP">x</a>', '<a href="/a" target="_TOP" rel="noopener noreferrer">x</a>'];
         yield 'already safe: unchanged' => ['<a href="https://example.com" target="_blank" rel="noopener noreferrer nofollow">x</a>', '<a href="https://example.com" target="_blank" rel="noopener noreferrer nofollow">x</a>'];
         yield 'opener without target is dropped' => ['<a href="https://example.com" rel="opener">x</a>', '<a href="https://example.com">x</a>'];
+        yield 'unknown rel without target is dropped' => ['<a href="https://example.com" rel="bogus">x</a>', '<a href="https://example.com">x</a>'];
         yield 'safe rel without target is kept' => ['<a href="https://example.com" rel="nofollow">x</a>', '<a href="https://example.com" rel="nofollow">x</a>'];
         yield 'no target, no rel: unchanged' => ['<a href="https://example.com">x</a>', '<a href="https://example.com">x</a>'];
         yield 'rel-like text in another attribute is not touched' => ['<a href="/a" title=\'x" rel="opener\' target="_blank">x</a>', '<a href="/a" title="x&#34; rel&#61;&#34;opener" target="_blank" rel="noopener noreferrer">x</a>'];
@@ -179,7 +181,7 @@ final class AllowlistTiptapHtmlSanitizerTest extends TestCase
      */
     public function testNamedTargetIsRewrittenEvenWhenTheSanitizerLeftItAlone(): void
     {
-        $method = new \ReflectionMethod(AllowlistTiptapHtmlSanitizer::class, 'secureLinkRel');
+        $method = new ReflectionMethod(AllowlistTiptapHtmlSanitizer::class, 'secureLinkRel');
 
         self::assertSame(
             '<p><a target="_blank" href="/a" rel="noopener noreferrer">x</a></p>',

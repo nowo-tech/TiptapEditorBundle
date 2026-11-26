@@ -151,7 +151,7 @@ final readonly class AllowlistTiptapHtmlSanitizer implements TiptapHtmlSanitizer
     private function secureLinkRel(string $html): string
     {
         return preg_replace_callback('#<a\b[^>]*>#i', static function (array $match): string {
-            $tag = $match[0];
+            $tag       = $match[0];
             $hasTarget = preg_match('#\starget="#i', $tag) === 1;
             if ($hasTarget) {
                 // Named targets expose window.opener and can navigate other frames: browsing contexts keywords only,
