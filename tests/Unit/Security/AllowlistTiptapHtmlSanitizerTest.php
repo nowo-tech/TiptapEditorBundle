@@ -7,6 +7,7 @@ namespace Nowo\TiptapEditorBundle\Tests\Unit\Security;
 use Nowo\TiptapEditorBundle\Security\AllowlistTiptapHtmlSanitizer;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
 
 /**
  * @covers \Nowo\TiptapEditorBundle\Security\AllowlistTiptapHtmlSanitizer
@@ -157,9 +158,12 @@ final class AllowlistTiptapHtmlSanitizerTest extends TestCase
         yield 'opener with target' => ['<a href="https://evil.example" target="_blank" rel="opener">x</a>', '<a href="https://evil.example" target="_blank" rel="noopener noreferrer">x</a>'];
         yield 'target without rel' => ['<a href="https://example.com" target="_blank">x</a>', '<a href="https://example.com" target="_blank" rel="noopener noreferrer">x</a>'];
         yield 'safe tokens kept, opener and unknown dropped' => ['<a href="https://example.com" target="_blank" rel="NoFollow opener ugc bogus">x</a>', '<a href="https://example.com" target="_blank" rel="nofollow ugc noopener noreferrer">x</a>'];
-        yield 'target before rel, any target value' => ['<a target="evil" rel="opener noopener" href="/a">x</a>', '<a target="evil" href="/a" rel="noopener noreferrer">x</a>'];
+        yield 'target before rel, named target becomes _blank' => ['<a target="evil" rel="opener noopener" href="/a">x</a>', '<a target="_blank" href="/a" rel="noopener noreferrer">x</a>'];
+        yield 'named target with other case and spaces' => ['<a href="/a" target=" Evil ">x</a>', '<a href="/a" target="_blank" rel="noopener noreferrer">x</a>'];
+        yield 'browsing context keywords kept' => ['<a href="/a" target="_TOP">x</a>', '<a href="/a" target="_TOP" rel="noopener noreferrer">x</a>'];
         yield 'already safe: unchanged' => ['<a href="https://example.com" target="_blank" rel="noopener noreferrer nofollow">x</a>', '<a href="https://example.com" target="_blank" rel="noopener noreferrer nofollow">x</a>'];
         yield 'opener without target is dropped' => ['<a href="https://example.com" rel="opener">x</a>', '<a href="https://example.com">x</a>'];
+        yield 'unknown rel without target is dropped' => ['<a href="https://example.com" rel="bogus">x</a>', '<a href="https://example.com">x</a>'];
         yield 'safe rel without target is kept' => ['<a href="https://example.com" rel="nofollow">x</a>', '<a href="https://example.com" rel="nofollow">x</a>'];
         yield 'no target, no rel: unchanged' => ['<a href="https://example.com">x</a>', '<a href="https://example.com">x</a>'];
         yield 'rel-like text in another attribute is not touched' => ['<a href="/a" title=\'x" rel="opener\' target="_blank">x</a>', '<a href="/a" title="x&#34; rel&#61;&#34;opener" target="_blank" rel="noopener noreferrer">x</a>'];
@@ -169,6 +173,20 @@ final class AllowlistTiptapHtmlSanitizerTest extends TestCase
     public function testLinkRelNeverGrantsTheOpener(string $input, string $expected): void
     {
         self::assertSame('<p>' . $expected . '</p>', (new AllowlistTiptapHtmlSanitizer())->sanitize('<p>' . $input . '</p>'));
+    }
+
+    /**
+     * Newer symfony/html-sanitizer patch versions already rewrite named targets; the bundle must give the same
+     * result on older ones, so the second pass is exercised directly on raw (un-rewritten) markup.
+     */
+    public function testNamedTargetIsRewrittenEvenWhenTheSanitizerLeftItAlone(): void
+    {
+        $method = new ReflectionMethod(AllowlistTiptapHtmlSanitizer::class, 'secureLinkRel');
+
+        self::assertSame(
+            '<p><a target="_blank" href="/a" rel="noopener noreferrer">x</a></p>',
+            $method->invoke(new AllowlistTiptapHtmlSanitizer(), '<p><a target="evil" href="/a">x</a></p>'),
+        );
     }
 
     public function testKeepsOnlyTextAlignStyle(): void
