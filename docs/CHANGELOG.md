@@ -49,6 +49,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Security
+
+- `AllowlistTiptapHtmlSanitizer`: a named `<a target>` (anything but `_blank`, `_self`, `_parent`, `_top`) becomes `_blank`, on every `symfony/html-sanitizer` patch version. Named targets can expose `window.opener` and navigate other frames; links with a target already got `rel="noopener noreferrer"`. symfony/html-sanitizer 7.4.23 / 8.1.x started rewriting named targets itself, which exposed the old test expectation (`target="evil"`).
+
 ## [1.10.0] - 2026-11-23
 
 ### Changed

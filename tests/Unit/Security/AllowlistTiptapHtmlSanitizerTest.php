@@ -157,7 +157,9 @@ final class AllowlistTiptapHtmlSanitizerTest extends TestCase
         yield 'opener with target' => ['<a href="https://evil.example" target="_blank" rel="opener">x</a>', '<a href="https://evil.example" target="_blank" rel="noopener noreferrer">x</a>'];
         yield 'target without rel' => ['<a href="https://example.com" target="_blank">x</a>', '<a href="https://example.com" target="_blank" rel="noopener noreferrer">x</a>'];
         yield 'safe tokens kept, opener and unknown dropped' => ['<a href="https://example.com" target="_blank" rel="NoFollow opener ugc bogus">x</a>', '<a href="https://example.com" target="_blank" rel="nofollow ugc noopener noreferrer">x</a>'];
-        yield 'target before rel, any target value' => ['<a target="evil" rel="opener noopener" href="/a">x</a>', '<a target="evil" href="/a" rel="noopener noreferrer">x</a>'];
+        yield 'target before rel, named target becomes _blank' => ['<a target="evil" rel="opener noopener" href="/a">x</a>', '<a target="_blank" href="/a" rel="noopener noreferrer">x</a>'];
+        yield 'named target with other case and spaces' => ['<a href="/a" target=" Evil ">x</a>', '<a href="/a" target="_blank" rel="noopener noreferrer">x</a>'];
+        yield 'browsing context keywords kept' => ['<a href="/a" target="_TOP">x</a>', '<a href="/a" target="_TOP" rel="noopener noreferrer">x</a>'];
         yield 'already safe: unchanged' => ['<a href="https://example.com" target="_blank" rel="noopener noreferrer nofollow">x</a>', '<a href="https://example.com" target="_blank" rel="noopener noreferrer nofollow">x</a>'];
         yield 'opener without target is dropped' => ['<a href="https://example.com" rel="opener">x</a>', '<a href="https://example.com">x</a>'];
         yield 'safe rel without target is kept' => ['<a href="https://example.com" rel="nofollow">x</a>', '<a href="https://example.com" rel="nofollow">x</a>'];
